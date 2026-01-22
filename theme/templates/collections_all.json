@@ -1,0 +1,34 @@
+{
+  "sections": {
+    "banner": {
+      "disabled": false,
+      "type": "main-collection-banner",
+      "settings": {
+        "show_collection_image": false,
+        "show_collection_title": true,
+        "show_collection_description": true,
+        "show_product_count": false,
+        "title": "All Collections",
+        "default_description": "Browse our complete collection catalog"
+      },
+      "blocks": {},
+      "custom_css": []
+    },
+    "main": {
+      "disabled": false,
+      "type": "main-list-collections",
+      "settings": {
+        "collections_per_row_desktop": 3,
+        "collections_per_row_mobile": 1,
+        "show_collection_image": true,
+        "show_collection_title": true,
+        "show_product_count": true
+      },
+      "blocks": {}
+    }
+  },
+  "order": [
+    "banner",
+    "main"
+  ]
+}

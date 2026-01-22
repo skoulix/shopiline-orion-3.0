@@ -1,0 +1,188 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(20) }}px !important;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(20) }}px !important;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(40) }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom | default(40) }}px !important;
+    }
+  }
+</style>
+
+<div id="shopline-section-{{section.id}}" data-section-id="{{section.id}}" class="contact-form-section-wrapper" style="background-color: {{ section.settings.background_color | default("ffffff") }};">
+<div>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    {{#if section.settings.heading}}
+      <h2 class="text-3xl sm:text-4xl md:text-5xl mb-8 font-heading {{#if section.settings.text_alignment == "left"}}text-left{{#else if section.settings.text_alignment == "right" /}}text-right{{#else/}}text-center{{/if}}">{{section.settings.heading}}</h2>
+    {{/if}}
+
+    {{#if section.settings.subheading}}
+      <p class="text-lg text-gray-600 mb-12 {{#if section.settings.text_alignment == "left"}}text-left{{#else if section.settings.text_alignment == "right" /}}text-right{{#else/}}text-center{{/if}}">{{section.settings.subheading}}</p>
+    {{/if}}
+
+    <form action="/contact" method="post" class="contact-form space-y-6" id="ContactForm">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="ContactForm-name" class="block text-sm font-medium text-gray-700 mb-1">
+            Name <span class="text-red-500">*</span>
+          </label>
+          <input type="text"
+                 id="ContactForm-name"
+                 name="contact[name]"
+                 required
+                 class="form-input">
+        </div>
+
+        <div>
+          <label for="ContactForm-email" class="block text-sm font-medium text-gray-700 mb-1">
+            Email <span class="text-red-500">*</span>
+          </label>
+          <input type="email"
+                 id="ContactForm-email"
+                 name="contact[email]"
+                 required
+                 autocorrect="off"
+                 autocapitalize="off"
+                 class="form-input">
+        </div>
+      </div>
+
+      <div>
+        <label for="ContactForm-phone" class="block text-sm font-medium text-gray-700 mb-1">
+          Phone Number
+        </label>
+        <input type="tel"
+               id="ContactForm-phone"
+               name="contact[phone]"
+               class="form-input">
+      </div>
+
+      <div>
+        <label for="ContactForm-message" class="block text-sm font-medium text-gray-700 mb-1">
+          Message <span class="text-red-500">*</span>
+        </label>
+        <textarea id="ContactForm-message"
+                  name="contact[message]"
+                  rows="6"
+                  required
+                  class="form-input"></textarea>
+      </div>
+
+      <div class="text-start">
+        <button type="submit" class="button button-primary">
+          Send
+        </button>
+      </div>
+    </form>
+
+    {{#if form.posted_successfully}}
+      <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
+        <p class="text-green-800 text-center">
+          {{#if section.settings.success_message}}
+            {{section.settings.success_message}}
+          {{#else/}}
+            Thanks for contacting us. We'll get back to you as soon as possible.
+          {{/if}}
+        </p>
+      </div>
+    {{/if}}
+
+    {{#if form.errors}}
+      <div class="mt-6 p-4 bg-red-50 border border-red-200 rounded-md">
+        <p class="text-red-800 text-center">
+          Please correct the errors below and try again.
+        </p>
+      </div>
+    {{/if}}
+  </div>
+</div>
+</div>
+
+{{#schema}}
+{
+  "name": "Contact form",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Contact Us"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thanks for contacting us. We'll get back to you as soon as possible."
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.contact-form.settings.group_header__0.label"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "default": "#ffffff",
+      "label": "t:sections.contact-form.settings.background_color.label"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.contact-form.settings.group_header__1.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.contact-form.settings.padding_top.label",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.contact-form.settings.padding_bottom.label",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact form"
+    }
+  ]
+}
+{{/schema}}

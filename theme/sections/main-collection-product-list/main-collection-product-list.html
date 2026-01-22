@@ -1,0 +1,620 @@
+<div class="collection-page" style="padding-top: {{section.settings.padding_top}}px; padding-bottom: {{section.settings.padding_bottom}}px;">
+  <div class="{{#if section.settings.full_width}}w-full px-4 sm:px-6 lg:px-8{{#else/}}container{{/if}}">
+    {{#if collection.products}}
+      {{#if section.settings.filter_position == "sidebar"}}
+        <!-- Sidebar Layout -->
+        <div class="flex gap-8">
+          <!-- Sidebar Filters -->
+          {{#if section.settings.enable_filtering}}
+            <aside class="w-64 flex-shrink-0 hidden lg:block">
+              <collection-filter-sidebar
+                collection-handle="{{collection.handle}}"
+                :show-sort="{{#if section.settings.enable_sorting}}true{{#else/}}false{{/if}}"
+              ></collection-filter-sidebar>
+            </aside>
+          {{/if}}
+          
+          <!-- Main Content -->
+          <div class="flex-1">
+            <!-- Mobile Filter Button -->
+            {{#if section.settings.enable_filtering}}
+              <div class="mb-6 lg:hidden">
+                <collection-filter-drawer
+                  collection-handle="{{collection.handle}}"
+                ></collection-filter-drawer>
+              </div>
+            {{/if}}
+            
+            <div class="product-grid grid" 
+                 style="gap: {{ section.settings.grid_gap | default(20) }}px;"
+                 data-products-count="{{collection.products_count}}"
+                 data-desktop-columns="{{section.settings.columns_desktop}}"
+                 data-mobile-columns="{{section.settings.columns_mobile}}"
+                 data-products-per-page="{{section.settings.products_per_page}}">
+              {{#for product in collection.products}}
+                <div class="product-card-wrapper" data-product-index="{{forloop.index}}" data-product-type="{{product.product_type}}">
+                  <product-card
+                    :product='{{product | json()}}'
+                  ></product-card>
+                </div>
+              {{/for}}
+            </div>
+          </div>
+        </div>
+      {{#else/}}
+        <!-- Drawer Layout (Default) -->
+        <!-- Filters and Sorting Bar -->
+        {{#if section.settings.enable_filtering || section.settings.enable_sorting}}
+          <div class="mb-6 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              {{#if section.settings.enable_filtering}}
+                <collection-filter-drawer
+                  collection-handle="{{collection.handle}}"
+                ></collection-filter-drawer>
+              {{/if}}
+            </div>
+            
+            {{#if section.settings.enable_sorting}}
+              <collection-sort
+                collection-handle="{{collection.handle}}"
+                current-sort="{{#if request.params.sort_by}}{{request.params.sort_by}}{{#else/}}manual{{/if}}"
+              ></collection-sort>
+            {{/if}}
+          </div>
+        {{/if}}
+        
+        <!-- Products Grid -->
+        <div class="product-grid grid" 
+             style="gap: {{ section.settings.grid_gap | default(20) }}px;"
+             data-products-count="{{collection.products_count}}"
+             data-desktop-columns="{{section.settings.columns_desktop}}"
+             data-mobile-columns="{{section.settings.columns_mobile}}"
+             data-products-per-page="{{section.settings.products_per_page}}">
+          {{#for product in collection.products}}
+            <div class="product-card-wrapper" data-product-index="{{forloop.index}}" data-product-type="{{product.product_type}}">
+              <product-card
+                :product='{{{ product | json() }}}'
+              ></product-card>
+            </div>
+          {{/for}}
+        </div>
+      {{/if}}
+    {{#else/}}
+      <div class="text-center py-16">
+        <!-- Empty State Icon -->
+        <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+          <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        
+        <!-- No Products Message -->
+        <h3 class="text-xl mb-2">No products found</h3>
+        <p class="text-gray-500 mb-6 container max-w-md">
+          {{#if request.params.sort_by}}
+            Try adjusting your filters or search terms to find what you're looking for.
+          {{#else/}}
+            This collection doesn't have any products yet.
+          {{/if}}
+        </p>
+        
+        <!-- Reset Filters Button (will be shown/hidden by JavaScript) -->
+        <button
+          id="resetFiltersBtn"
+          onclick="window.location.href = window.location.pathname"
+          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 transition-colors duration-200"
+          style="display: none;"
+        >
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Reset all filters
+        </button>
+      </div>
+    {{/if}}
+  </div>
+</div>
+
+<style>
+  /* Reset any default grid styles from tailwind.css */
+  .collection-page .product-grid {
+    width: 100%;
+    display: grid;
+    /* Gap is now controlled by inline style from settings */
+  }
+  
+  /* Mobile columns - default */
+  .collection-page .product-grid[data-mobile-columns="1"] {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  .collection-page .product-grid[data-mobile-columns="2"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  
+  /* Small screens - use mobile columns */
+  @media (max-width: 767px) {
+    .collection-page .product-grid[data-mobile-columns="1"] {
+      grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+    }
+    .collection-page .product-grid[data-mobile-columns="2"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+  }
+  
+  /* Tablet columns - fixed at 3 for medium screens */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .collection-page .product-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+  }
+  
+  /* Desktop columns - using data attributes to set grid columns */
+  @media (min-width: 1024px) {
+    .collection-page .product-grid[data-desktop-columns="2"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+    .collection-page .product-grid[data-desktop-columns="3"] {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+    .collection-page .product-grid[data-desktop-columns="4"] {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+    .collection-page .product-grid[data-desktop-columns="5"] {
+      grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    }
+  }
+  
+  /* Override any conflicting styles from product-grid classes in tailwind.css */
+  @media (min-width: 1024px) {
+    .collection-page .product-grid[data-products-count] {
+      /* Reset product count based grid columns */
+      grid-template-columns: inherit;
+    }
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const productGrids = document.querySelectorAll('.product-grid');
+  
+  productGrids.forEach(grid => {
+    const productsPerPage = parseInt(grid.getAttribute('data-products-per-page')) || 24;
+    let allProducts = Array.from(grid.querySelectorAll('.product-card-wrapper'));
+    let filteredProducts = [...allProducts];
+    let currentPage = 1;
+    
+    // Get current page from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('page')) {
+      currentPage = parseInt(urlParams.get('page')) || 1;
+    }
+    
+    // Create pagination container
+    const paginationContainer = document.createElement('nav');
+    paginationContainer.className = 'pagination mt-8 flex justify-center items-center gap-2';
+    
+    // Apply filters from URL parameters
+    function applyFiltersFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      filteredProducts = [...allProducts];
+      
+      // Filter by availability
+      if (params.get('filter.v.availability') === '1') {
+        filteredProducts = filteredProducts.filter(productEl => {
+          const productCard = productEl.querySelector('product-card');
+          return productCard && productCard.getAttribute(':available') === "true";
+        });
+      }
+      
+      // Filter by product type
+      const productTypes = params.getAll('filter.p.product_type');
+      if (productTypes.length > 0) {
+        filteredProducts = filteredProducts.filter(productEl => {
+          const productCard = productEl.querySelector('product-card');
+          if (!productCard) return false;
+          const productData = {
+            title: productCard.getAttribute('title'),
+            vendor: productCard.getAttribute('vendor'),
+            handle: productCard.getAttribute('handle')
+          };
+          // Since we don't have product_type in the HTML, we'll need to fetch it
+          // For now, let's skip this filter or implement it differently
+          return true;
+        });
+      }
+      
+      // Filter by vendor
+      const vendors = params.getAll('filter.p.vendor');
+      if (vendors.length > 0) {
+        filteredProducts = filteredProducts.filter(productEl => {
+          const productCard = productEl.querySelector('product-card');
+          if (!productCard) return false;
+          const vendor = productCard.getAttribute('vendor');
+          return vendors.includes(vendor);
+        });
+      }
+      
+      // Filter by price range
+      const priceRanges = params.getAll('filter.price.range');
+      if (priceRanges.length > 0) {
+        filteredProducts = filteredProducts.filter(productEl => {
+          const productCard = productEl.querySelector('product-card');
+          if (!productCard) return false;
+          const price = parseFloat(productCard.getAttribute('price')) / 100; // Convert from cents
+          
+          return priceRanges.some(range => {
+            if (range === '0-50") return price < 50;
+            if (range === '50-100") return price >= 50 && price < 100;
+            if (range === '100-200") return price >= 100 && price < 200;
+            if (range === '200+") return price >= 200;
+            return false;
+          });
+        });
+      }
+      
+      // Reset to page 1 when filters change
+      currentPage = 1;
+      
+      // Update display
+      updateProductDisplay();
+    }
+    
+    function updateProductDisplay() {
+      // Hide all products first
+      allProducts.forEach(product => {
+        product.style.display = 'none';
+      });
+      
+      const totalFilteredProducts = filteredProducts.length;
+      const totalPages = Math.ceil(totalFilteredProducts / productsPerPage);
+      
+      // Show filtered products for current page
+      const startIndex = (currentPage - 1) * productsPerPage;
+      const endIndex = Math.min(startIndex + productsPerPage, totalFilteredProducts);
+      
+      for (let i = startIndex; i < endIndex; i++) {
+        if (filteredProducts[i]) {
+          filteredProducts[i].style.display = 'block';
+        }
+      }
+      
+      // Update pagination
+      updatePaginationControls(currentPage, totalPages);
+      
+      // Show/hide empty state
+      let emptyState = document.querySelector('.collection-page .text-center.py-16');
+      
+      // Find sort dropdown
+      const sortDropdown = document.querySelector('collection-sort');
+      
+      if (totalFilteredProducts === 0) {
+        // Create empty state if it doesn't exist
+        if (!emptyState) {
+          emptyState = document.createElement('div');
+          emptyState.className = 'text-center py-16';
+          emptyState.innerHTML = `
+            <!-- Empty State Icon -->
+            <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+              <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            
+            <!-- No Products Message -->
+            <h3 class="text-xl mb-2">No products found</h3>
+            <p class="text-gray-500 mb-6 container max-w-md"></p>
+            
+            <!-- Reset Filters Button -->
+            <button
+              id="resetFiltersBtn"
+              onclick="window.location.href = window.location.pathname"
+              class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 transition-colors duration-200"
+              style="display: none;"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Reset all filters
+            </button>
+          `;
+          // Insert after the grid
+          grid.parentNode.insertBefore(emptyState, grid.nextSibling);
+        }
+        
+        // Show empty state and hide other elements
+        emptyState.style.display = 'block';
+        grid.style.display = 'none';
+        paginationContainer.style.display = 'none';
+        
+        // Hide sort dropdown when no products
+        if (sortDropdown) {
+          sortDropdown.style.display = 'none';
+        }
+        
+        // Update empty state message for filtered results
+        const emptyMessage = emptyState.querySelector('p.text-gray-500');
+        const resetBtn = emptyState.querySelector('#resetFiltersBtn');
+        
+        if (emptyMessage) {
+          const hasFilters = window.location.search.includes('filter.');
+          if (hasFilters) {
+            emptyMessage.textContent = "Try adjusting your filters or search terms to find what you're looking for.";
+            if (resetBtn) {
+              resetBtn.style.display = 'inline-flex';
+            }
+          } else {
+            emptyMessage.textContent = "This collection doesn't have any products yet.";
+            if (resetBtn) {
+              resetBtn.style.display = 'none';
+            }
+          }
+        }
+      } else {
+        // Hide empty state if it exists and show other elements
+        if (emptyState) {
+          emptyState.style.display = 'none';
+        }
+        grid.style.display = '';
+        paginationContainer.style.display = totalPages > 1 ? '' : 'none';
+        
+        // Show sort dropdown when products are available
+        if (sortDropdown) {
+          sortDropdown.style.display = '';
+        }
+      }
+    }
+    
+    function showPage(page) {
+      currentPage = page;
+      updateProductDisplay();
+      
+      // Update URL
+      const newUrl = new URL(window.location.href);
+      if (page > 1) {
+        newUrl.searchParams.set('page', page);
+      } else {
+        newUrl.searchParams.delete('page');
+      }
+      window.history.replaceState({}, '', newUrl.toString());
+      
+      // Scroll to top of products
+      grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    function updatePaginationControls(page, totalPages) {
+      paginationContainer.innerHTML = '';
+      
+      // Only show pagination if there are multiple pages
+      if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
+        return;
+      }
+      
+      paginationContainer.style.display = '';
+      
+      // Previous button
+      if (page > 1) {
+        const prevBtn = createPaginationButton('← Previous', () => showPage(page - 1));
+        paginationContainer.appendChild(prevBtn);
+      }
+      
+      // Page numbers
+      const pageNumbers = getPageNumbers(page, totalPages);
+      pageNumbers.forEach(num => {
+        if (num === '...") {
+          const dots = document.createElement('span');
+          dots.className = 'px-3 py-2 text-sm';
+          dots.textContent = '...';
+          paginationContainer.appendChild(dots);
+        } else {
+          const pageBtn = createPaginationButton(num, () => showPage(num), num === page);
+          paginationContainer.appendChild(pageBtn);
+        }
+      });
+      
+      // Next button
+      if (page < totalPages) {
+        const nextBtn = createPaginationButton('Next →', () => showPage(page + 1));
+        paginationContainer.appendChild(nextBtn);
+      }
+    }
+    
+    function createPaginationButton(text, onClick, isActive = false) {
+      const btn = document.createElement('button');
+      btn.textContent = text;
+      btn.onclick = onClick;
+      
+      if (isActive) {
+        btn.className = 'px-3 py-2 text-sm border border-red-600 bg-red-600 text-white rounded';
+      } else {
+        btn.className = 'px-3 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors';
+      }
+      
+      return btn;
+    }
+    
+    function getPageNumbers(current, total) {
+      const delta = 2;
+      const range = [];
+      const rangeWithDots = [];
+      let l;
+      
+      for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+          range.push(i);
+        }
+      }
+      
+      range.forEach((i) => {
+        if (l) {
+          if (i - l !== 1) {
+            rangeWithDots.push('...');
+          }
+        }
+        rangeWithDots.push(i);
+        l = i;
+      });
+      
+      return rangeWithDots;
+    }
+    
+    // Insert pagination after the grid
+    grid.parentNode.insertBefore(paginationContainer, grid.nextSibling);
+    
+    // Apply filters and initialize display
+    applyFiltersFromURL();
+    
+    // Mount Vue components for visible products
+    if (window.mountVueComponents) {
+      window.mountVueComponents(grid);
+    }
+  });
+  
+  // Re-initialize on browser back/forward
+  window.addEventListener('popstate', function() {
+    location.reload();
+  });
+});
+</script>
+
+{{#schema}}
+{
+  "name": "t:sections.main-collection-product-list.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "t:sections.main-collection-product-list.settings.group_header__0.label"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "default": false,
+      "label": "t:sections.main-collection-product-list.settings.full_width.label",
+      "info": "t:sections.main-collection-product-list.settings.full_width.info"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 1,
+      "max": 48,
+      "step": 1,
+      "default": 24,
+      "label": "t:sections.main-collection-product-list.settings.products_per_page.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.main-collection-product-list.settings.columns_desktop.label"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:sections.main-collection-product-list.settings.columns_mobile.options__0.label"
+        },
+        {
+          "value": "2",
+          "label": "t:sections.main-collection-product-list.settings.columns_mobile.options__1.label"
+        }
+      ],
+      "default": "2",
+      "label": "t:sections.main-collection-product-list.settings.columns_mobile.label"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 20,
+      "unit": "px",
+      "label": "Grid gap",
+      "info": "Space between products"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.main-collection-product-list.settings.group_header__1.label"
+    },
+    {
+      "type": "switch",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "t:sections.main-collection-product-list.settings.enable_filtering.label"
+    },
+    {
+      "type": "select",
+      "id": "filter_position",
+      "label": "t:sections.main-collection-product-list.settings.filter_position.label",
+      "default": "drawer",
+      "options": [
+        {
+          "value": "sidebar",
+          "label": "t:sections.main-collection-product-list.settings.filter_position.options__0.label"
+        },
+        {
+          "value": "drawer",
+          "label": "t:sections.main-collection-product-list.settings.filter_position.options__1.label"
+        }
+      ],
+      "info": "t:sections.main-collection-product-list.settings.filter_position.info"
+    },
+    {
+      "type": "switch",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "t:sections.main-collection-product-list.settings.enable_sorting.label"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.main-collection-product-list.settings.group_header__2.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.main-collection-product-list.settings.padding_top.label",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 20,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.main-collection-product-list.settings.padding_bottom.label",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 40,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ]
+}
+{{/schema}}

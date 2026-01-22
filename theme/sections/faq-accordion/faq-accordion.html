@@ -1,0 +1,473 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(24) }}px !important;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(24) }}px !important;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(48) }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom | default(48) }}px !important;
+    }
+  }
+</style>
+
+<div class="faq-accordion section-stack" style="background-color: {{ section.settings.background_color | default("ffffff") }}; " id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+  <div class="container">
+    {{#if section.settings.title}}
+      <div class="section-stack__intro mb-10 {{ section.settings.heading_alignment | default("text-center") }}">
+        <div class="prose max-w-none">
+          <h2 class="{{ section.settings.heading_size | default("text-3xl md:text-4xl") }}" style="font-family: {{#if section.settings.heading_font == "title" }}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.heading_color | default("000000") }};">
+            {{section.settings.title}}
+          </h2>
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if section.blocks}}
+      <!-- Schema.org FAQ structured data -->
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {{#for block in section.blocks}}
+              {{#if block.settings.question && block.settings.answer }}
+                {{#if !forloop.first}},{{/if}}
+                {
+                  "@block.type": "Question",
+                  "name": "{{block.settings.question}}",
+                  "acceptedAnswer": {
+                    "@block.type": "Answer",
+                    "text": "{{block.settings.answer}}"
+                  }
+                }
+              {{/if}}
+            {{/for}}
+          ]
+        }
+      </script>
+
+      <div class="section-stack__main max-w-4xl mx-auto">
+        <div class="accordion-box rounded-2xl px-6 sm:px-8 py-6" style="background-color: {{ section.settings.box_background | default("f3f4f6") }};">
+          {{#for block in section.blocks}}
+            {{#if block.settings.question && block.settings.answer }}
+              <div class="faq-accordion-item {{#if !forloop.first}}border-t{{/if}}" style="{{#if !forloop.first}}border-top-color: {{ section.settings.divider_color | default("e5e7eb") }};{{/if}}">
+                <button block.type="button" class="faq-accordion-header w-full flex items-center justify-between py-6 cursor-pointer focus:outline-none text-left" aria-expanded="false" onclick="toggleFaqAccordion(this)">
+                  <div class="text-with-icon flex-1 pr-4">
+                    <span class="text-lg font-bold" style="color: {{ section.settings.question_color | default("000000") }};">
+                      {{block.settings.question}}
+                    </span>
+                  </div>
+                  <span class="circle-chevron flex items-center justify-center rounded-full"
+                        style="width: 32px; height: 32px; background-color: {{ section.settings.icon_background | default("000000") }}; color: {{ section.settings.icon_color | default("ffffff") }};">
+                    <svg role="presentation" focusable="false" width="12" height="8" class="icon icon-chevron" viewBox="0 0 12 8" style="color: inherit;">
+                      <path d="m1 1.5 5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                  </span>
+                </button>
+
+                <div class="faq-accordion-content overflow-hidden">
+                  <div class="faq-accordion-content-inner prose prose-base max-w-none pb-6 pr-14" style="color: {{ section.settings.answer_color | default("4b5563") }};">
+                    {{{block.settings.answer}}}
+                  </div>
+                </div>
+              </div>
+            {{/if}}
+          {{/for}}
+        </div>
+      </div>
+    {{#else/}}
+      <div class="text-center text-gray-500">
+        <p>Add FAQ items to display questions and answers.</p>
+      </div>
+    {{/if}}
+  </div>
+</div>
+
+<style>
+  /* FAQ Accordion content animation */
+  .faq-accordion-content {
+    transition: max-height 0.3s ease-in-out;
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .faq-accordion-content.open {
+    max-height: 1000px;
+  }
+
+  .faq-accordion-content-inner {
+    opacity: 1;
+  }
+
+  /* Chevron rotation */
+  .faq-accordion-header[aria-expanded="true"] .icon-chevron {
+    transform: rotate(180deg);
+  }
+
+  .icon-chevron {
+    transition: transform 0.3s ease;
+  }
+
+  /* Ensure SVG inherits color */
+  .circle-chevron svg path {
+    stroke: currentColor !important;
+  }
+
+  /* Hover effects */
+  .faq-accordion-header:hover .circle-chevron {
+    background-color: {{ section.settings.icon_hover_background | default("ffffff") }} !important;
+    color: {{ section.settings.icon_hover_color | default("000000") }} !important;
+    transform: scale(1.05);
+  }
+
+  /* Ensure answer text colors are applied to all elements */
+  .faq-accordion-content-inner * {
+    color: inherit !important;
+    text-transform: none !important;
+  }
+
+  .faq-accordion-content-inner p {
+    color: {{ section.settings.answer_color | default("4b5563") }} !important;
+    text-transform: none !important;
+  }
+
+  .faq-accordion-content-inner a {
+    color: {{ section.settings.answer_color | default("4b5563") }} !important;
+    text-decoration: underline;
+    text-transform: none !important;
+  }
+
+  .faq-accordion-content-inner a:hover {
+    opacity: 0.8;
+  }
+
+  /* Remove focus outline and add custom focus style */
+  .faq-accordion-header:focus {
+    outline: none;
+  }
+
+  .faq-accordion-header:focus-visible .circle-chevron {
+    box-shadow: 0 0 0 2px {{ section.settings.icon_color | default("ffffff") }};
+  }
+
+  /* Ensure consistent spacing */
+  .faq-accordion-item:first-child .faq-accordion-header {
+    padding-top: 0;
+  }
+
+  /* Smooth chevron rotation */
+  .circle-chevron svg {
+    transition: transform 0.4s ease-out;
+  }
+
+  /* Smooth hover transition */
+  .circle-chevron {
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                transform 0.2s ease;
+  }
+</style>
+
+<script>
+  function toggleFaqAccordion(button) {
+    const wrapper = button.closest('.faq-accordion-item');
+    const answer = wrapper.querySelector('.faq-accordion-content');
+    const isOpen = button.getAttribute('aria-expanded') === "true";
+
+    // Close all other accordions in the same section
+    const section = button.closest('.faq-accordion');
+    const allButtons = section.querySelectorAll('.faq-accordion-header');
+    const allAnswers = section.querySelectorAll('.faq-accordion-content');
+
+    allButtons.forEach((btn, index) => {
+      if (btn !== button) {
+        btn.setAttribute('aria-expanded', 'false');
+        allAnswers[index].classList.remove('open');
+        allAnswers[index].style.maxHeight = '0';
+      }
+    });
+
+    // Toggle current accordion
+    if (isOpen) {
+      button.setAttribute('aria-expanded', 'false');
+      answer.classList.remove('open');
+      answer.style.maxHeight = '0';
+    } else {
+      button.setAttribute('aria-expanded', 'true');
+      answer.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set initial state for all accordion items
+    const allButtons = document.querySelectorAll('.faq-accordion .faq-accordion-header');
+    allButtons.forEach(button => {
+      button.setAttribute('aria-expanded', 'false');
+      const answer = button.closest('.faq-accordion-item').querySelector('.faq-accordion-content');
+      answer.style.maxHeight = '0';
+    });
+  });
+</script>
+
+{{#schema}}
+{
+  "name": "FAQ Accordion",
+  "class": "section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "FAQs"
+    },
+    {
+      "type": "group_header",
+      "label": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "title"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        {
+          "value": "text-2xl md:text-3xl",
+          "label": "Small"
+        },
+        {
+          "value": "text-3xl md:text-4xl",
+          "label": "Medium"
+        },
+        {
+          "value": "text-4xl md:text-5xl",
+          "label": "Large"
+        },
+        {
+          "value": "text-5xl md:text-6xl",
+          "label": "Extra large"
+        }
+      ],
+      "default": "text-3xl md:text-4xl"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        },
+        {
+          "value": "text-right",
+          "label": "Right"
+        }
+      ],
+      "default": "text-center"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "group_header",
+      "label": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "box_background",
+      "label": "FAQ box background",
+      "default": "#f3f4f6"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Question text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Answer text color",
+      "default": "#4b5563"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider line color",
+      "default": "#e5e7eb"
+    },
+    {
+      "type": "color",
+      "id": "icon_background",
+      "label": "Icon circle background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "icon_hover_background",
+      "label": "Icon circle hover background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "icon_hover_color",
+      "label": "Icon hover color",
+      "default": "#000000"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq-item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What is your return policy?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>We offer a 30-day return policy on all products. Items must be in their original condition with tags attached.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Accordion",
+      "blocks": [
+        {
+          "type": "faq-item",
+          "settings": {
+            "question": "How long do ELOS Heating Insoles last?",
+            "answer": "<p>ELOS Heating Insoles are designed to provide up to 10 hours of continuous heat. Warning: reaction time may be affected by extreme exposure to water or other conditions where the mixture inside the insole may become saturated.</p>"
+          }
+        },
+        {
+          "type": "faq-item",
+          "settings": {
+            "question": "Can I use ELOS Heating Insoles for all types of footwear?",
+            "answer": "<p>Yes! ELOS Heating Insoles are designed to fit a wide range of footwear, including running shoes, hiking boots, ski boots, and more. Their flexible, orthotic-first design ensures maximum comfort and support for any activity.</p>"
+          }
+        },
+        {
+          "type": "faq-item",
+          "settings": {
+            "question": "When will my product be shipped?",
+            "answer": "<p>Orders will be shipped on a first-come, first-served basis based on availability. Expected early bird shipping is currently set to late February.</p>"
+          }
+        },
+        {
+          "type": "faq-item",
+          "settings": {
+            "question": "Are ELOS Insoles reusable?",
+            "answer": "<p>No, ELOS Heating Insoles are designed for single-use. Once activated, the heating reaction cannot be reversed or restarted. Each pair provides up to 10 hours of continuous warmth.</p>"
+          }
+        },
+        {
+          "type": "faq-item",
+          "settings": {
+            "question": "What sizes are available?",
+            "answer": "<p>ELOS Heating Insoles come in multiple sizes to fit most shoe sizes. They can also be trimmed along the marked guidelines for a perfect custom fit in your footwear.</p>"
+          }
+        },
+        {
+          "type": "faq-item",
+          "settings": {
+            "question": "How do I activate the heating insoles?",
+            "answer": "<p>Simply remove the insoles from their packaging and shake them gently. The heating process will begin automatically when exposed to air. Insert them into your shoes and enjoy up to 10 hours of warmth.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{{/schema}}

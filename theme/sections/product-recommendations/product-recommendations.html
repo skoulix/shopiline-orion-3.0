@@ -1,0 +1,401 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(24) }}px !important;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(24) }}px !important;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(48) }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom | default(48) }}px !important;
+    }
+  }
+</style>
+
+{{#if product}}
+<div class="product-recommendations-section" 
+     style="background-color: {{ section.settings.background_color | default("#f9fafb") }}; "
+     data-url="{{routes.product_recommendations_url}}" 
+     data-product-id="{{product.id}}" 
+     data-limit="{{section.settings.products_to_show}}" 
+     data-section-id="{{section.id}}">
+  
+  <div class="container">
+    <h2 class="text-3xl sm:text-4xl md:{{ section.settings.heading_size | default("text-2xl") }} mb-8 text-center font-heading" style="color: {{ section.settings.heading_color | default("#000000") }};">
+      {{section.settings.heading}}
+    </h2>
+    
+    <div class="recommendations-container">
+      <!-- Check if recommendations object is available and performed -->
+      {{#if recommendations}}
+        {{#if recommendations.performed}}
+          {{#if recommendations.products}}
+            {{#if recommendations.products_count > 0}}
+              <div class="recommendations-grid flex flex-wrap justify-center gap-6" 
+                   data-desktop-columns="{{section.settings.columns_desktop}}">
+                
+                {{#for product in (recommendations.products | slice(0, len=section.settings.products_to_show))}}
+                  <div class="product-card-wrapper flex-shrink-0" style="width: 100%; max-width: 300px;">
+                    <product-card
+                      product-id="{{product.id}}"
+                      variant-id="{{product.first_available_variant.id}}"
+                      title="{{product.title}}"
+                      handle="{{product.handle}}"
+                      url="{{product.url}}"
+                      vendor="{{product.vendor}}"
+                      price="{{product.price}}"
+                      compare-at-price="{{product.compare_at_price}}"
+                      image="{{ product.featured_image | image_url(width=800) }}"
+                      :available="{{#if product.available}}true{{#else/}}false{{/if}}"
+                    ></product-card>
+                  </div>
+                {{/for}}
+                
+              </div>
+            {{#else/}}
+              <!-- No recommended products available, use AJAX fallback -->
+              <div class="recommendations-grid flex flex-wrap justify-center gap-6" 
+                   data-desktop-columns="{{section.settings.columns_desktop}}"
+                   id="recommendations-ajax">
+                <div class="col-span-full text-center py-8 text-gray-500">
+                  <div class="animate-pulse">Loading recommendations...</div>
+                </div>
+              </div>
+            {{/if}}
+          {{#else/}}
+            <!-- Recommendations object exists but no products, use AJAX fallback -->
+            <div class="recommendations-grid flex flex-wrap justify-center gap-6" 
+                 data-desktop-columns="{{section.settings.columns_desktop}}"
+                 id="recommendations-ajax">
+              <div class="col-span-full text-center py-8 text-gray-500">
+                <div class="flex items-center justify-center space-x-2">
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400"></div>
+                  <span>Loading recommendations...</span>
+                </div>
+              </div>
+            </div>
+          {{/if}}
+        {{#else/}}
+          <!-- Recommendations not performed (recommendations.performed = false), use AJAX -->
+          <div class="recommendations-grid flex flex-wrap justify-center gap-6" 
+               data-desktop-columns="{{section.settings.columns_desktop}}"
+               id="recommendations-ajax">
+            <div class="col-span-full text-center py-8 text-gray-500">
+              <div class="flex items-center justify-center space-x-2">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400"></div>
+                <span>Loading recommendations...</span>
+              </div>
+            </div>
+          </div>
+        {{/if}}
+      {{#else/}}
+        <!-- Recommendations object not available, use AJAX -->
+        <div class="recommendations-grid flex flex-wrap justify-center gap-6" 
+             data-desktop-columns="{{section.settings.columns_desktop}}"
+             id="recommendations-ajax">
+          <div class="col-span-full text-center py-8 text-gray-500">
+            <div class="flex items-center justify-center space-x-2">
+              <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400"></div>
+              <span>Loading recommendations...</span>
+            </div>
+          </div>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
+{{/if}}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Mount Vue components for product cards that are already rendered
+  const recommendationsGrid = document.querySelector('.recommendations-grid');
+  if (recommendationsGrid && window.mountVueComponents) {
+    window.mountVueComponents(recommendationsGrid);
+  }
+  
+  // Handle AJAX loading if needed
+  const ajaxContainer = document.getElementById('recommendations-ajax');
+  if (ajaxContainer) {
+    const section = document.querySelector('.product-recommendations-section');
+    const productId = section.dataset.productId;
+    const limit = section.dataset.limit || 4;
+    const sectionId = section.dataset.sectionId;
+    
+    // Show enhanced loading state
+    ajaxContainer.innerHTML = `
+      <div class="col-span-full text-center py-12 text-gray-500">
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
+          <span class="text-sm">Finding products you might like...</span>
+        </div>
+      </div>
+    `;
+    
+    // Use the official Shopline recommendations route
+    const baseUrl = section.dataset.url || '/recommendations/products';
+    const url = `${baseUrl}?section_id=${sectionId}&product_id=${productId}&limit=${limit}`;
+    
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text(); // Get HTML response from Shopline
+      })
+      .then(html => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        const recommendationsContent = tempDiv.querySelector('.recommendations-grid');
+        
+        if (recommendationsContent && recommendationsContent.children.length > 0) {
+          ajaxContainer.innerHTML = recommendationsContent.innerHTML;
+          
+          // Mount Vue components for the new products
+          if (window.mountVueComponents) {
+            window.mountVueComponents(ajaxContainer);
+          }
+        } else {
+          showNoRecommendations(ajaxContainer);
+        }
+      })
+      .catch(error => {
+        console.log('Recommendations API not available:', error);
+        showNoRecommendations(ajaxContainer);
+      });
+  }
+  
+  function renderProducts(products, container) {
+    const limit = parseInt(document.querySelector('.product-recommendations-section').dataset.limit) || 4;
+    const productsToShow = products.slice(0, limit);
+    
+    container.innerHTML = '';
+    
+    productsToShow.forEach(product => {
+      const productHtml = `
+        <div class="product-card-wrapper flex-shrink-0" style="width: 100%; max-width: 300px;">
+          <product-card
+            product-id="${product.id}"
+            variant-id="${product.variants && product.variants[0] ? product.variants[0].id : ''}"
+            title="${product.title || ''}"
+            handle="${product.handle || ''}"
+            url="/products/${product.handle || ''}"
+            vendor="${product.brand || ''}"
+            price="${product.price || 0}"
+            compare-at-price="${product.compare_at_price || 0}"
+            image="${product.images && product.images[0] ? product.images[0] : ''}"
+            :available="${!product.sold_out ? 'true' : 'false'}"
+          ></product-card>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', productHtml);
+    });
+    
+    // Mount Vue components
+    if (window.mountVueComponents) {
+      window.mountVueComponents(container);
+    }
+  }
+  
+  function showNoRecommendations(container) {
+    // Hide the whole section instead of showing an error
+    const section = document.querySelector('.product-recommendations-section');
+    if (section) {
+      section.style.display = 'none';
+    }
+  }
+});
+</script>
+
+<style>
+  /* Responsive sizing for centered product cards */
+  .product-card-wrapper {
+    flex: 0 0 auto;
+  }
+  
+  /* Mobile: 2 columns */
+  @media (max-width: 767px) {
+    .product-card-wrapper {
+      width: calc(50% - 0.75rem);
+      max-width: 200px;
+    }
+  }
+  
+  /* Tablet and desktop: dynamic columns based on settings */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .product-card-wrapper {
+      width: calc(33.333% - 1rem);
+      max-width: 280px;
+    }
+  }
+  
+  /* Large desktop: use settings */
+  @media (min-width: 1024px) {
+    .recommendations-grid[data-desktop-columns="2"] .product-card-wrapper {
+      width: calc(50% - 0.75rem);
+      max-width: 400px;
+    }
+    .recommendations-grid[data-desktop-columns="3"] .product-card-wrapper {
+      width: calc(33.333% - 1rem);
+      max-width: 350px;
+    }
+    .recommendations-grid[data-desktop-columns="4"] .product-card-wrapper {
+      width: calc(25% - 1.125rem);
+      max-width: 300px;
+    }
+    .recommendations-grid[data-desktop-columns="5"] .product-card-wrapper {
+      width: calc(20% - 1.2rem);
+      max-width: 250px;
+    }
+  }
+</style>
+
+{{#schema}}
+{
+  "name": "t:sections.product-recommendations.name",
+  "class": "section",
+  "tag": "section",
+  "templates": ["product"],
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "You may also like",
+      "label": "t:sections.product-recommendations.settings.heading.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "text-2xl",
+      "options": [
+        {
+          "value": "text-xl",
+          "label": "Extra Small"
+        },
+        {
+          "value": "text-2xl",
+          "label": "Small"
+        },
+        {
+          "value": "text-3xl",
+          "label": "Medium"
+        },
+        {
+          "value": "text-4xl",
+          "label": "Large"
+        },
+        {
+          "value": "text-5xl",
+          "label": "Extra Large"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.product-recommendations.settings.products_to_show.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.product-recommendations.settings.columns_desktop.label"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        {
+          "value": 1,
+          "label": "t:sections.product-recommendations.settings.columns_mobile.options__0.label"
+        },
+        {
+          "value": 2,
+          "label": "t:sections.product-recommendations.settings.columns_mobile.options__1.label"
+        }
+      ],
+      "default": 2,
+      "label": "t:sections.product-recommendations.settings.columns_mobile.label"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.product-recommendations.settings.group_header__0.label"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "default": "#f9fafb",
+      "label": "t:sections.product-recommendations.settings.background_color.label"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "default": "#000000",
+      "label": "Heading color"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.product-recommendations.settings.padding_top.label",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+{
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.product-recommendations.settings.padding_bottom.label",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Recommendations",
+      "settings": {
+        "heading": "You may also like",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "columns_mobile": 2,
+        "heading_size": "text-3xl",
+        "background_color": "#f9fafb",
+        "heading_color": "#000000",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    }
+  ]
+}
+{{/schema}}

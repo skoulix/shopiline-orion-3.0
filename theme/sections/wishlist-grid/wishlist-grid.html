@@ -1,0 +1,611 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(40) }}px !important;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(40) }}px !important;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(60) }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom | default(60) }}px !important;
+    }
+  }
+</style>
+
+<div class="wishlist-page" id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+  <div class="container mx-auto px-4">
+    <!-- Page Header -->
+    <div class="text-center mb-10">
+      <h1 class="text-3xl md:text-4xl font-bold mb-4">{{ section.settings.title | default("My Wishlist") }}</h1>
+      <p class="text-gray-600 max-w-2xl mx-auto">{{ section.settings.subtitle | default("Save your favorite items and shop them anytime") }}</p>
+    </div>
+    
+    <!-- Wishlist Container -->
+    <div id="wishlist-container" class="wishlist-container">
+      <!-- Empty State -->
+      <div class="wishlist-empty text-center py-16" style="display: none;">
+        <div class="max-w-sm mx-auto">
+          <svg class="w-24 h-24 mx-auto mb-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+          <h2 class="text-xl font-semibold mb-3">Your wishlist is empty</h2>
+          <p class="text-gray-600 mb-8">Start adding items you love to see them here</p>
+          <a href="{{ section.settings.empty_cta_link | default("/collections/all") }}" 
+             class="btn btn-primary continue-shopping-btn">
+            <span class="continue-shopping-text">{{ section.settings.empty_cta_text | default("Continue Shopping") }}</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Loading State -->
+      <div class="wishlist-loading grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6" style="display: none;">
+        {{#for _ in 1 | range(8)}}
+        <div class="animate-pulse">
+          <div class="aspect-[3/4] bg-gray-200 rounded-lg mb-3"></div>
+          <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+          <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+        </div>
+        {{/for}}
+      </div>
+      
+      <!-- Wishlist Grid -->
+      <div class="wishlist-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+        <!-- Items will be dynamically inserted here -->
+      </div>
+      
+      <!-- Clear All Button -->
+      <div class="wishlist-actions text-center mt-12" style="display: none;">
+        <button type="button" class="btn btn-secondary clear-wishlist">
+          <span class="clear-all-text">Clear All Items</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Minimal horizontal card styles */
+  .wishlist-card {
+    /* Let height be determined by content */
+  }
+  
+  /* Remove button hover effect */
+  .wishlist-remove-btn:hover svg {
+    color: #ef4444;
+  }
+  
+  /* Line clamp utility for 2 lines */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Skeleton loader styles */
+  .wishlist-skeleton-card {
+    height: auto; /* Vertical layout by default */
+  }
+  
+  /* Horizontal layout on lg screens and up */
+  @media (min-width: 1024px) {
+    .wishlist-skeleton-card {
+      height: 180px; /* Fixed height for horizontal cards */
+    }
+    .wishlist-card {
+      min-height: 180px; /* Minimum height for horizontal cards */
+    }
+  }
+  
+  /* Skeleton animation */
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @media (max-width: 640px) {
+    .wishlist-item-info {
+      padding: 8px;
+    }
+    
+    .wishlist-item-title {
+      font-size: 13px;
+    }
+    
+    .wishlist-item-remove {
+      width: 32px;
+      height: 32px;
+    }
+  }
+</style>
+
+<script>
+(function() {
+  const container = document.getElementById('wishlist-container');
+  if (!container) return;
+  
+  const grid = container.querySelector('.wishlist-grid');
+  const emptyState = container.querySelector('.wishlist-empty');
+  const loadingState = container.querySelector('.wishlist-loading');
+  const actionsSection = container.querySelector('.wishlist-actions');
+  
+  // Format price function - now using fresh API data with correct currency
+  function formatPrice(price) {
+    if (!price && price !== 0) {
+      return '$0.00';
+    }
+    
+    // Get current currency data from window.ShoplineCurrency
+    const currencyData = window.ShoplineCurrency || {};
+    const symbol = currencyData.symbol || '$';
+    
+    // Parse the numeric price
+    let numPrice = price;
+    if (typeof price === 'string') {
+      numPrice = parseFloat(price.replace(/[^0-9.-]/g, '"));
+    }
+    
+    if (!numPrice || isNaN(numPrice)) {
+      return symbol + '0.00';
+    }
+    
+    // Since we're getting fresh data from API, prices should be in correct format
+    // Shopline API returns prices in cents, so divide by 100
+    const priceValue = numPrice / 100;
+    
+    // Get locale for formatting
+    const locale = window.Shopline?.locale?.current || 'en';
+    
+    // Format with current locale
+    const formatter = new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    
+    const formattedAmount = formatter.format(priceValue);
+    
+    // Always put currency symbol BEFORE the amount
+    return symbol + formattedAmount;
+  }
+  
+  // Create wishlist item element (vertical on mobile/tablet, horizontal on lg+)
+  function createWishlistItem(item) {
+    const itemEl = document.createElement('div');
+    // Vertical layout on mobile and tablet, horizontal on lg and up
+    itemEl.className = 'wishlist-card group relative flex flex-col lg:flex-row bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300';
+    itemEl.dataset.productId = item.id;
+    
+    // Calculate sale percentage
+    const isOnSale = item.compareAtPrice && item.compareAtPrice > item.price;
+    
+    itemEl.innerHTML = `
+      <!-- Remove button in top right corner -->
+      <button 
+        class="wishlist-remove-btn absolute top-2 right-2 z-10 w-8 h-8 flex items-center justify-center bg-white/90 rounded-full shadow-sm hover:bg-red-50 transition-colors" 
+        data-handle="${item.handle}" 
+        type="button" 
+        aria-label="Remove from wishlist"
+      >
+        <svg class="w-4 h-4 text-gray-500 hover:text-red-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      
+      <!-- Product Image (full width for vertical, fixed width for horizontal) -->
+      <a href="${item.url || '/products/' + item.handle}" class="flex-shrink-0 w-full h-auto lg:w-40 xl:w-48 lg:h-full relative overflow-hidden bg-gray-50">
+        ${(() => {
+          // Handle different image formats from Shopline API
+          let imageSrc = null;
+          
+          // Try different possible image properties
+          if (item.featured_image) {
+            imageSrc = typeof item.featured_image === "object" && item.featured_image?.src 
+              ? item.featured_image.src 
+              : item.featured_image;
+          } else if (item.image) {
+            imageSrc = typeof item.image === "object" && item.image?.src 
+              ? item.image.src 
+              : item.image;
+          } else if (item.images && item.images.length > 0) {
+            const firstImage = item.images[0];
+            if (typeof firstImage === 'string') {
+              imageSrc = firstImage;
+            } else if (firstImage?.src) {
+              imageSrc = firstImage.src;
+            } else if (firstImage?.url) {
+              imageSrc = firstImage.url;
+            }
+          }
+          
+          return imageSrc 
+            ? `<img src="${imageSrc}" alt="${item.title}" class="w-full h-auto lg:absolute lg:inset-0 lg:w-full lg:h-full object-contain lg:object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy">` 
+            : `<div class="w-full h-full min-h-[200px] flex items-center justify-center">
+                <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </div>`;
+        })()}
+      </a>
+      
+      <!-- Product Info -->
+      <div class="flex-1 p-4 flex flex-col justify-between min-w-0">
+        <div>
+          <!-- Title and Vendor -->
+          <div class="mb-2">
+            ${item.vendor ? `<p class="text-xs text-gray-500 uppercase tracking-wide mb-1">${item.vendor}</p>` : ''}
+            <h3 class="text-base font-semibold text-gray-900 line-clamp-2 pr-6">
+              <a href="${item.url || '/products/' + item.handle}" class="hover:text-gray-600">${item.title}</a>
+            </h3>
+          </div>
+          
+          <!-- Price (smaller font) -->
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold text-gray-900">${formatPrice(item.price)}</span>
+            ${isOnSale ? `<span class="text-xs text-gray-400 line-through">${formatPrice(item.compareAtPrice)}</span>` : ''}
+          </div>
+        </div>
+        
+        <!-- Add to Cart Button (using btn-small) -->
+        <div class="mt-3">
+          <button 
+            class="wishlist-add-to-cart btn-small btn-primary w-full gap-1.5"
+            data-variant-id="${(() => {
+              // Get variant ID from different possible sources
+              if (item.variantId) return item.variantId;
+              if (item.variants && item.variants.length > 0) return item.variants[0].id;
+              if (item.id) return item.id;
+              return '';
+            })()}" 
+            ${(() => {
+              // Check availability from different possible sources
+              const isAvailable = item.available !== false && 
+                                 item.available !== "false" &&
+                                 (item.variants ? item.variants.some(v => v.available !== false) : true);
+              return !isAvailable ? 'disabled' : '';
+            })()}
+          >
+            ${(() => {
+              // Check availability for button text
+              const isAvailable = item.available !== false && 
+                                 item.available !== "false" &&
+                                 (item.variants ? item.variants.some(v => v.available !== false) : true);
+              
+              return isAvailable ? `
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <span>Add to Cart</span>
+              ` : 'Out of Stock';
+            })()}
+          </button>
+        </div>
+      </div>
+    `;
+    
+    return itemEl;
+  }
+  
+  // Create skeleton loader card (vertical on mobile/tablet, horizontal on lg+)
+  function createSkeletonCard() {
+    const skeletonEl = document.createElement('div');
+    skeletonEl.className = 'wishlist-skeleton-card flex flex-col lg:flex-row bg-white border border-gray-200 rounded-lg overflow-hidden';
+    
+    skeletonEl.innerHTML = `
+      <!-- Skeleton Image -->
+      <div class="flex-shrink-0 w-full aspect-square lg:w-40 xl:w-48 lg:h-full lg:aspect-auto bg-gray-200 animate-pulse"></div>
+      
+      <!-- Skeleton Content -->
+      <div class="flex-1 p-4 flex flex-col justify-between">
+        <div>
+          <!-- Skeleton Vendor -->
+          <div class="h-3 bg-gray-200 rounded w-20 mb-2 animate-pulse"></div>
+          
+          <!-- Skeleton Title -->
+          <div class="space-y-2 mb-3">
+            <div class="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
+            <div class="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+          </div>
+          
+          <!-- Skeleton Price -->
+          <div class="h-5 bg-gray-200 rounded w-24 mb-3 animate-pulse"></div>
+        </div>
+        
+        <!-- Skeleton Button -->
+        <div class="h-9 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+    `;
+    
+    return skeletonEl;
+  }
+  
+  // Show skeleton loaders
+  function showSkeletonLoaders(count = 3) {
+    grid.innerHTML = '';
+    grid.style.display = 'grid';
+    loadingState.style.display = 'none';
+    emptyState.style.display = 'none';
+    
+    // Show skeleton actions section
+    actionsSection.style.display = 'block';
+    const clearButton = actionsSection.querySelector('.clear-wishlist');
+    if (clearButton) {
+      clearButton.disabled = true;
+      clearButton.classList.add('opacity-60');
+      clearButton.innerHTML = '<div class="h-4 bg-gray-300 rounded w-20 animate-pulse mx-auto"></div>';
+    }
+    
+    // Create skeleton cards
+    for (let i = 0; i < count; i++) {
+      const skeletonCard = createSkeletonCard();
+      grid.appendChild(skeletonCard);
+    }
+  }
+
+  // Render wishlist
+  async function renderWishlist() {
+    const wishlist = window.OrionWishlist;
+    if (!wishlist) {
+      loadingState.style.display = 'grid';
+      return;
+    }
+    
+    if (wishlist.items.length === 0) {
+      loadingState.style.display = 'none';
+      grid.style.display = 'none';
+      emptyState.style.display = 'block';
+      actionsSection.style.display = 'none';
+    } else {
+      // Show skeleton loaders while fetching
+      showSkeletonLoaders(wishlist.items.length);
+      
+      // Fetch fresh product data from API
+      const items = await wishlist.getItems();
+      
+      // Clear skeleton loaders and show real content
+      grid.innerHTML = '';
+      grid.style.display = 'grid';
+      emptyState.style.display = 'none';
+      actionsSection.style.display = 'block';
+      
+      // Restore Clear Items button to normal state
+      const clearButton = actionsSection.querySelector('.clear-wishlist');
+      if (clearButton) {
+        clearButton.disabled = false;
+        clearButton.classList.remove('opacity-60');
+        // Restore original button text based on uppercase setting
+        const uppercaseButtons = window.Shopline?.theme?.settings?.button_text_uppercase;
+        const text = 'Clear All Items';
+        clearButton.innerHTML = `<span class="clear-all-text">${uppercaseButtons ? text.toUpperCase() : text}</span>`;
+      }
+      
+      // Render each wishlist item with fresh data
+      items.forEach(item => {
+        if (item) { // Only render if we got valid product data
+          const itemEl = createWishlistItem(item);
+          grid.appendChild(itemEl);
+        }
+      });
+      
+      // Add event listeners for remove buttons
+      grid.querySelectorAll('.wishlist-remove-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const productHandle = this.dataset.handle;
+          if (window.OrionWishlist) {
+            window.OrionWishlist.remove(productHandle);
+            
+            // Animate removal
+            const itemEl = this.closest('.wishlist-card');
+            itemEl.style.transition = 'opacity 0.3s, transform 0.3s';
+            itemEl.style.opacity = '0';
+            itemEl.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+              renderWishlist();
+            }, 300);
+          }
+        });
+      });
+      
+      // Add event listeners for add to cart buttons
+      grid.querySelectorAll('.wishlist-add-to-cart:not(:disabled)').forEach(btn => {
+        btn.addEventListener('click', async function(e) {
+          e.preventDefault();
+          const variantId = this.dataset.variantId;
+          const button = this;
+          
+          if (!variantId) return;
+          
+          // Disable button and show loading state
+          button.disabled = true;
+          button.textContent = 'Adding...';
+          
+          try {
+            const response = await fetch('/api/carts/ajax-cart/add.js', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                items: [{
+                  id: variantId,
+                  quantity: 1
+                }]
+              })
+            });
+            
+            if (response.ok) {
+              // Update cart if available
+              if (window.OrionCart) {
+                await window.OrionCart.fetchCart();
+                window.OrionCart.openDrawer();
+              }
+              
+              button.textContent = 'Added!';
+              setTimeout(() => {
+                button.textContent = 'Add to Cart';
+                button.disabled = false;
+              }, 1500);
+            } else {
+              throw new Error('Failed to add to cart");
+            }
+          } catch (error) {
+            console.error('Error adding to cart:', error);
+            button.textContent = 'Error';
+            setTimeout(() => {
+              button.textContent = 'Add to Cart';
+              button.disabled = false;
+            }, 1500);
+          }
+        });
+      });
+    }
+  }
+  
+  // Clear all wishlist items
+  const clearButton = container.querySelector('.clear-wishlist');
+  if (clearButton) {
+    clearButton.addEventListener('click', function() {
+      if (confirm('Are you sure you want to clear all items from your wishlist?")) {
+        if (window.OrionWishlist) {
+          window.OrionWishlist.clear();
+          renderWishlist();
+        }
+      }
+    });
+  }
+  
+  // Initial render
+  if (window.OrionWishlist) {
+    renderWishlist();
+  } else {
+    // Wait for wishlist to be initialized
+    loadingState.style.display = 'grid';
+    const checkInterval = setInterval(() => {
+      if (window.OrionWishlist) {
+        clearInterval(checkInterval);
+        renderWishlist();
+      }
+    }, 100);
+  }
+  
+  // Listen for wishlist updates
+  window.addEventListener('wishlist:updated', renderWishlist);
+  
+  // Set button texts based on uppercase setting
+  const uppercaseButtons = window.Shopline?.theme?.settings?.button_text_uppercase;
+  
+  // Clear All button
+  const clearAllText = container.querySelector('.clear-all-text');
+  if (clearAllText) {
+    const text = 'Clear All Items';
+    clearAllText.textContent = uppercaseButtons ? text.toUpperCase() : text;
+  }
+  
+  // Continue Shopping button
+  const continueShoppingText = container.querySelector('.continue-shopping-text');
+  if (continueShoppingText) {
+    const currentText = continueShoppingText.textContent.trim();
+    continueShoppingText.textContent = uppercaseButtons ? currentText.toUpperCase() : currentText;
+  }
+  
+  // Listen for currency changes and reload page for proper price conversion
+  window.addEventListener('localization:changed', function() {
+    // The issue is that wishlist items are stored in localStorage with old currency prices
+    // We need to reload the page to get fresh prices from server
+    window.location.reload();
+  });
+  
+  // Also listen for storage events (when currency selector changes currency data)
+  window.addEventListener('storage', function(e) {
+    if (e.key === "shopline_currency" || e.key === 'localization') {
+      window.location.reload();
+    }
+  });
+})();
+</script>
+
+{{#schema}}
+{
+  "name": "Wishlist Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Page title",
+      "default": "My Wishlist"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Page subtitle",
+      "default": "Save your favorite items and shop them anytime"
+    },
+    {
+      "type": "text",
+      "id": "empty_cta_text",
+      "label": "Empty state button text",
+      "default": "Continue Shopping"
+    },
+    {
+      "type": "url",
+      "id": "empty_cta_link",
+      "label": "Empty state button link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "default": 60,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 40,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "default": 60,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 40,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    }
+  ]
+}
+{{/schema}}

@@ -1,0 +1,186 @@
+<div class="main-order-section container" id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(30) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(30) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(40) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(40) }}px;
+    }
+  }
+</style>
+  <div class="max-w-4xl mx-auto px-4">
+    <!-- Breadcrumb -->
+    <nav class="mb-8 text-sm">
+      <a href="{{routes.account_url}}" class="text-gray-600 hover:text-gray-900">{{"customer.account.title" | t()}}</a>
+      <span class="mx-2">/</span>
+      <span class="text-gray-900">{{"customer.orders.order_number" | t()}} {{order.name}}</span>
+    </nav>
+
+    <!-- Order Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl sm:text-3xl font-bold mb-4">{{"customer.orders.order_number" | t()}} {{order.name}}</h1>
+      <p class="text-gray-600">{{"customer.orders.placed_on" | t()}} {{order.created_at}}</p>
+    </div>
+
+    <!-- Order Status -->
+    <div class="bg-gray-50 rounded-lg p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 mb-1">{{"customer.orders.fulfillment_status" | t()}}</h3>
+          <p class="font-medium">{{order.fulfillment_status_label}}</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 mb-1">{{"customer.orders.payment_status" | t()}}</h3>
+          <p class="font-medium">{{order.financial_status_label}}</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 mb-1">{{"customer.orders.total" | t()}}</h3>
+          <p class="font-medium">{{order.total_price}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="mb-8">
+      <h2 class="text-xl font-bold mb-4">{{"customer.orders.items" | t()}}</h2>
+      <div class="border rounded-lg overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left px-6 py-4 text-sm font-medium text-gray-900">{{"customer.orders.product" | t()}}</th>
+              <th class="text-center px-6 py-4 text-sm font-medium text-gray-900">{{"customer.orders.quantity" | t()}}</th>
+              <th class="text-right px-6 py-4 text-sm font-medium text-gray-900">{{"customer.orders.price" | t()}}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            {{#for line_item in order.line_items}}
+              <tr>
+                <td class="px-6 py-4">
+                  <div class="flex items-start space-x-4">
+                    {{#if line_item.image}}
+                      <img src="{{ line_item.image | image_url(width=80) }}" alt="{{line_item.title}}" class="w-20 h-20 object-cover rounded">
+                    {{/if}}
+                    <div>
+                      <span class="font-medium">{{line_item.title}}</span>
+                      {{#if line_item.variant_title}}
+                        <p class="text-sm text-gray-600">{{line_item.variant_title}}</p>
+                      {{/if}}
+                      {{#if line_item.sku}}
+                        <p class="text-sm text-gray-500">{{"customer.orders.sku" | t()}}: {{line_item.sku}}</p>
+                      {{/if}}
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-center">{{line_item.quantity}}</td>
+                <td class="px-6 py-4 text-right">{{line_item.line_price}}</td>
+              </tr>
+            {{/for}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Shipping Address -->
+      <div>
+        <h3 class="text-lg font-medium mb-4">{{"customer.orders.shipping_address" | t()}}</h3>
+        {{#if order.shipping_address}}
+          <address class="not-italic text-gray-600">
+            {{order.shipping_address.name}}<br>
+            {{order.shipping_address.address1}}<br>
+            {{#if order.shipping_address.address2}}
+              {{order.shipping_address.address2}}<br>
+            {{/if}}
+            {{order.shipping_address.city}}, {{order.shipping_address.province}} {{order.shipping_address.zip}}<br>
+            {{order.shipping_address.country}}
+          </address>
+        {{/if}}
+      </div>
+
+      <!-- Order Totals -->
+      <div>
+        <h3 class="text-lg font-medium mb-4">{{"customer.orders.order_summary" | t()}}</h3>
+        <dl class="space-y-2">
+          <div class="flex justify-between">
+            <dt class="text-gray-600">{{"customer.orders.subtotal" | t()}}</dt>
+            <dd>{{order.subtotal_price}}</dd>
+          </div>
+          {{#for shipping_line in order.shipping_lines}}
+            <div class="flex justify-between">
+              <dt class="text-gray-600">{{"customer.orders.shipping" | t()}} ({{shipping_line.title}})</dt>
+              <dd>{{shipping_line.price}}</dd>
+            </div>
+          {{/for}}
+          {{#for tax_line in order.tax_lines}}
+            <div class="flex justify-between">
+              <dt class="text-gray-600">{{"transaction.general.order_tax" | t()}}</dt>
+              <dd>{{tax_line.price}}</dd>
+            </div>
+          {{/for}}
+          <div class="flex justify-between pt-2 border-t font-medium">
+            <dt>{{"customer.orders.total" | t()}}</dt>
+            <dd>{{order.total_price}}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Back to Orders -->
+    <div class="mt-8">
+      <a href="{{routes.account_url}}#orders" class="text-black hover:underline">← {{"customer.orders.back_to_orders" | t()}}</a>
+    </div>
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "t:sections.main-order.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.main-order.settings.padding_top.label",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.main-order.settings.padding_bottom.label",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    }
+  ]
+}
+{{/schema}}

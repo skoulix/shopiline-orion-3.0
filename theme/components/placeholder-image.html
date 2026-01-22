@@ -1,0 +1,12 @@
+<!-- Placeholder image from Lorem Picsum -->
+<!-- Using a semi-random seed based on section for consistency within same section but variety across sections -->
+<div class="w-full h-full relative overflow-hidden bg-gray-100">
+  <img 
+    src="https://picsum.photos/1920/800?random={{ seed | default("1") }}" 
+    alt="Placeholder image"
+    class="w-full h-full object-cover"
+    loading="lazy"
+  >
+  <!-- Optional overlay to ensure text readability -->
+  <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+</div>

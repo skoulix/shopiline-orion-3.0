@@ -1,0 +1,13 @@
+{{!--
+  URL Handler Component
+  Usage: component "url-handler" url=section.settings.button_link
+
+  In Sline, URL fields return the URL directly or an object.
+  This component outputs the URL value.
+--}}
+
+{{#if url}}
+  {{url}}
+{{#else/}}
+  #
+{{/if}}

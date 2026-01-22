@@ -1,0 +1,526 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(30) }}px !important;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(30) }}px !important;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(60) }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom | default(60) }}px !important;
+    }
+  }
+</style>
+
+<div class="image-with-text overflow-hidden relative" style="background-color: {{ section.settings.background_color | default("ffffff") }};{{#if section.settings.background_image}} background-image: url('{{ section.settings.background_image | image_url(width=1920) }}"); background-position: {{ section.settings.background_position | default("center") }}; background-repeat: no-repeat;{{/if}}">
+  <style>
+    #shopline-section-{{section.id}} .rich-text-content,
+    #shopline-section-{{section.id}} .rich-text-content p,
+    #shopline-section-{{section.id}} .rich-text-content span,
+    #shopline-section-{{section.id}} .rich-text-content div,
+    #shopline-section-{{section.id}} .rich-text-content li,
+    #shopline-section-{{section.id}} .rich-text-content strong,
+    #shopline-section-{{section.id}} .rich-text-content em,
+    #shopline-section-{{section.id}} .rich-text-content u {
+      color: {{ section.settings.text_color | default("666666") }} !important;
+    }
+    {{#if section.settings.background_image}}
+      @media (max-width: 1023px) {
+        .image-with-text {
+          background-size: auto !important;
+        }
+      }
+      @media (min-width: 1024px) {
+        .image-with-text {
+          background-size: {{ section.settings.background_size | default("cover") }} !important;
+        }
+      }
+    {{/if}}
+  </style>
+  {{#if section.settings.background_image}}
+    <div class="absolute inset-0 bg-black" style="opacity: {{ section.settings.background_overlay_opacity | default(0) }};"></div>
+  {{/if}}
+  <div class="{{#if !section.settings.full_width}}container{{/if}} relative" style="" id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch overflow-hidden" style="border-radius: var(--card-border-radius, 8px); background-color: {{ section.settings.card_background_color | default("transparent") }};">
+      <div class="order-2 {{#if section.settings.layout == "image_first" }}lg:order-2{{#else/}}lg:order-1{{/if}} {{#if section.settings.image}}lg:col-span-6{{#else/}}col-span-full lg:col-span-6{{/if}} flex items-center {{#if section.settings.background_image}}{{#if section.settings.layout == "text_first" }}lg:pl-24 xl:pl-32{{#else/}}lg:pr-24 xl:pr-32{{/if}}{{/if}}">
+        <div class="w-full {{#if !section.settings.remove_padding}}px-8 lg:px-16{{/if}} py-12 lg:py-16 {{#if section.settings.mobile_text_alignment == "left" }}text-left{{#else/}}{{#if section.settings.mobile_text_alignment == "right" }}text-right{{#else/}}text-center{{/if}}{{/if}} {{#if section.settings.content_alignment == "center" }}lg:text-center{{#else/}}{{#if section.settings.content_alignment == "right" }}lg:text-right{{#else/}}lg:text-left{{/if}}{{/if}}">
+          
+          {{#if section.settings.heading}}
+            <h2 class="text-3xl sm:text-4xl md:{{ section.settings.heading_size | default("text-5xl") }} mb-6 text-balance"
+                style="font-family: {{#if section.settings.heading_font == "title" }}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.heading_color | default("3d3259") }};">
+              {{section.settings.heading}}
+            </h2>
+          {{/if}}
+
+          {{#if section.settings.text}}
+            <div class="rich-text-content mb-8 text-balance leading-relaxed max-w-prose {{#if section.settings.content_alignment == "center" }}mx-auto{{#else/}}{{#if section.settings.content_alignment == "right" }}ml-auto{{/if}}{{/if}}"
+                 style="font-family: {{#if section.settings.text_font == "title" }}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.text_color | default("666666") }};">
+              {{{section.settings.text}}}
+            </div>
+          {{/if}}
+          
+          {{#if section.settings.button_label}}
+            <a href="{{ section.settings.button_link | default("#") }}" class="button inline-block transition-all duration-200" style="background-color: {{ section.settings.button_bg_color | default("000000") }} !important; color: {{ section.settings.button_text_color | default("ffffff") }} !important; border-radius: var(--button-radius, 6px); {{#if section.settings.button_border_enabled}}border: {{ section.settings.button_border_width | default(2) }}px solid {{ section.settings.button_border_color | default("ffffff") }} !important;{{#else/}}border-color: {{ section.settings.button_bg_color | default("000000") }} !important;{{/if}}">
+              {{section.settings.button_label}}
+            </a>
+          {{/if}}
+        </div>
+      </div>
+      
+      <div class="{{#if !section.settings.image}}hidden lg:block{{/if}} order-1 {{#if section.settings.layout == "image_first" }}lg:order-1{{#else/}}lg:order-2{{/if}} lg:col-span-6 relative h-full">
+        {{#if section.settings.button_link}}
+          <a href="{{section.settings.button_link}}" class="block h-full">
+        {{/if}}
+        
+        {{#if section.settings.background_image}}
+          {{!-- When background image is used, show transparent placeholder --}}
+          <div class="{{#if section.settings.image_height == "medium" }}h-[500px]{{#else/}}{{#if section.settings.image_height == "large" }}h-[700px]{{#else/}}{{#if section.settings.image_height == "full" }}min-h-[400px]{{#else/}}h-[600px]{{/if}}{{/if}}{{/if}}"></div>
+        {{#else/}}
+          {{!-- Normal image display when no background image --}}
+          {{#if section.settings.image}}
+            {{#if section.settings.image_height == "full" }}
+              <div class="relative flex items-center h-full">
+                <img
+                  src="{{ section.settings.image | image_url(width=1920) }}"
+                  class="w-full h-auto lg:object-contain"
+                  loading="lazy"
+                  alt="{{ section.settings.image.alt | default("") }}"
+                >
+              </div>
+            {{#else/}}
+              <div class="relative lg:h-full lg:min-h-[{{#if section.settings.image_height == "medium" }}500px{{#else/}}{{#if section.settings.image_height == "large" }}700px{{#else/}}600px{{/if}}{{/if}}]">
+                <img
+                  src="{{ section.settings.image | image_url(width=1920) }}"
+                  class="w-full h-auto lg:absolute lg:inset-0 lg:h-full lg:object-cover"
+                  loading="lazy"
+                  alt="{{ section.settings.image.alt | default("") }}"
+                >
+              </div>
+            {{/if}}
+          {{#else/}}
+            <div class="bg-gray-100 {{#if section.settings.image_height == "medium" }}h-[500px]{{#else/}}{{#if section.settings.image_height == "large" }}h-[700px]{{#else/}}{{#if section.settings.image_height == "full" }}min-h-[400px]{{#else/}}h-[600px]{{/if}}{{/if}}{{/if}}"></div>
+          {{/if}}
+        {{/if}}
+        
+        {{#if section.settings.button_link}}
+          </a>
+        {{/if}}
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "t:sections.image-with-text.name",
+  "class": "section-image-with-text",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "ENERGY FOR THE WHOLE DAY"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "default": "title",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "text-5xl",
+      "options": [
+        {
+          "value": "text-2xl",
+          "label": "Small"
+        },
+        {
+          "value": "text-3xl",
+          "label": "Medium"
+        },
+        {
+          "value": "text-4xl",
+          "label": "Large"
+        },
+        {
+          "value": "text-5xl",
+          "label": "Extra Large"
+        },
+        {
+          "value": "text-6xl",
+          "label": "Huge"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#3d3259"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Keeps me focused throughout the work day and I'm not crashing by 2pm.</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_font",
+      "label": "Text font",
+      "default": "body",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#666666"
+    },
+    {
+      "type": "group_header",
+      "label": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "switch",
+      "id": "button_border_enabled",
+      "label": "Enable button border",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Button border color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "label": "Button border width",
+      "default": 2,
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "group_header",
+      "label": "Background"
+    },
+    {
+      "type": "image",
+      "id": "background_image",
+      "label": "Background image",
+      "info": "If set, this image will be used as the section background"
+    },
+    {
+      "type": "select",
+      "id": "background_position",
+      "label": "Background image position",
+      "default": "center",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "top left",
+          "label": "Top left"
+        },
+        {
+          "value": "top right",
+          "label": "Top right"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "bottom left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom right",
+          "label": "Bottom right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_size",
+      "label": "Background image size",
+      "default": "cover",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover (fills container)"
+        },
+        {
+          "value": "contain",
+          "label": "Contain (fits entire image)"
+        },
+        {
+          "value": "100% auto",
+          "label": "Fit width (adapts to browser width)"
+        },
+        {
+          "value": "auto 100%",
+          "label": "Fit height"
+        }
+      ],
+      "info": "How the background image should be sized"
+    },
+    {
+      "type": "range",
+      "id": "background_overlay_opacity",
+      "label": "Background overlay opacity",
+      "min": 0,
+      "max": 0.8,
+      "step": 0.1,
+      "default": 0.3,
+      "info": "Add a dark overlay to improve text readability"
+    },
+    {
+      "type": "group_header",
+      "label": "Image"
+    },
+    {
+      "type": "image",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "label": "Image height",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Adapt to content"
+        },
+        {
+          "value": "medium",
+          "label": "Medium (500px)"
+        },
+        {
+          "value": "large",
+          "label": "Large (700px)"
+        },
+        {
+          "value": "full",
+          "label": "Full (native dimensions)"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "text_first",
+          "label": "Text first"
+        },
+        {
+          "value": "image_first",
+          "label": "Image first"
+        }
+      ],
+      "default": "text_first"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Text alignment (Desktop)",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_text_alignment",
+      "label": "Text alignment (Mobile)",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "switch",
+      "id": "remove_padding",
+      "label": "Remove left/right padding",
+      "default": false,
+      "info": "Removes horizontal padding from the text content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff",
+      "info": "Used when no background image is set"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Card background color",
+      "default": "#ffffff",
+      "info": "Adds a colored card behind the content with rounded corners."
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "default": 0,
+      "max": 200,
+      "min": 0,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 10,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "default": 0,
+      "max": 200,
+      "min": 0,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 10,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.image-with-text.presets.presets__0.name",
+      "settings": {
+        "heading": "ENERGY FOR THE WHOLE DAY",
+        "text": "<p>Keeps me focused throughout the work day and I'm not crashing by 2pm.</p>",
+        "button_label": "Shop Now",
+        "layout": "text_first",
+        "content_alignment": "left",
+        "mobile_text_alignment": "center",
+        "full_width": true,
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    }
+  ]
+}
+{{/schema}}

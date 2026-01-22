@@ -1,0 +1,279 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(20) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(20) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(40) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(40) }}px;
+    }
+  }
+</style>
+
+<div class="featured-collection" style="background-color: {{ section.settings.background_color | default("ffffff") }}; " id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+  <div class="container">
+    {{#if section.settings.title}}
+      <h2 class="{{#if section.settings.title_size == "text-xl" }}text-lg sm:text-xl{{#else/}}{{#if section.settings.title_size == "text-2xl" }}text-xl sm:text-2xl{{#else/}}{{#if section.settings.title_size == "text-3xl" }}text-2xl sm:text-3xl{{#else/}}{{#if section.settings.title_size == "text-4xl" }}text-2xl sm:text-3xl md:text-4xl{{#else/}}{{#if section.settings.title_size == "text-5xl" }}text-3xl sm:text-4xl md:text-5xl{{#else/}}{{#if section.settings.title_size == "text-6xl" }}text-3xl sm:text-4xl md:text-5xl lg:text-6xl{{#else/}}text-2xl sm:text-3xl{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}} {{ section.settings.heading_font | default("font-heading") }} mb-8 {{#if section.settings.title_alignment == "left" }}text-left{{#else if section.settings.title_alignment == "right" /}}text-right{{#else/}}text-center{{/if}}"
+          style="color: {{ section.settings.title_color | default("000000") }};">
+        {{section.settings.title}}
+      </h2>
+    {{/if}}
+
+    {{#if section.settings.subtitle}}
+      <div class="mb-8 max-w-3xl {{#if section.settings.title_alignment == "left" }}mx-0{{#else if section.settings.title_alignment == "right" /}}ml-auto mr-0{{#else/}}mx-auto{{/if}}">
+        <p class="text-lg" style="color: {{ section.settings.subtitle_color | default("666666") }};">
+          {{section.settings.subtitle}}
+        </p>
+      </div>
+    {{/if}}
+
+    {{#if section.settings.collection}}
+      {{#if section.settings.collection.products}}
+        <div class="product-grid flex flex-wrap justify-center gap-6" data-products-count="{{section.settings.products_to_show}}">
+          {{#for product in (section.settings.collection.products | slice(0, len=section.settings.products_to_show))}}
+            <product-card
+              :product='{{product | json()}}'
+              class="w-full sm:w-[calc(50%-12px)] md:w-[calc(50%-12px)] lg:w-[calc(50%-12px)] xl:w-[calc(25%-18px)] max-w-sm"
+            ></product-card>
+          {{/for}}
+        </div>
+
+        {{#if section.settings.show_view_all}}
+          <div class="text-center mt-8">
+            <a
+              href="{{section.settings.collection.url}}"
+              class="btn btn-secondary"
+            >
+              {{ section.settings.button_label | default("View All Products") }}
+            </a>
+          </div>
+        {{/if}}
+      {{#else/}}
+        <p class="text-center text-gray-500 py-8">This collection has no products.</p>
+      {{/if}}
+    {{#else/}}
+      <p class="text-center text-gray-500">Please select a collection to display products.</p>
+    {{/if}}
+  </div>
+</div>
+
+
+{{#schema}}
+{
+  "name": "t:sections.featured-collection.name",
+  "class": "section",
+  "presets": [
+    {
+      "category_index": 2,
+      "category": "t:sections.featured-collection.presets.presets__0.category",
+      "name": "t:sections.featured-collection.presets.presets__0.name",
+      "settings": {
+        "title": "Featured Products",
+        "subtitle": "",
+        "title_alignment": "center",
+        "heading_font": "font-heading",
+        "title_size": "text-3xl",
+        "title_color": "#000000",
+        "subtitle_color": "#666666",
+        "collection": null,
+        "products_to_show": 8,
+        "show_view_all": true,
+        "button_label": "View All Products",
+        "background_color": "#ffffff",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
+    }
+  ],
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "default": "Featured Products",
+      "label": "t:sections.featured-collection.settings.title.label"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "",
+      "info": "Optional text to display after the title"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.featured-collection.settings.title_alignment.options__0.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.featured-collection.settings.title_alignment.options__1.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.featured-collection.settings.title_alignment.options__2.label"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.featured-collection.settings.title_alignment.label"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:sections.featured-collection.settings.collection.label"
+    },
+    {
+      "type": "group_header",
+      "label": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "options": [
+        {
+          "value": "font-heading",
+          "label": "Heading font"
+        },
+        {
+          "value": "font-body",
+          "label": "Body font"
+        }
+      ],
+      "default": "font-heading",
+      "info": "Choose the font family for the heading"
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "Title size",
+      "default": "text-3xl",
+      "options": [
+        {
+          "value": "text-xl",
+          "label": "Extra Small"
+        },
+        {
+          "value": "text-2xl",
+          "label": "Small"
+        },
+        {
+          "value": "text-3xl",
+          "label": "Medium"
+        },
+        {
+          "value": "text-4xl",
+          "label": "Large"
+        },
+        {
+          "value": "text-5xl",
+          "label": "Extra Large"
+        },
+        {
+          "value": "text-6xl",
+          "label": "Huge"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 8,
+      "label": "t:sections.featured-collection.settings.products_to_show.label"
+    },
+    {
+      "type": "switch",
+      "id": "show_view_all",
+      "default": true,
+      "label": "t:sections.featured-collection.settings.show_view_all.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "View All Products",
+      "label": "Button label",
+      "info": "Text to display on the view all products button"
+    },
+    {
+      "type": "group_header",
+      "label": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "default": "#ffffff",
+      "label": "t:sections.featured-collection.settings.background_color.label"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.featured-collection.settings.padding_top.label",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.featured-collection.settings.padding_bottom.label",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ]
+}
+{{/schema}}

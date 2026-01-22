@@ -1,0 +1,7 @@
+{{#if variant == "primary" }}
+style="background-color: var(--button-primary-bg); color: var(--button-primary-text); border-radius: var(--button-radius);"
+{{#else if variant == "secondary" /}}
+style="background-color: var(--button-secondary-bg); color: var(--button-secondary-text); border-color: var(--button-secondary-border); border-radius: var(--button-radius);"
+{{#else/}}
+style="border-radius: var(--button-radius);"
+{{/if}}

@@ -1,0 +1,21 @@
+{{block.settings.question}}
+
+{{#schema}}
+{
+  "name": "FAQ Item",
+  "settings": [
+    {
+      "type": "text",
+      "id": "question",
+      "label": "Question",
+      "default": "What is your return policy?"
+    },
+    {
+      "type": "richtext",
+      "id": "answer",
+      "label": "Answer",
+      "default": "<p>We offer a 30-day return policy on all products.</p>"
+    }
+  ]
+}
+{{/schema}}

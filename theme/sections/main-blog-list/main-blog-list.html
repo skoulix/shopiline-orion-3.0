@@ -1,0 +1,294 @@
+<main class="container" style="padding-top: {{section.settings.padding_top}}px; padding-bottom: {{section.settings.padding_bottom}}px;">
+  <div class="text-center mb-12">
+    <h1 class="text-3xl sm:text-4xl mb-4">{{blog.title}}</h1>
+    {{#if blog.description}}
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">{{blog.description}}</p>
+    {{/if}}
+  </div>
+
+  {{#var articles_paginate = blog | get_article_pagination(section.settings.articles_per_page) /}}
+  {{#var articles = articles_paginate.list /}}
+    {{#if blog.articles}}
+      <!-- Featured Article (First Article) -->
+      {{#if section.settings.feature_first_article}}
+        {{#var featured = blog.articles[0] /}}
+          <div class="mb-12">
+            <article class="featured-article bg-gray-50 overflow-hidden transition-all duration-500 border border-gray-100" style="border-radius: var(--card-radius, 8px);">
+              <div class="grid md:grid-cols-2 gap-0">
+                <!-- Featured Image -->
+                {{#if section.settings.show_image}}
+                  {{#if featured.image}}
+                    <div class="aspect-[16/9] md:aspect-auto overflow-hidden">
+                      <a href="{{#if featured.url}}{{featured.url}}{{#else/}}/blogs/{{blog.handle}}/{{featured.id}}{{/if}}" class="block w-full h-full">
+                        <img
+                          src="{{ featured.image.src | image_url(width=1200) }}"
+                          alt="{{#if featured.image.alt}}{{featured.image.alt}}{{#else/}}{{featured.title}}{{/if}}"
+                          class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                          loading="eager"
+                        >
+                      </a>
+                    </div>
+                  {{/if}}
+                {{/if}}
+
+                <!-- Content -->
+                <div class="p-8 md:p-12 flex flex-col justify-center">
+                  <!-- Tags -->
+                  {{#if section.settings.show_tags}}
+                    {{#if featured.tags}}
+                      <div class="flex flex-wrap gap-2 mb-4">
+                        {{#for tag in (featured.tags | slice(0, len=3))}}
+                          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-red-500 to-pink-500 text-white">
+                            {{tag}}
+                          </span>
+                        {{/for}}
+                      </div>
+                    {{/if}}
+                  {{/if}}
+
+                  <!-- Title -->
+                  <h2 class="text-2xl md:text-3xl lg:text-4xl mb-4">
+                    <a href="{{#if featured.url}}{{featured.url}}{{#else/}}/blogs/{{blog.handle}}/{{featured.id}}{{/if}}" class="transition-colors">
+                      {{featured.title}}
+                    </a>
+                  </h2>
+
+                  <!-- Meta -->
+                  <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-4">
+                    {{#if section.settings.show_author}}
+                      {{#if featured.author}}
+                        <span>{{featured.author}}</span>
+                      {{/if}}
+                    {{/if}}
+                    {{#if section.settings.show_date}}
+                      {{#if featured.published_at}}
+                        <time datetime="{{featured.published_at}}">
+                          {{featured.published_at | date(format="abbreviated_date")}}
+                        </time>
+                      {{/if}}
+                    {{/if}}
+                  </div>
+
+                  <!-- Excerpt -->
+                  <p class="text-gray-600 text-lg mb-6 line-clamp-3">
+                    {{featured.excerpt_or_content}}
+                  </p>
+
+                  <!-- Read More -->
+                  <div>
+                    <a href="{{#if featured.url}}{{featured.url}}{{#else/}}/blogs/{{blog.handle}}/{{featured.id}}{{/if}}"
+                       class="inline-flex items-center gap-2 font-semibold text-base hover:opacity-80 transition-opacity"
+                       style="color: var(--color-primary, #000000);">
+                      <span>Read Article</span>
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        
+        <!-- Regular Articles Grid (Skip First) -->
+        <div class="grid gap-8 grid-cols-{{section.settings.columns_mobile}} sm:grid-cols-{{section.settings.columns_tablet}} lg:grid-cols-{{section.settings.columns_desktop}}">
+          {{#for article in blog.articles}}
+            {{#if !forloop.first}}
+              <article-card
+                title="{{article.title}}"
+                url="{{#if article.url}}{{article.url}}{{#else/}}/blogs/{{blog.handle}}/{{article.id}}{{/if}}"
+                excerpt="{{article.excerpt_or_content}}"
+                content="{{article.content}}"
+                author="{{article.author}}"
+                published-at="{{#if article.published_at}}{{article.published_at | date(format="abbreviated_date")}}{{/if}}"
+                raw-published-at="{{article.published_at}}"
+                image="{{#if article.image}}{{article.image.src}}{{/if}}"
+                image-alt="{{#if article.image}}{{article.image.alt}}{{#else/}}{{article.title}}{{/if}}"
+                tags="{{#if article.tags}}{{article.tags | json()}}{{#else/}}[]{{/if}}"
+                image-ratio="{{section.settings.image_ratio}}"
+                show-image="{{section.settings.show_image}}"
+                show-author="{{section.settings.show_author}}"
+                show-date="{{section.settings.show_date}}"
+                show-tags="{{section.settings.show_tags}}"
+              ></article-card>
+            {{/if}}
+          {{/for}}
+        </div>
+      {{#else/}}
+        <!-- Regular Grid (All Articles) -->
+        <div class="grid gap-8 grid-cols-{{section.settings.columns_mobile}} sm:grid-cols-{{section.settings.columns_tablet}} lg:grid-cols-{{section.settings.columns_desktop}}">
+          {{#for article in blog.articles}}
+            <article-card
+              title="{{article.title}}"
+              url="{{#if article.url}}{{article.url}}{{#else/}}/blogs/{{blog.handle}}/{{article.id}}{{/if}}"
+              excerpt="{{article.excerpt_or_content}}"
+              content="{{article.content}}"
+              author="{{article.author}}"
+              published-at="{{#if article.published_at}}{{article.published_at | date(format="abbreviated_date")}}{{/if}}"
+              raw-published-at="{{article.published_at}}"
+              image="{{#if article.image}}{{article.image.src}}{{/if}}"
+              image-alt="{{#if article.image}}{{article.image.alt}}{{#else/}}{{article.title}}{{/if}}"
+              tags="{{#if article.tags}}{{article.tags | json()}}{{#else/}}[]{{/if}}"
+              image-ratio="{{section.settings.image_ratio}}"
+              show-image="{{section.settings.show_image}}"
+              show-author="{{section.settings.show_author}}"
+              show-date="{{section.settings.show_date}}"
+              show-tags="{{section.settings.show_tags}}"
+            ></article-card>
+          {{/for}}
+        </div>
+      {{/if}}
+      
+      {{#if articles_paginate.pages > 1}}
+        <nav class="pagination mt-12 flex justify-center">
+          {{#component "pagination" paginate=articles_paginate /}}
+        </nav>
+      {{/if}}
+    {{#else/}}
+      <div class="text-center py-12 bg-gray-50 rounded-lg">
+        <h2 class="text-2xl  mb-4">No articles found</h2>
+        <p class="text-gray-600">This blog doesn't have any published articles yet.</p>
+      </div>
+    {{/if}}
+</main>
+
+{{#schema}}
+{
+  "name": "Blog list",
+  "settings": [
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "min": 6,
+      "max": 24,
+      "step": 1,
+      "default": 9,
+      "label": "Articles per page"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "Desktop columns"
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2,
+      "label": "Tablet columns"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        {
+          "value": 1,
+          "label": "1 column"
+        },
+        {
+          "value": 2,
+          "label": "2 columns"
+        }
+      ],
+      "default": 1,
+      "label": "Mobile columns"
+    },
+    {
+      "type": "switch",
+      "id": "show_image",
+      "default": true,
+      "label": "Show image"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "landscape",
+          "label": "Landscape"
+        },
+        {
+          "value": "square",
+          "label": "Square"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait"
+        }
+      ],
+      "default": "landscape",
+      "label": "Image ratio"
+    },
+    {
+      "type": "switch",
+      "id": "show_author",
+      "default": true,
+      "label": "Show author"
+    },
+    {
+      "type": "switch",
+      "id": "show_date",
+      "default": true,
+      "label": "Show date"
+    },
+    {
+      "type": "switch",
+      "id": "show_tags",
+      "default": true,
+      "label": "Show tags"
+    },
+    {
+      "type": "switch",
+      "id": "feature_first_article",
+      "default": false,
+      "label": "Feature first article"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "default": 60,
+      "unit": "px",
+      "label": "Padding top"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "default": 60,
+      "unit": "px",
+      "label": "Padding bottom"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ]
+}
+{{/schema}}

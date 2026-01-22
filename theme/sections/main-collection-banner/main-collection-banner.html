@@ -1,0 +1,354 @@
+<div class="collection-banner">
+  {{#if section.settings.show_collection_image}}
+    {{#if collection.banner_image || collection.image || collection.featured_image || section.settings.default_image}}
+      <!-- Banner with image -->
+      <div class="relative overflow-hidden {{#if section.settings.image_height == "small"}}h-48 md:h-64{{/if}}{{#if section.settings.image_height == "medium"}}h-64 md:h-96{{/if}}{{#if section.settings.image_height == "large"}}h-96 md:h-[32rem]{{/if}}">
+        <img 
+          src="{{#if collection.banner_image}}{{ collection.banner_image | image_url(width=1920) }}{{#else if collection.image /}}{{ collection.image | image_url(width=1920) }}{{#else if collection.featured_image /}}{{ collection.featured_image | image_url(width=1920) }}{{#else if section.settings.default_image /}}{{ section.settings.default_image | image_url(width=1920) }}{{#else/}}/placeholder.svg{{/if}}" 
+          alt="{{collection.title}}"
+          class="w-full h-full object-cover"
+          loading="eager"
+        >
+        {{#if section.settings.show_overlay}}
+          <div class="absolute inset-0" style="background-color: rgba(0, 0, 0, {{ section.settings.overlay_opacity | divided_by(100) }})"></div>
+        {{/if}}
+        
+        <!-- Content over image -->
+        <div class="absolute inset-0 flex items-center justify-center" style="
+          {{#if section.settings.overlay_text_color == "white"}}
+            color: #ffffff;
+          {{#else/}}
+            {{#if section.settings.overlay_text_color == "black"}}
+              color: #000000;
+            {{#else/}}
+              {{#if section.settings.overlay_text_color == "1"}}
+                color: rgb(var(--color-scheme-1-text));
+              {{#else/}}
+                {{#if section.settings.overlay_text_color == "2"}}
+                  color: rgb(var(--color-scheme-2-text));
+                {{#else/}}
+                  {{#if section.settings.overlay_text_color == "3"}}
+                    color: rgb(var(--color-scheme-3-text));
+                  {{#else/}}
+                    {{#if section.settings.overlay_text_color == "4"}}
+                      color: rgb(var(--color-scheme-4-text));
+                    {{#else/}}
+                      color: #ffffff;
+                    {{/if}}
+                  {{/if}}
+                {{/if}}
+              {{/if}}
+            {{/if}}
+          {{/if}}
+        ">
+          <div class="container text-center">
+            {{#if section.settings.show_collection_title}}
+              <h1 class="text-4xl md:text-5xl mb-4 font-heading" style="color: inherit;">
+                {{#if collection}}{{collection.title}}{{#else/}}{{ section.settings.title | default("All Collections") }}{{/if}}
+              </h1>
+            {{/if}}
+            
+            {{#if section.settings.show_collection_description}}
+              {{#if collection.description}}
+                <div class="prose prose-lg max-w-3xl mx-auto font-body" style="color: inherit;">
+                  {{{collection.description}}}
+                </div>
+              {{#else if section.settings.default_description /}}
+                <div class="prose prose-lg max-w-3xl mx-auto font-body" style="color: inherit;">
+                  {{section.settings.default_description}}
+                </div>
+              {{/if}}
+            {{/if}}
+            
+            {{#if section.settings.show_product_count}}
+              {{#if collection}}
+                <div class="mt-6 text-sm opacity-75" style="color: inherit;">
+                  {{collection.products_count}} {{#if collection.products_count == 1}}product{{#else/}}products{{/if}}
+                </div>
+              {{/if}}
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    {{#else/}}
+      <!-- No image available -->
+      <div style="
+        {{#if section.settings.background_style == "1"}}
+          background-color: rgb(var(--color-scheme-1-bg)); color: rgb(var(--color-scheme-1-text));
+        {{#else/}}
+          {{#if section.settings.background_style == "2"}}
+            background-color: rgb(var(--color-scheme-2-bg)); color: rgb(var(--color-scheme-2-text));
+          {{#else/}}
+            {{#if section.settings.background_style == "3"}}
+              background-color: rgb(var(--color-scheme-3-bg)); color: rgb(var(--color-scheme-3-text));
+            {{#else/}}
+              background-color: rgb(var(--color-scheme-4-bg)); color: rgb(var(--color-scheme-4-text));
+            {{/if}}
+          {{/if}}
+        {{/if}}
+      ">
+        <div class="container py-{{section.settings.padding_vertical}}">
+          <div class="{{#if section.settings.text_alignment == "left"}}text-left{{/if}}{{#if section.settings.text_alignment == "center"}}text-center{{/if}}{{#if section.settings.text_alignment == "right"}}text-right{{/if}}">
+            {{#if section.settings.show_collection_title}}
+              <h1 class="text-4xl md:text-5xl mb-4 font-heading" style="color: inherit;">
+                {{#if collection}}{{collection.title}}{{#else/}}{{ section.settings.title | default("All Collections") }}{{/if}}
+              </h1>
+            {{/if}}
+            
+            {{#if section.settings.show_collection_description}}
+              {{#if collection.description}}
+                <div class="prose prose-lg max-w-3xl {{#if section.settings.text_alignment == "center"}}mx-auto{{/if}} font-body" style="color: inherit;">
+                  {{{collection.description}}}
+                </div>
+              {{#else if section.settings.default_description /}}
+                <div class="prose prose-lg max-w-3xl {{#if section.settings.text_alignment == "center"}}mx-auto{{/if}} font-body" style="color: inherit;">
+                  {{section.settings.default_description}}
+                </div>
+              {{/if}}
+            {{/if}}
+            
+            {{#if section.settings.show_product_count}}
+              <div class="mt-6 text-sm opacity-75" style="color: inherit;">
+                {{collection.products_count}} {{#if collection.products_count == 1}}product{{#else/}}products{{/if}}
+              </div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    {{/if}}
+  {{#else/}}
+    <!-- Image display disabled -->
+    <div style="
+      {{#if section.settings.background_style == "1"}}
+        background-color: rgb(var(--color-scheme-1-bg)); color: rgb(var(--color-scheme-1-text));
+      {{#else/}}
+        {{#if section.settings.background_style == "2"}}
+          background-color: rgb(var(--color-scheme-2-bg)); color: rgb(var(--color-scheme-2-text));
+        {{#else/}}
+          {{#if section.settings.background_style == "3"}}
+            background-color: rgb(var(--color-scheme-3-bg)); color: rgb(var(--color-scheme-3-text));
+          {{#else/}}
+            background-color: rgb(var(--color-scheme-4-bg)); color: rgb(var(--color-scheme-4-text));
+          {{/if}}
+        {{/if}}
+      {{/if}}
+    ">
+      <div class="container py-{{section.settings.padding_vertical}}">
+        <div class="{{#if section.settings.text_alignment == "left"}}text-left{{/if}}{{#if section.settings.text_alignment == "center"}}text-center{{/if}}{{#if section.settings.text_alignment == "right"}}text-right{{/if}}">
+          {{#if section.settings.show_collection_title}}
+            <h1 class="text-4xl md:text-5xl mb-4" style="color: inherit;">
+              {{#if collection}}{{collection.title}}{{#else/}}{{ section.settings.title | default("All Collections") }}{{/if}}
+            </h1>
+          {{/if}}
+          
+          {{#if section.settings.show_collection_description}}
+            {{#if collection.description}}
+              <div class="prose prose-lg max-w-3xl {{#if section.settings.text_alignment == "center"}}mx-auto{{/if}}" style="color: inherit;">
+                {{{collection.description}}}
+              </div>
+            {{#else if section.settings.default_description /}}
+              <div class="prose prose-lg max-w-3xl {{#if section.settings.text_alignment == "center"}}mx-auto{{/if}}" style="color: inherit;">
+                {{section.settings.default_description}}
+              </div>
+            {{/if}}
+          {{/if}}
+          
+          {{#if section.settings.show_product_count}}
+            {{#if collection}}
+              <div class="mt-6 text-sm opacity-75" style="color: inherit;">
+                {{collection.products_count}} {{#if collection.products_count == 1}}product{{#else/}}products{{/if}}
+              </div>
+            {{/if}}
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  {{/if}}
+</div>
+
+{{#schema}}
+{
+  "name": "t:sections.main-collection-banner.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.main-collection-banner.settings.title.label",
+      "default": "All Collections"
+    },
+    {
+      "type": "text",
+      "id": "default_description",
+      "label": "Default description",
+      "default": "Browse our complete collection catalog"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.main-collection-banner.settings.group_header__0.label"
+    },
+    {
+      "type": "switch",
+      "id": "show_collection_title",
+      "default": true,
+      "label": "t:sections.main-collection-banner.settings.show_collection_title.label"
+    },
+    {
+      "type": "switch",
+      "id": "show_collection_description",
+      "default": true,
+      "label": "t:sections.main-collection-banner.settings.show_collection_description.label"
+    },
+    {
+      "type": "switch",
+      "id": "show_product_count",
+      "default": true,
+      "label": "t:sections.main-collection-banner.settings.show_product_count.label"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.main-collection-banner.settings.group_header__1.label"
+    },
+    {
+      "type": "switch",
+      "id": "show_collection_image",
+      "default": true,
+      "label": "t:sections.main-collection-banner.settings.show_collection_image.label",
+      "info": "t:sections.main-collection-banner.settings.show_collection_image.info"
+    },
+    {
+      "type": "image",
+      "id": "default_image",
+      "label": "t:sections.main-collection-banner.settings.default_image.label",
+      "info": "t:sections.main-collection-banner.settings.default_image.info"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "label": "t:sections.main-collection-banner.settings.image_height.label",
+      "default": "medium",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.main-collection-banner.settings.image_height.options__0.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.main-collection-banner.settings.image_height.options__1.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.main-collection-banner.settings.image_height.options__2.label"
+        }
+      ]
+    },
+    {
+      "type": "switch",
+      "id": "show_overlay",
+      "default": true,
+      "label": "t:sections.main-collection-banner.settings.show_overlay.label",
+      "info": "t:sections.main-collection-banner.settings.show_overlay.info"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "t:sections.main-collection-banner.settings.overlay_opacity.label",
+      "min": 0,
+      "max": 90,
+      "step": 10,
+      "default": 40,
+      "unit": "%"
+    },
+    {
+      "type": "select",
+      "id": "overlay_text_color",
+      "label": "Text color (with image)",
+      "default": "white",
+      "options": [
+        {
+          "value": "white",
+          "label": "White"
+        },
+        {
+          "value": "black",
+          "label": "Black"
+        },
+        {
+          "value": "1",
+          "label": "Color 1 Text"
+        },
+        {
+          "value": "2",
+          "label": "Color 2 Text"
+        },
+        {
+          "value": "3",
+          "label": "Color 3 Text"
+        },
+        {
+          "value": "4",
+          "label": "Color 4 Text"
+        }
+      ]
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.main-collection-banner.settings.group_header__2.label"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "t:sections.main-collection-banner.settings.text_alignment.label",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.main-collection-banner.settings.text_alignment.options__0.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.main-collection-banner.settings.text_alignment.options__1.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.main-collection-banner.settings.text_alignment.options__2.label"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_style",
+      "label": "t:sections.main-collection-banner.settings.background_style.label",
+      "default": "1",
+      "options": [
+        {
+          "value": "1",
+          "label": "Color 1"
+        },
+        {
+          "value": "2",
+          "label": "Color 2"
+        },
+        {
+          "value": "3",
+          "label": "Color 3"
+        },
+        {
+          "value": "4",
+          "label": "Color 4"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "t:sections.main-collection-banner.settings.padding_vertical.label",
+      "min": 8,
+      "max": 24,
+      "step": 4,
+      "default": 12,
+      "unit": "spacing units"
+    }
+  ]
+}
+{{/schema}}

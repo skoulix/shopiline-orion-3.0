@@ -1,0 +1,548 @@
+{{#if settings.newsletter_popup_enabled}}
+<!-- Newsletter Popup Button and Modal -->
+<div id="newsletter-popup-container">
+  <!-- Floating Button -->
+  <button 
+    type="button" 
+    id="newsletter-popup-button"
+    aria-haspopup="dialog" 
+    aria-label="{{settings.newsletter_button_text}}"
+    class="newsletter-popup-button {{#if settings.newsletter_button_position == "bottom-right" }}newsletter-popup-button--right{{#else/}}newsletter-popup-button--left{{/if}}"
+    style="background-color: {{ settings.newsletter_button_bg | default("#000000") }}; color: {{ settings.newsletter_button_text_color | default("#ffffff") }}; border: 1px solid {{ settings.newsletter_button_border_color | default("#cccccc") }}; border-radius: {{ settings.button_border_radius | default(6) }}px;">
+    <span role="button" tabindex="0" aria-label="Close" class="newsletter-popup-button__close">
+      <svg aria-hidden="true" focusable="false" width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+        <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M6.178 5L9.354 1.824a.833.833 0 10-1.178-1.178L5 3.822 1.824.646A.833.833 0 00.646 1.824L3.822 5 .646 8.176a.833.833 0 101.178 1.178L5 6.178l3.176 3.176a.833.833 0 001.178-1.178L6.178 5z"></path>
+      </svg>
+    </span>
+    <span class="newsletter-popup-button__text">{{ settings.newsletter_button_text | default("Newsletter") }}</span>
+  </button>
+
+  <!-- Popup Modal -->
+  <div id="newsletter-popup-modal" class="newsletter-popup-modal" aria-hidden="true">
+    <div class="newsletter-popup-modal__overlay"></div>
+    <div class="newsletter-popup-modal__content" role="dialog" aria-modal="true" aria-labelledby="newsletter-popup-heading"
+         style="background-color: {{ settings.newsletter_popup_bg | default("#ffffff") }}; color: {{ settings.newsletter_popup_text_color | default("#000000") }}; border-radius: {{ settings.card_border_radius | default(8) }}px;">
+      
+      <!-- Close Button -->
+      <button type="button" class="newsletter-popup-modal__close" aria-label="Close modal">
+        <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill="currentColor" d="M11.414 10l4.293-4.293a1 1 0 10-1.414-1.414L10 8.586 5.707 4.293a1 1 0 00-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 101.414 1.414L10 11.414l4.293 4.293a1 1 0 001.414-1.414L11.414 10z"/>
+        </svg>
+      </button>
+
+      <!-- Form View -->
+      <div class="newsletter-popup-modal__form-view">
+        <!-- Header -->
+        <section class="newsletter-popup-modal__header">
+          <h2 id="newsletter-popup-heading" class="newsletter-popup-modal__heading">
+            {{ settings.newsletter_popup_heading | default("Subscribe to Our Newsletter") }}
+          </h2>
+          <div class="newsletter-popup-modal__text">
+            {{{ settings.newsletter_popup_text | default("<p>Be the first to know about new collections and exclusive offers.</p>") }}}
+          </div>
+        </section>
+
+        <!-- Form -->
+        <form class="newsletter-popup-modal__form" action="/contact#newsletter-popup-form" method="post" id="newsletter-popup-form" accept-charset="UTF-8" novalidate>
+          <input type="hidden" name="form_type" value="customer">
+          <input type="hidden" name="utf8" value="✓">
+          <input type="hidden" name="contact[accepts_marketing]" value="true">
+          <input type="hidden" name="contact[tags]" value="newsletter,popup">
+          
+          <div class="newsletter-popup-modal__field">
+            <input 
+              id="newsletter-popup-email" 
+              type="email" 
+              name="contact[email]"
+              class="newsletter-popup-modal__input"
+              placeholder=" "
+              aria-label="Email"
+              aria-invalid="false"
+              required
+              autocomplete="email">
+            <label for="newsletter-popup-email" class="newsletter-popup-modal__label">
+              Email
+            </label>
+          </div>
+
+          <button 
+            type="submit" 
+            class="newsletter-popup-modal__submit btn btn-primary"
+            style="background-color: {{ settings.newsletter_button_bg | default("#000000") }}; color: {{ settings.newsletter_button_text_color | default("#ffffff") }};">
+            {{ settings.newsletter_submit_text | default("Subscribe") }}
+          </button>
+
+          <div class="newsletter-popup-modal__error" style="display: none;">
+            <p>Please enter a valid email address.</p>
+          </div>
+        </form>
+
+        <!-- Disclaimer -->
+        <div class="newsletter-popup-modal__disclaimer">
+          {{{ settings.newsletter_disclaimer_text | default("<p>By subscribing, you agree to receive marketing emails from our store.</p>") }}}
+        </div>
+      </div>
+
+      <!-- Success View -->
+      <div class="newsletter-popup-modal__success-view" style="display: none;">
+        <div class="newsletter-popup-modal__success-icon">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="30" r="30" fill="currentColor" opacity="0.1"/>
+            <path d="M20 30L26 36L40 22" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 class="newsletter-popup-modal__success-heading">
+          {{ settings.newsletter_success_heading | default("Thank You!") }}
+        </h2>
+        <div class="newsletter-popup-modal__success-text">
+          {{{ settings.newsletter_success_text | default("<p>You have successfully subscribed to our newsletter.</p>") }}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Floating Button */
+  .newsletter-popup-button {
+    position: fixed;
+    bottom: 20px;
+    z-index: 999;
+    padding: 12px 20px 12px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-family: inherit;
+  }
+
+  .newsletter-popup-button--left {
+    left: 20px;
+  }
+
+  .newsletter-popup-button--right {
+    right: 20px;
+  }
+
+  .newsletter-popup-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .newsletter-popup-button__text {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: var(--button-text-uppercase, none);
+    letter-spacing: var(--button-letter-spacing, 0.025em);
+  }
+
+  .newsletter-popup-button__close {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, background 0.2s ease;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+  }
+
+  .newsletter-popup-button__close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .newsletter-popup-button.hidden {
+    display: none;
+  }
+
+  /* Modal */
+  .newsletter-popup-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .newsletter-popup-modal.active {
+    display: flex;
+  }
+
+  .newsletter-popup-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .newsletter-popup-modal__content {
+    position: relative;
+    max-width: 500px;
+    width: 100%;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .newsletter-popup-modal__close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+    color: inherit;
+  }
+
+  .newsletter-popup-modal__close:hover {
+    opacity: 1;
+  }
+
+  .newsletter-popup-modal__header {
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .newsletter-popup-modal__heading {
+    margin: 0 0 12px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-wrap: balance;
+  }
+
+  .newsletter-popup-modal__text {
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.8;
+    text-wrap: balance;
+  }
+
+  .newsletter-popup-modal__text p {
+    margin: 0;
+  }
+
+  /* Form */
+  .newsletter-popup-modal__form {
+    margin-bottom: 20px;
+  }
+
+  .newsletter-popup-modal__field {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .newsletter-popup-modal__input {
+    width: 100%;
+    padding: 16px 12px 8px;
+    font-size: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: {{ settings.button_border_radius | default(6) }}px;
+    background: transparent;
+    color: inherit;
+    transition: border-color 0.2s ease;
+  }
+
+  .newsletter-popup-modal__input:focus {
+    outline: none;
+    border-color: currentColor;
+  }
+
+  .newsletter-popup-modal__label {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    opacity: 0.6;
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
+
+  .newsletter-popup-modal__input:focus + .newsletter-popup-modal__label,
+  .newsletter-popup-modal__input:not(:placeholder-shown) + .newsletter-popup-modal__label {
+    top: 8px;
+    font-size: 11px;
+    transform: translateY(0);
+  }
+
+  .newsletter-popup-modal__submit {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: var(--button-text-uppercase, none);
+    letter-spacing: var(--button-letter-spacing, 0.025em);
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .newsletter-popup-modal__submit:hover {
+    opacity: 0.9;
+  }
+
+  .newsletter-popup-modal__submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .newsletter-popup-modal__error {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: {{ settings.button_border_radius | default(6) }}px;
+    text-align: center;
+    font-size: 14px;
+    background-color: #fee;
+    color: #c00;
+  }
+
+  /* Success View */
+  .newsletter-popup-modal__success-view {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .newsletter-popup-modal__success-icon {
+    margin-bottom: 24px;
+    color: #10b981;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .newsletter-popup-modal__success-heading {
+    margin: 0 0 16px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+  }
+
+  .newsletter-popup-modal__success-text {
+    font-size: 16px;
+    line-height: 1.6;
+    opacity: 0.8;
+  }
+
+  .newsletter-popup-modal__success-text p {
+    margin: 0;
+  }
+
+  .newsletter-popup-modal__disclaimer {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    opacity: 0.6;
+    text-align: center;
+  }
+
+  .newsletter-popup-modal__disclaimer p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .newsletter-popup-button {
+      bottom: 15px;
+      padding: 10px 16px 10px 10px;
+    }
+
+    .newsletter-popup-button--left {
+      left: 15px;
+    }
+
+    .newsletter-popup-button--right {
+      right: 15px;
+    }
+
+    .newsletter-popup-button__text {
+      font-size: 13px;
+    }
+
+    .newsletter-popup-modal__content {
+      padding: 30px 20px;
+    }
+
+    .newsletter-popup-modal__heading {
+      font-size: 20px;
+      padding: 0 30px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    // Check if popup was already closed in this session
+    const popupDismissed = sessionStorage.getItem('newsletter-popup-dismissed');
+    
+    const button = document.getElementById('newsletter-popup-button');
+    const modal = document.getElementById('newsletter-popup-modal');
+    const form = document.getElementById('newsletter-popup-form');
+    
+    if (!button || !modal) return;
+    
+    // Hide button if dismissed
+    if (popupDismissed === 'true') {
+      button.classList.add('hidden');
+    }
+    
+    // Close button on floating button
+    const floatingCloseBtn = button.querySelector('.newsletter-popup-button__close');
+    if (floatingCloseBtn) {
+      floatingCloseBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        button.classList.add('hidden');
+        sessionStorage.setItem('newsletter-popup-dismissed', 'true');
+      });
+    }
+    
+    // Open modal
+    button.addEventListener('click', function(e) {
+      if (e.target.closest('.newsletter-popup-button__close')) return;
+      
+      // Check subscription status and show appropriate view
+      const hasSubscribed = localStorage.getItem('newsletter-popup-subscribed');
+      const formView = modal.querySelector('.newsletter-popup-modal__form-view');
+      const successView = modal.querySelector('.newsletter-popup-modal__success-view');
+      
+      if (hasSubscribed === 'true') {
+        // Show success view for returning subscribers
+        if (formView) formView.style.display = 'none';
+        if (successView) successView.style.display = 'block';
+      } else {
+        // Show form view for new visitors
+        if (formView) formView.style.display = 'block';
+        if (successView) successView.style.display = 'none';
+      }
+      
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    });
+    
+    // Close modal
+    function closeModal() {
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    
+    // Close button in modal
+    const modalCloseBtn = modal.querySelector('.newsletter-popup-modal__close');
+    if (modalCloseBtn) {
+      modalCloseBtn.addEventListener('click', closeModal);
+    }
+    
+    // Close on overlay click
+    const overlay = modal.querySelector('.newsletter-popup-modal__overlay');
+    if (overlay) {
+      overlay.addEventListener('click', closeModal);
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === "Escape" && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+    
+    // Handle form submission
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = form.querySelector('#newsletter-popup-email').value;
+        const submitBtn = form.querySelector('.newsletter-popup-modal__submit');
+        const errorMsg = form.querySelector('.newsletter-popup-modal__error');
+        const formView = modal.querySelector('.newsletter-popup-modal__form-view');
+        const successView = modal.querySelector('.newsletter-popup-modal__success-view');
+        
+        // Hide error message
+        if (errorMsg) errorMsg.style.display = 'none';
+        
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          if (errorMsg) errorMsg.style.display = 'block';
+          return;
+        }
+        
+        // Disable submit button
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Subscribing...';
+        }
+        
+        // Submit form via AJAX
+        fetch('/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
+          },
+          body: new URLSearchParams(new FormData(form))
+        })
+        .then(response => {
+          if (response.ok) {
+            // Hide form view and show success view
+            if (formView) formView.style.display = 'none';
+            if (successView) successView.style.display = 'block';
+            
+            // Store success state
+            localStorage.setItem('newsletter-popup-subscribed', 'true');
+            
+            // Reset form
+            form.reset();
+            
+            // Auto-close modal after 3 seconds
+            setTimeout(closeModal, 3000);
+          } else {
+            throw new Error('Subscription failed");
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          if (errorMsg) {
+            errorMsg.textContent = 'Something went wrong. Please try again.';
+            errorMsg.style.display = 'block';
+          }
+        })
+        .finally(() => {
+          // Re-enable submit button
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = '{{ settings.newsletter_submit_text | default("Subscribe") }}';
+          }
+        });
+      });
+    }
+  })();
+</script>
+{{/if}}

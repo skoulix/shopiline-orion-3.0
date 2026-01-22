@@ -1,0 +1,691 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(30) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(30) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(60) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(60) }}px;
+    }
+  }
+</style>
+
+<div class="testimonials-carousel-section" style="background-color: {{ section.settings.background_color | default("#ffffff") }}; " id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+  <div class="{{#if section.settings.full_width}}w-full{{#else/}}container{{/if}}">
+    {{#if section.settings.title}}
+      <h2 class="text-3xl sm:text-4xl md:text-5xl {{#if section.settings.uppercase_title}}uppercase{{/if}} {{#if section.settings.title_alignment == "left"}}text-left{{#else if section.settings.title_alignment == "right" /}}text-right{{#else/}}text-center{{/if}} mb-8"
+          style="font-family: {{#if section.settings.heading_font == "title"}}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.heading_color | default("#000000") }};">
+        {{section.settings.title}}
+      </h2>
+    {{/if}}
+    
+    {{#if section.settings.show_overall_rating}}
+      <div class="flex items-center justify-center mb-8 gap-1">
+        {{#if section.settings.overall_rating >= 1}}
+          <svg class="w-6 h-6 fill-current" style="color: {{ section.settings.star_color | default("#fbbf24") }};" viewBox="0 0 15 15">
+            <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+          </svg>
+        {{#else/}}
+          <svg class="w-6 h-6 fill-current text-gray-300" viewBox="0 0 15 15">
+            <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+          </svg>
+        {{/if}}
+
+        {{#if section.settings.overall_rating >= 2}}
+          <svg class="w-6 h-6 fill-current" style="color: {{ section.settings.star_color | default("#fbbf24") }};" viewBox="0 0 15 15">
+            <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+          </svg>
+        {{#else/}}
+          <svg class="w-6 h-6 fill-current text-gray-300" viewBox="0 0 15 15">
+            <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+          </svg>
+        {{/if}}
+
+        {{#if section.settings.overall_rating >= 3}}
+          <svg class="w-6 h-6 fill-current" style="color: {{ section.settings.star_color | default("#fbbf24") }};" viewBox="0 0 15 15">
+            <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+          </svg>
+        {{#else/}}
+          <svg class="w-6 h-6 fill-current text-gray-300" viewBox="0 0 15 15">
+            <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+          </svg>
+        {{/if}}
+
+        {{#if section.settings.overall_rating >= 4}}
+          <svg class="w-6 h-6 fill-current" style="color: {{ section.settings.star_color | default("#fbbf24") }};" viewBox="0 0 15 15">
+            <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+          </svg>
+        {{#else/}}
+          <svg class="w-6 h-6 fill-current text-gray-300" viewBox="0 0 15 15">
+            <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+          </svg>
+        {{/if}}
+
+        {{#if section.settings.overall_rating >= 5}}
+          <svg class="w-6 h-6 fill-current" style="color: {{ section.settings.star_color | default("#fbbf24") }};" viewBox="0 0 15 15">
+            <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+          </svg>
+        {{#else/}}
+          <svg class="w-6 h-6 fill-current text-gray-300" viewBox="0 0 15 15">
+            <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+          </svg>
+        {{/if}}
+      </div>
+    {{/if}}
+    
+    <div class="testimonials-carousel relative">
+      <div class="testimonial-slides-container overflow-hidden">
+        <div class="testimonial-slides flex transition-transform duration-500">
+          {{#for block in section.blocks}}
+            {{#if block.type == "testimonial"}}
+              <div class="testimonial-slide w-full flex-shrink-0 px-4 md:px-12 lg:px-24">
+                <div class="text-center max-w-4xl mx-auto">
+                  {{#if block.settings.show_quote_icon}}
+                    <div class="flex justify-center mb-6">
+                      <svg class="w-12 h-12" style="color: {{ section.settings.icon_color | default("#e0e0e0") }};" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/>
+                      </svg>
+                    </div>
+                  {{/if}}
+                  
+                  <div class="testimonial-text mb-6 text-xl md:text-2xl lg:text-3xl {{#if section.settings.uppercase_testimonial}}uppercase{{/if}} leading-relaxed"
+                       style="font-family: {{#if section.settings.testimonial_font == "title"}}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.testimonial_color | default("#000000") }};">
+                    {{block.settings.testimonial}}
+                  </div>
+                  
+                  {{#if block.settings.show_rating}}
+                    <div class="flex items-center justify-center mb-4 gap-1">
+                      {{#if block.settings.rating >= 1}}
+                        <svg class="w-5 h-5 fill-current" style="color: {{ section.settings.star_color | default("#fbbf24") }};" viewBox="0 0 15 15">
+                          <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+                        </svg>
+                      {{#else/}}
+                        <svg class="w-5 h-5 fill-current text-gray-300" viewBox="0 0 15 15">
+                          <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+                        </svg>
+                      {{/if}}
+
+                      {{#if block.settings.rating >= 2}}
+                        <svg class="w-5 h-5 fill-current" style="color: {{ section.settings.star_color | default("#fbbf24") }};" viewBox="0 0 15 15">
+                          <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+                        </svg>
+                      {{#else/}}
+                        <svg class="w-5 h-5 fill-current text-gray-300" viewBox="0 0 15 15">
+                          <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+                        </svg>
+                      {{/if}}
+
+                      {{#if block.settings.rating >= 3}}
+                        <svg class="w-5 h-5 fill-current" style="color: {{ section.settings.star_color | default("#fbbf24") }};" viewBox="0 0 15 15">
+                          <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+                        </svg>
+                      {{#else/}}
+                        <svg class="w-5 h-5 fill-current text-gray-300" viewBox="0 0 15 15">
+                          <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+                        </svg>
+                      {{/if}}
+
+                      {{#if block.settings.rating >= 4}}
+                        <svg class="w-5 h-5 fill-current" style="color: {{ section.settings.star_color | default("#fbbf24") }};" viewBox="0 0 15 15">
+                          <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+                        </svg>
+                      {{#else/}}
+                        <svg class="w-5 h-5 fill-current text-gray-300" viewBox="0 0 15 15">
+                          <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+                        </svg>
+                      {{/if}}
+
+                      {{#if block.settings.rating >= 5}}
+                        <svg class="w-5 h-5 fill-current" style="color: {{ section.settings.star_color | default("#fbbf24") }};" viewBox="0 0 15 15">
+                          <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+                        </svg>
+                      {{#else/}}
+                        <svg class="w-5 h-5 fill-current text-gray-300" viewBox="0 0 15 15">
+                          <path d="M7.5 0L9.58587 5.2731L15 5.72949L10.875 9.44483L12.1353 15L7.5 12.0231L2.86475 15L4.125 9.44483L0 5.72949L5.41414 5.2731L7.5 0Z"/>
+                        </svg>
+                      {{/if}}
+                    </div>
+                  {{/if}}
+                  
+                  <div class="author-info">
+                    {{#if block.settings.author_image}}
+                      <img src="{{ block.settings.author_image | image_url(width=80) }}"
+                           alt="{{block.settings.author_name}}"
+                           class="w-16 h-16 rounded-full mx-auto mb-3 object-cover">
+                    {{/if}}
+
+                    <div class="author-name text-base md:text-lg font-medium {{#if section.settings.uppercase_author}}uppercase{{/if}}"
+                         style="font-family: {{#if section.settings.author_font == "title"}}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.author_color | default("#333333") }};">
+                      {{block.settings.author_name}}
+                    </div>
+                    
+                    {{#if block.settings.author_title}}
+                      <div class="author-title text-sm md:text-base mt-1"
+                           style="color: {{ section.settings.author_title_color | default("#666666") }};">
+                        {{block.settings.author_title}}
+                      </div>
+                    {{/if}}
+                  </div>
+                </div>
+              </div>
+            {{/if}}
+          {{/for}}
+        </div>
+      </div>
+      
+      {{#if section.settings.show_navigation || section.settings.show_dots}}
+        <div class="testimonial-controls flex items-center justify-center mt-8 gap-12">
+          {{#if section.settings.show_navigation}}
+            <button class="testimonial-prev group bg-white border border-gray-200 rounded-full p-3 hover:bg-gray-50 transition-colors overflow-hidden flex-shrink-0">
+              <div class="relative w-6 h-6">
+                <svg class="absolute inset-0 w-6 h-6 transition-all duration-300 group-hover:opacity-0 group-hover:-translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <svg class="absolute inset-0 w-6 h-6 transition-all duration-300 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+              </div>
+            </button>
+          {{/if}}
+          
+          {{#if section.settings.show_dots}}
+            <div class="testimonial-dots flex justify-center gap-2 min-w-[120px]">
+              <!-- Dots will be generated by JavaScript -->
+            </div>
+          {{/if}}
+          
+          {{#if section.settings.show_navigation}}
+            <button class="testimonial-next group bg-white border border-gray-200 rounded-full p-3 hover:bg-gray-50 transition-colors overflow-hidden flex-shrink-0">
+              <div class="relative w-6 h-6">
+                <svg class="absolute inset-0 w-6 h-6 transition-all duration-300 group-hover:opacity-0 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <svg class="absolute inset-0 w-6 h-6 transition-all duration-300 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+              </div>
+            </button>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const carousel = document.querySelector('.testimonials-carousel');
+    if (!carousel) return;
+    
+    const slidesContainer = carousel.querySelector('.testimonial-slides');
+    const slides = carousel.querySelectorAll('.testimonial-slide');
+    const prevBtn = carousel.querySelector('.testimonial-prev');
+    const nextBtn = carousel.querySelector('.testimonial-next');
+    const dotsContainer = carousel.querySelector('.testimonial-dots');
+    
+    let currentSlide = 0;
+    const totalSlides = slides.length;
+    const autoplay = {{ section.settings.autoplay | default(true) }};
+    const autoplaySpeed = {{ section.settings.autoplay_speed | default(5000) }};
+    let autoplayTimer;
+    
+    // Create dots
+    if (dotsContainer) {
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'relative w-8 h-2 flex items-center justify-center';
+        const dotInner = document.createElement('span');
+        dotInner.className = 'absolute w-2 h-2 rounded-full bg-gray-300 transition-all duration-300';
+        dot.appendChild(dotInner);
+        dot.addEventListener('click', () => goToSlide(i));
+        dotsContainer.appendChild(dot);
+      }
+    }
+    
+    function updateSlider() {
+      slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+      
+      // Update dots
+      if (dotsContainer) {
+        const dots = dotsContainer.querySelectorAll('button');
+        dots.forEach((dot, index) => {
+          const dotInner = dot.querySelector('span');
+          if (index === currentSlide) {
+            dotInner.classList.remove('bg-gray-300', 'w-2');
+            dotInner.classList.add('bg-gray-900', 'w-8');
+          } else {
+            dotInner.classList.remove('bg-gray-900', 'w-8');
+            dotInner.classList.add('bg-gray-300', 'w-2');
+          }
+        });
+      }
+    }
+    
+    function goToSlide(slideIndex) {
+      currentSlide = slideIndex;
+      updateSlider();
+      resetAutoplay();
+    }
+    
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      updateSlider();
+      resetAutoplay();
+    }
+    
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+      updateSlider();
+      resetAutoplay();
+    }
+    
+    function startAutoplay() {
+      if (autoplay && totalSlides > 1) {
+        autoplayTimer = setInterval(nextSlide, autoplaySpeed);
+      }
+    }
+    
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+      }
+    }
+    
+    function resetAutoplay() {
+      stopAutoplay();
+      startAutoplay();
+    }
+    
+    // Event listeners
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    
+    // Pause on hover
+    carousel.addEventListener('mouseenter', stopAutoplay);
+    carousel.addEventListener('mouseleave', startAutoplay);
+    
+    // Touch/swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    carousel.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+    
+    carousel.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    });
+    
+    function handleSwipe() {
+      if (touchEndX < touchStartX - 50) {
+        nextSlide();
+      }
+      if (touchEndX > touchStartX + 50) {
+        prevSlide();
+      }
+    }
+    
+    // Initialize
+    updateSlider();
+    startAutoplay();
+  });
+</script>
+
+{{#schema}}
+{
+  "name": "Testimonials Carousel",
+  "class": "section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "switch",
+      "id": "uppercase_title",
+      "label": "Uppercase section title",
+      "default": false
+    },
+    {
+      "type": "group_header",
+      "label": "Overall Rating"
+    },
+    {
+      "type": "switch",
+      "id": "show_overall_rating",
+      "label": "Show overall rating",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "overall_rating",
+      "label": "Overall rating stars",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "default": 5
+    },
+    {
+      "type": "group_header",
+      "label": "Carousel Settings"
+    },
+    {
+      "type": "switch",
+      "id": "autoplay",
+      "label": "Auto-play slides",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Auto-play speed",
+      "min": 3000,
+      "max": 10000,
+      "step": 1,
+      "unit": "ms",
+      "default": 5000,
+      "info": "Time between slide transitions"
+    },
+    {
+      "type": "switch",
+      "id": "show_navigation",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "switch",
+      "id": "show_dots",
+      "label": "Show pagination dots",
+      "default": true
+    },
+    {
+      "type": "group_header",
+      "label": "Testimonial Display"
+    },
+    {
+      "type": "switch",
+      "id": "uppercase_testimonial",
+      "label": "Uppercase testimonial text",
+      "default": true
+    },
+    {
+      "type": "switch",
+      "id": "uppercase_author",
+      "label": "Uppercase author names",
+      "default": false
+    },
+    {
+      "type": "group_header",
+      "label": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Section heading font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "title"
+    },
+    {
+      "type": "select",
+      "id": "testimonial_font",
+      "label": "Testimonial font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "select",
+      "id": "author_font",
+      "label": "Author font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Section heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "testimonial_color",
+      "label": "Testimonial text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "author_color",
+      "label": "Author name color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "author_title_color",
+      "label": "Author title color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#fbbf24"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Quote icon color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "group_header",
+      "label": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+{
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "testimonial",
+          "label": "Testimonial text",
+          "default": "THE BEST WALLET I'VE EVER OWNED. REALLY IMPRESSED WITH THE QUALITY AND PRACTICALITY"
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Author name",
+          "default": "James A."
+        },
+        {
+          "type": "text",
+          "id": "author_title",
+          "label": "Author title",
+          "default": "Verified Customer",
+          "info": "E.g., 'CEO', 'Verified Customer', etc."
+        },
+        {
+          "type": "image",
+          "id": "author_image",
+          "label": "Author image",
+          "info": "Optional author photo"
+        },
+        {
+          "type": "switch",
+          "id": "show_rating",
+          "label": "Show rating for this testimonial",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Rating",
+          "min": 0,
+          "max": 5,
+          "step": 0.5,
+          "default": 5
+        },
+        {
+          "type": "switch",
+          "id": "show_quote_icon",
+          "label": "Show quote icon",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials Carousel",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial": "THE BEST WALLET I'VE EVER OWNED. REALLY IMPRESSED WITH THE QUALITY AND PRACTICALITY",
+            "author_name": "James A.",
+            "author_title": "Verified Customer"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial": "HIGHLY RECOMMEND THIS WALLET TO ANYONE. HAS MADE MY EVERYDAY CARRY SO MUCH SIMPLER. PLUS IT LOOKS FANTASTIC",
+            "author_name": "Paul H.",
+            "author_title": "Verified Customer"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial": "THE VALUE FOR MONEY HERE IS INSANE! PLUS WITH THE LIFETIME WARRANTY, WHY WOULD YOU EVEN THINK ABOUT BUYING ANYTHING ELSE?",
+            "author_name": "Ryan C.",
+            "author_title": "Verified Customer"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "testimonial": "LOVE THIS THING. 6 MONTHS IN NOW AND WOULD NEVER USE ANYTHING ELSE",
+            "author_name": "Jonny H.",
+            "author_title": "Verified Customer"
+          }
+        }
+      ]
+    }
+  ]
+}
+{{/schema}}

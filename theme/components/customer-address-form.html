@@ -1,0 +1,151 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="md:col-span-2">
+    <label for="AddressFirstName{{form.id}}" class="block text-sm font-medium text-gray-700 mb-1">
+      {{"customer.addresses.first_name" | t()}}
+    </label>
+    <input
+      type="text"
+      id="AddressFirstName{{form.id}}"
+      name="address[first_name]"
+      value="{{form.first_name}}"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black"
+      required
+    >
+  </div>
+
+  <div class="md:col-span-2">
+    <label for="AddressLastName{{form.id}}" class="block text-sm font-medium text-gray-700 mb-1">
+      {{"customer.addresses.last_name" | t()}}
+    </label>
+    <input
+      type="text"
+      id="AddressLastName{{form.id}}"
+      name="address[last_name]"
+      value="{{form.last_name}}"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black"
+      required
+    >
+  </div>
+
+  <div class="md:col-span-2">
+    <label for="AddressCompany{{form.id}}" class="block text-sm font-medium text-gray-700 mb-1">
+      {{"customer.addresses.company" | t()}}
+    </label>
+    <input
+      type="text"
+      id="AddressCompany{{form.id}}"
+      name="address[company]"
+      value="{{form.company}}"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black"
+    >
+  </div>
+
+  <div class="md:col-span-2">
+    <label for="AddressAddress1{{form.id}}" class="block text-sm font-medium text-gray-700 mb-1">
+      {{"customer.addresses.address1" | t()}}
+    </label>
+    <input
+      type="text"
+      id="AddressAddress1{{form.id}}"
+      name="address[address1]"
+      value="{{form.address1}}"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black"
+      required
+    >
+  </div>
+
+  <div class="md:col-span-2">
+    <label for="AddressAddress2{{form.id}}" class="block text-sm font-medium text-gray-700 mb-1">
+      {{"customer.addresses.address2" | t()}}
+    </label>
+    <input
+      type="text"
+      id="AddressAddress2{{form.id}}"
+      name="address[address2]"
+      value="{{form.address2}}"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black"
+    >
+  </div>
+
+  <div>
+    <label for="AddressCity{{form.id}}" class="block text-sm font-medium text-gray-700 mb-1">
+      {{"customer.addresses.city" | t()}}
+    </label>
+    <input
+      type="text"
+      id="AddressCity{{form.id}}"
+      name="address[city]"
+      value="{{form.city}}"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black"
+      required
+    >
+  </div>
+
+  <div>
+    <label for="AddressCountry{{form.id}}" class="block text-sm font-medium text-gray-700 mb-1">
+      {{"customer.addresses.country" | t()}}
+    </label>
+    <select
+      id="AddressCountry{{form.id}}"
+      name="address[country]"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black"
+      data-default="{{form.country}}"
+    >
+      {{country_option_tags}}
+    </select>
+  </div>
+
+  <div>
+    <label for="AddressProvince{{form.id}}" class="block text-sm font-medium text-gray-700 mb-1">
+      {{"customer.addresses.province" | t()}}
+    </label>
+    <select
+      id="AddressProvince{{form.id}}"
+      name="address[province]"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black"
+      data-default="{{form.province}}"
+      disabled
+    >
+    </select>
+  </div>
+
+  <div>
+    <label for="AddressZip{{form.id}}" class="block text-sm font-medium text-gray-700 mb-1">
+      {{"customer.addresses.zip" | t()}}
+    </label>
+    <input
+      type="text"
+      id="AddressZip{{form.id}}"
+      name="address[zip]"
+      value="{{form.zip}}"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black"
+      required
+    >
+  </div>
+
+  <div class="md:col-span-2">
+    <label for="AddressPhone{{form.id}}" class="block text-sm font-medium text-gray-700 mb-1">
+      {{"customer.addresses.phone" | t()}}
+    </label>
+    <input
+      type="tel"
+      id="AddressPhone{{form.id}}"
+      name="address[phone]"
+      value="{{form.phone}}"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-black"
+    >
+  </div>
+
+  <div class="md:col-span-2">
+    <label class="flex items-center">
+      <input
+        type="checkbox"
+        name="address[default]"
+        value="1"
+        {{#if form.default}}checked{{/if}}
+        class="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
+      >
+      <span class="ml-2 text-sm text-gray-700">{{"customer.addresses.set_default" | t()}}</span>
+    </label>
+  </div>
+</div>

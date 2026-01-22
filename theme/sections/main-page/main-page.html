@@ -1,0 +1,75 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(20) }}px !important;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(20) }}px !important;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(40) }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom | default(40) }}px !important;
+    }
+  }
+</style>
+
+<div class="page-content" style="background-color: {{ section.settings.background_color | default("#ffffff") }}; " id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+  <div class="container max-w-4xl">
+    <h1 class="text-2xl sm:text-3xl mb-8">{{page.title}}</h1>
+    
+    <div class="prose prose-lg max-w-none">
+      {{{page.content}}}
+    </div>
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "Page",
+  "class": "section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "t:sections.main-page.settings.group_header__0.label"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "default": "#ffffff",
+      "label": "t:sections.main-page.settings.background_color.label"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.main-page.settings.group_header__1.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.main-page.settings.padding_top.label",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 20,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+{
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.main-page.settings.padding_bottom.label",
+      "default": 40
+    }
+  ]
+}
+{{/schema}}

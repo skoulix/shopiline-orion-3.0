@@ -1,0 +1,292 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(30) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(30) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(60) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(60) }}px;
+    }
+  }
+</style>
+
+<div class="multi-column-cards" style="background-color: {{ section.settings.background_color | default("#ffffff") }}; " id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+  <div class="{{#if !(section.settings.full_width)}}container mx-auto{{/if}} px-4">
+    
+    {{#if section.settings.heading}}
+      <h2 class="text-center text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance max-w-3xl mx-auto" style="color: {{ section.settings.heading_color | default("#000000") }};">
+        {{section.settings.heading}}
+      </h2>
+    {{/if}}
+    
+    {{#if section.settings.subheading}}
+      <p class="text-center text-xl md:text-2xl lg:text-3xl mb-12 max-w-2xl mx-auto" style="color: {{ section.settings.subheading_color | default("#666666") }};">
+        {{section.settings.subheading}}
+      </p>
+    {{/if}}
+    
+    <!-- Grid Layout: 4 columns on desktop, 2 on tablet, 2 on mobile -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3">
+      {{#for block in section.blocks}}
+        {{#if block.type == "card"}}
+          <div class="multi-column-card text-center rounded-lg overflow-hidden" style="background-color: {{ block.settings.card_bg_color | default("transparent") }}; border-radius: var(--card-border-radius, 8px);">
+            {{#if block.settings.image}}
+              <div class="card-image-wrapper aspect-square overflow-hidden">
+                <img
+                  src="{{ block.settings.image | image_url(width=800) }}"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                  alt="{{ block.settings.image_alt | default("") }}"
+                >
+              </div>
+            {{#else/}}
+              <div class="card-image-placeholder aspect-square bg-gray-200"></div>
+            {{/if}}
+
+            <div class="card-content p-6">
+              {{#if block.settings.title}}
+                <h3 class="text-lg md:text-xl font-semibold" style="color: {{#if block.settings.title_color}}{{block.settings.title_color}}{{#else/}}#000000{{/if}};">
+                  {{block.settings.title}}
+                </h3>
+              {{/if}}
+
+              {{#if block.settings.description}}
+                <p class="mt-3 text-sm md:text-base" style="color: {{#if block.settings.description_color}}{{block.settings.description_color}}{{#else/}}#666666{{/if}};">
+                  {{block.settings.description}}
+                </p>
+              {{/if}}
+            </div>
+          </div>
+        {{/if}}
+      {{/for}}
+    </div>
+    
+    {{#if section.settings.button_label}}
+      <div class="text-center mt-12">
+        <a href="{{ section.settings.button_link | default("#") }}" class="button inline-block px-8 py-3 font-medium transition-all duration-200" style="background-color: {{ section.settings.button_bg_color | default("#000000") }}; color: {{ section.settings.button_text_color | default("#ffffff") }}; border-radius: var(--button-radius, 6px);">
+          {{section.settings.button_label}}
+        </a>
+      </div>
+    {{/if}}
+  </div>
+</div>
+
+<style>
+  .multi-column-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .multi-column-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+{{#schema}}
+{
+  "name": "Multi-column cards",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "group_header",
+      "label": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#666666"
+    },
+    {
+      "type": "group_header",
+      "label": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "default": 60,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+{
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "default": 60,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "image",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Image alt text",
+          "info": "Describe the image for accessibility"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Card Title"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "info": "Optional description text"
+        },
+        {
+          "type": "group_header",
+          "label": "Card colors"
+        },
+        {
+          "type": "color",
+          "id": "card_bg_color",
+          "label": "Card background color",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title color",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "description_color",
+          "label": "Description color",
+          "default": "#666666"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multi-column cards",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "title": "Founded in Southern California."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "Resealable, portable, and eco-conscious."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "Prioritizing giving back to our community."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "Owned and operated by women empowering others."
+          }
+        }
+      ]
+    }
+  ]
+}
+{{/schema}}

@@ -1,0 +1,370 @@
+<template>
+  <div>
+    <!-- Filter Button -->
+    <Button 
+      @click="toggleDrawer"
+      variant="secondary"
+      size="medium"
+      class="relative"
+    >
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+      </svg>
+      <span>Filter</span>
+      <span v-if="activeFilterCount > 0" class="ml-2 px-2 py-0.5 text-xs bg-gray-900 text-white rounded-full">
+        {{ activeFilterCount }}
+      </span>
+    </Button>
+
+    <!-- Filter Drawer -->
+    <Teleport to="body">
+      <Transition name="drawer">
+        <div v-if="isOpen" class="fixed inset-0 z-50 overflow-hidden">
+          <div class="absolute inset-0 overflow-hidden">
+            <Transition name="fade">
+              <div
+                v-if="isOpen"
+                class="absolute inset-0 bg-black/60 transition-opacity duration-300 overlay-close-cursor"
+                @click="closeDrawer"
+              ></div>
+            </Transition>
+
+            <div class="fixed inset-y-0 left-0 max-w-full flex pointer-events-none">
+              <Transition name="slide-left" appear>
+                <div
+                  v-if="isOpen"
+                  class="w-screen max-w-md pointer-events-auto"
+                >
+                  <div class="h-full flex flex-col bg-white shadow-xl transition-shadow duration-300">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between px-4 py-6 sm:px-6 border-b border-gray-200">
+                      <div class="h-12 flex flex-col justify-between">
+                        <h2 class="text-xl">Filters</h2>
+                        <p class="text-sm text-gray-500 h-5 transition-opacity duration-200"
+                           :class="{ 'opacity-0': activeFilterCount === 0, 'opacity-100': activeFilterCount > 0 }">
+                          {{ activeFilterCount || '0' }} {{ (activeFilterCount || 0) === 1 ? 'filter' : 'filters' }} active
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        class="ml-3 -m-1.5 p-1.5 text-gray-400 hover:text-gray-500 transition-colors"
+                        @click="closeDrawer"
+                      >
+                        <span class="sr-only">Close filters</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <!-- Filter Content -->
+                    <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+            <!-- Availability Filter -->
+            <div class="mb-6">
+              <h3 class="text-lg mb-3">Availability</h3>
+              <label class="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  v-model="filters.inStock"
+                  class="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                >
+                <span class="ml-2 text-sm">In stock only</span>
+              </label>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div class="mb-6">
+              <h3 class="text-lg mb-3">Price</h3>
+              <div class="space-y-2">
+                <label 
+                  v-for="range in priceRanges" 
+                  :key="range.value"
+                  class="flex items-center cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    :value="range.value"
+                    v-model="filters.priceRanges"
+                    class="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                  >
+                  <span class="ml-2 text-sm">{{ range.label }}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Product Type Filter -->
+            <div v-if="productTypes.length > 0" class="mb-6">
+              <h3 class="text-lg mb-3">Product Type</h3>
+              <div class="space-y-2">
+                <label 
+                  v-for="type in productTypes" 
+                  :key="type"
+                  class="flex items-center cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    :value="type"
+                    v-model="filters.types"
+                    class="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                  >
+                  <span class="ml-2 text-sm">{{ type }}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Vendor Filter -->
+            <div v-if="vendors.length > 0" class="mb-6">
+              <h3 class="text-lg mb-3">Brand</h3>
+              <div class="space-y-2">
+                <label 
+                  v-for="vendor in vendors" 
+                  :key="vendor"
+                  class="flex items-center cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    :value="vendor"
+                    v-model="filters.vendors"
+                    class="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
+                  >
+                  <span class="ml-2 text-sm">{{ vendor }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+                    <!-- Footer -->
+                    <div class="px-4 py-6 sm:px-6 border-t border-gray-200 space-y-3">
+                      <Button
+                        @click="applyFilters"
+                        variant="primary"
+                        :full-width="true"
+                        size="large"
+                      >
+                        Apply Filters
+                      </Button>
+                      <Button
+                        @click="clearFilters"
+                        variant="secondary"
+                        :full-width="true"
+                        size="large"
+                      >
+                        Clear All
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Transition>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import Button from './Button.vue'
+
+const props = defineProps({
+  products: {
+    type: Array,
+    default: () => []
+  },
+  collectionHandle: {
+    type: String,
+    required: true
+  }
+})
+
+const isOpen = ref(false)
+const filters = ref({
+  inStock: false,
+  priceRanges: [],
+  types: [],
+  vendors: []
+})
+
+const priceRanges = [
+  { value: '0-50', label: 'Under $50' },
+  { value: '50-100', label: '$50 - $100' },
+  { value: '100-200', label: '$100 - $200' },
+  { value: '200+', label: '$200 & above' }
+]
+
+// Extract unique product types and vendors from products
+const productTypes = computed(() => {
+  const types = new Set()
+  props.products.forEach(product => {
+    if (product.product_type) {
+      types.add(product.product_type)
+    }
+  })
+  return Array.from(types).sort()
+})
+
+const vendors = computed(() => {
+  const vendorSet = new Set()
+  props.products.forEach(product => {
+    if (product.vendor) {
+      vendorSet.add(product.vendor)
+    }
+  })
+  return Array.from(vendorSet).sort()
+})
+
+const activeFilterCount = computed(() => {
+  let count = 0
+  if (filters.value.inStock) count++
+  count += filters.value.priceRanges.length
+  count += filters.value.types.length
+  count += filters.value.vendors.length
+  return count
+})
+
+const toggleDrawer = () => {
+  isOpen.value = !isOpen.value
+  if (isOpen.value) {
+    // Sync filters with URL when opening drawer
+    loadFiltersFromURL()
+    document.body.classList.add('overflow-hidden')
+  } else {
+    document.body.classList.remove('overflow-hidden')
+  }
+}
+
+const closeDrawer = () => {
+  isOpen.value = false
+  document.body.classList.remove('overflow-hidden')
+}
+
+const applyFilters = () => {
+  const params = new URLSearchParams(window.location.search)
+  
+  // Clear ALL existing filter params (including multiple values)
+  const keysToDelete = []
+  for (const [key] of params) {
+    if (key.startsWith('filter.')) {
+      keysToDelete.push(key)
+    }
+  }
+  keysToDelete.forEach(key => {
+    // Delete all instances of this key
+    while (params.has(key)) {
+      params.delete(key)
+    }
+  })
+  
+  // Add active filters
+  if (filters.value.inStock) {
+    params.set('filter.v.availability', '1')
+  }
+  
+  if (filters.value.priceRanges.length > 0) {
+    // Convert price ranges to a format that can be handled client-side
+    // Since Shopline doesn't support OR conditions in price filters via URL params,
+    // we'll store the selected ranges and handle filtering client-side
+    filters.value.priceRanges.forEach(range => {
+      params.append('filter.price.range', range)
+    })
+  }
+  
+  if (filters.value.types.length > 0) {
+    filters.value.types.forEach(type => {
+      params.append('filter.p.product_type', type)
+    })
+  }
+  
+  if (filters.value.vendors.length > 0) {
+    filters.value.vendors.forEach(vendor => {
+      params.append('filter.p.vendor', vendor)
+    })
+  }
+  
+  // Update URL and reload
+  const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`
+  window.location.href = newUrl
+}
+
+const clearFilters = () => {
+  filters.value = {
+    inStock: false,
+    priceRanges: [],
+    types: [],
+    vendors: []
+  }
+  
+  // Remove all filter params from URL
+  const params = new URLSearchParams(window.location.search)
+  const keysToDelete = []
+  
+  for (const [key] of params) {
+    if (key.startsWith('filter.')) {
+      keysToDelete.push(key)
+    }
+  }
+  
+  keysToDelete.forEach(key => params.delete(key))
+  
+  // Keep sort param if exists
+  const sortParam = params.get('sort_by')
+  const newUrl = `${window.location.pathname}${sortParam ? '?sort_by=' + sortParam : ''}`
+  window.location.href = newUrl
+}
+
+// Function to load filters from URL
+const loadFiltersFromURL = () => {
+  const params = new URLSearchParams(window.location.search)
+  
+  // Reset filters first
+  filters.value = {
+    inStock: false,
+    priceRanges: [],
+    types: [],
+    vendors: []
+  }
+  
+  // Check availability filter
+  if (params.get('filter.v.availability') === '1') {
+    filters.value.inStock = true
+  }
+  
+  // Check product type filters
+  const typeParams = params.getAll('filter.p.product_type')
+  if (typeParams.length > 0) {
+    filters.value.types = typeParams
+  }
+  
+  // Check vendor filters
+  const vendorParams = params.getAll('filter.p.vendor')
+  if (vendorParams.length > 0) {
+    filters.value.vendors = vendorParams
+  }
+  
+  // Check price range filters
+  const priceRangeParams = params.getAll('filter.price.range')
+  if (priceRangeParams.length > 0) {
+    filters.value.priceRanges = priceRangeParams
+  }
+  
+}
+
+// Handle popstate events (back/forward navigation)
+const handlePopState = () => {
+  loadFiltersFromURL()
+}
+
+// Load filters from URL on mount
+onMounted(() => {
+  loadFiltersFromURL()
+  window.addEventListener('popstate', handlePopState)
+})
+
+// Clean up event listener and body overflow
+onBeforeUnmount(() => {
+  window.removeEventListener('popstate', handlePopState)
+  document.body.classList.remove('overflow-hidden')
+})
+</script>
+

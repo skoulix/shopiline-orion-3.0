@@ -1,0 +1,306 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(20) }}px !important;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(20) }}px !important;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(40) }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom | default(40) }}px !important;
+    }
+  }
+</style>
+
+<div class="rich-text {{#if section.settings.full_width}}px-0{{/if}} relative overflow-hidden" style="background-color: {{ section.settings.background_color | default("#ffffff") }}; {{#if section.settings.background_image}} background-image: url('{{ section.settings.background_image | image_url(width=1920) }}"); background-size: cover; background-position: center; background-repeat: no-repeat;{{/if}}" id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+  <div class="{{#if !(section.settings.full_width)}}container max-w-4xl{{/if}} text-{{section.settings.text_alignment}} relative z-10">
+    {{#if section.settings.heading_image}}
+      <div class="mb-8 {{#if section.settings.text_alignment == "center"}}mx-auto{{/if}} {{#if section.settings.text_alignment == "right"}}ml-auto{{/if}}" style="width: {{ section.settings.heading_image_width | default(100) }}px;">
+        <img
+          src="{{ section.settings.heading_image | image_url(width=200) }}"
+          alt="{{ section.settings.heading_image_alt | default("") }}"
+          class="w-full h-auto"
+        >
+      </div>
+    {{/if}}
+    
+    {{#if section.settings.heading}}
+      <h2 class="text-3xl sm:text-4xl md:{{section.settings.heading_size}} mb-6" style="font-family: {{#if section.settings.heading_font == "title"}}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.heading_color | default("#000000") }};">
+        {{section.settings.heading}}
+      </h2>
+    {{/if}}
+    
+    <style>
+      #shopline-section-{{section.id}} .rich-text-content {
+        color: {{ section.settings.text_color | default("#666666") }};
+      }
+      #shopline-section-{{section.id}} .rich-text-content p,
+      #shopline-section-{{section.id}} .rich-text-content span,
+      #shopline-section-{{section.id}} .rich-text-content li,
+      #shopline-section-{{section.id}} .rich-text-content ul,
+      #shopline-section-{{section.id}} .rich-text-content ol,
+      #shopline-section-{{section.id}} .rich-text-content strong,
+      #shopline-section-{{section.id}} .rich-text-content em,
+      #shopline-section-{{section.id}} .rich-text-content a,
+      #shopline-section-{{section.id}} .rich-text-content h1,
+      #shopline-section-{{section.id}} .rich-text-content h2,
+      #shopline-section-{{section.id}} .rich-text-content h3,
+      #shopline-section-{{section.id}} .rich-text-content h4,
+      #shopline-section-{{section.id}} .rich-text-content h5,
+      #shopline-section-{{section.id}} .rich-text-content h6 {
+        color: inherit !important;
+      }
+    </style>
+    <div class="prose prose-lg max-w-none rich-text-content">
+      {{{section.settings.text}}}
+    </div>
+    
+    {{#if section.settings.button_label}}
+      <div class="mt-8">
+        <a href="{{section.settings.button_link | default("#")}}" class="button button-primary inline-block transition-colors" style="border-radius: var(--button-radius);">
+          {{section.settings.button_label}}
+        </a>
+      </div>
+    {{/if}}
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "t:sections.rich-text.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "t:sections.rich-text.settings.group_header__content.label"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Talk about your brand",
+      "label": "t:sections.rich-text.settings.heading.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "default": "title",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "t:sections.rich-text.settings.heading_size.label",
+      "default": "text-5xl",
+      "options": [
+        {
+          "value": "text-2xl",
+          "label": "t:sections.rich-text.settings.heading_size.options__0.label"
+        },
+        {
+          "value": "text-3xl",
+          "label": "t:sections.rich-text.settings.heading_size.options__1.label"
+        },
+        {
+          "value": "text-4xl",
+          "label": "t:sections.rich-text.settings.heading_size.options__2.label"
+        },
+        {
+          "value": "text-5xl",
+          "label": "t:sections.rich-text.settings.heading_size.options__3.label"
+        },
+        {
+          "value": "text-6xl",
+          "label": "t:sections.rich-text.settings.heading_size.options__4.label"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "id": "heading_image",
+      "label": "t:sections.rich-text.settings.heading_image.label",
+      "info": "t:sections.rich-text.settings.heading_image.info"
+    },
+    {
+      "type": "text",
+      "id": "heading_image_alt",
+      "label": "t:sections.rich-text.settings.heading_image_alt.label"
+    },
+    {
+      "type": "range",
+      "id": "heading_image_width",
+      "label": "t:sections.rich-text.settings.heading_image_width.label",
+      "default": 100,
+      "min": 50,
+      "max": 300,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "default": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.</p>",
+      "label": "t:sections.rich-text.settings.text.label"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "default": "center",
+      "label": "t:sections.rich-text.settings.text_alignment.label",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.rich-text.settings.group_header__button.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.rich-text.settings.button_label.label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.rich-text.settings.button_link.label"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.rich-text.settings.group_header__layout.label"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "default": false,
+      "label": "t:sections.rich-text.settings.full_width.label"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.rich-text.settings.content_position.options__0.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.rich-text.settings.content_position.options__1.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.rich-text.settings.content_position.options__2.label"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.rich-text.settings.content_position.label",
+      "info": "t:sections.rich-text.settings.content_position.info"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.rich-text.settings.group_header__appearance.label"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "default": "#000000",
+      "label": "t:sections.rich-text.settings.heading_color.label"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "default": "#666666",
+      "label": "t:sections.rich-text.settings.text_color.label"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "default": "#ffffff",
+      "label": "t:sections.rich-text.settings.background_color.label"
+    },
+    {
+      "type": "image",
+      "id": "background_image",
+      "label": "t:sections.rich-text.settings.background_image.label",
+      "info": "t:sections.rich-text.settings.background_image.info"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.rich-text.settings.group_header__spacing.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:sections.rich-text.settings.padding_top.label",
+      "default": 60,
+      "max": 200,
+      "min": 0,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:sections.rich-text.settings.padding_bottom.label",
+      "default": 60,
+      "max": 200,
+      "min": 0,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.rich-text.presets.presets__0.name",
+      "settings": {
+        "heading": "Talk about your brand",
+        "text": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.</p>",
+        "text_alignment": "center",
+        "content_position": "center",
+        "full_width": false,
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    }
+  ]
+}
+{{/schema}}

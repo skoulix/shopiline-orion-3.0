@@ -1,0 +1,50 @@
+{{#if block.settings.icon}}
+  <div class="mx-auto mb-6" style="max-width: {{ section_settings.icon_size | default(100) }}px;">
+    <div class="aspect-square">
+      <img
+        src="{{ block.settings.icon | image_url(width=300) }}"
+        class="w-full h-full object-contain"
+        loading="lazy"
+        alt="{{ block.settings.icon.alt | default("") }}"
+      >
+    </div>
+  </div>
+{{/if}}
+
+{{#if block.settings.title}}
+  <h3 class="text-base lg:text-lg"
+      style="font-family: {{#if section_settings.title_font == "title"}}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section_settings.title_color | default("#000000") }};">
+    {{block.settings.title}}
+  </h3>
+{{/if}}
+
+{{#if block.settings.description}}
+  <p class="text-sm mt-3"
+     style="color: {{ section_settings.description_color | default("#666666") }};">
+    {{block.settings.description}}
+  </p>
+{{/if}}
+
+{{#schema}}
+{
+  "name": "Icon Column",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "icon",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Feature Title"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    }
+  ]
+}
+{{/schema}}

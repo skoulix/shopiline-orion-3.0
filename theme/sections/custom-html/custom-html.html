@@ -1,0 +1,169 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(20) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(20) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(40) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(40) }}px;
+    }
+  }
+</style>
+
+<div id="shopline-section-{{section.id}}" data-section-id="{{section.id}}" class="custom-html-section" style="background-color: {{ section.settings.background_color | default("transparent") }};">
+  <div class="{{#if section.settings.full_width}}w-full{{#else/}}container{{/if}}">
+    {{#if section.settings.heading}}
+      <h2 class="text-center text-2xl sm:text-3xl md:text-4xl mb-8" style="font-family: {{#if section.settings.heading_font == "title"}}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.heading_color | default("000000") }};">
+        {{section.settings.heading}}
+      </h2>
+    {{/if}}
+
+    {{#if section.settings.custom_html}}
+      <div class="custom-html-content {{ section.settings.content_alignment | default("text-center") }}">
+        {{{section.settings.custom_html}}}
+      </div>
+    {{/if}}
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "Custom HTML",
+  "tag": "section",
+  "class": "custom-html",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "custom_html",
+      "label": "Custom HTML",
+      "info": "Add your custom HTML code here. Scripts and styles are supported."
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Make section full width",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        },
+        {
+          "value": "text-right",
+          "label": "Right"
+        }
+      ],
+      "default": "text-center"
+    },
+    {
+      "type": "group_header",
+      "label": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "title"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "group_header",
+      "label": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "transparent"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "default": 60,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "default": 60,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom HTML",
+      "category": "Custom"
+    }
+  ]
+}
+{{/schema}}

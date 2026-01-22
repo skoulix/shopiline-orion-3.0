@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "wishlist": {
+      "type": "wishlist-grid",
+      "settings": {
+        "title": "My Wishlist",
+        "subtitle": "Save your favorite items and shop them anytime",
+        "empty_cta_text": "Continue Shopping",
+        "empty_cta_link": "/collections/all",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
+      }
+    }
+  },
+  "order": ["wishlist"]
+}

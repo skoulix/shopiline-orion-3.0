@@ -1,0 +1,367 @@
+<article class="article-page bg-white">
+  <div class="container max-w-4xl py-12">
+    <!-- Article Header -->
+    <header class="text-center mb-12">
+      {{#if section.settings.show_tags}}
+        {{#if article.tags}}
+          <div class="flex flex-wrap justify-center gap-2 mb-6">
+            {{#for tag in (article.tags | slice(0, len=5))}}
+              <a href="{{blog.url}}/tagged/{{tag}}" class="inline-block bg-red-100 text-red-700 text-sm font-medium px-3 py-1 rounded-full hover:bg-red-200 transition-colors">
+                {{tag}}
+              </a>
+            {{/for}}
+          </div>
+        {{/if}}
+      {{/if}}
+
+      <h1 class="text-4xl md:text-5xl mb-6">
+        {{article.title}}
+      </h1>
+
+      <div class="flex flex-wrap justify-center items-center gap-6 text-gray-600">
+        {{#if section.settings.show_author}}
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+            </svg>
+            <span>{{article.author}}</span>
+          </div>
+        {{/if}}
+
+        {{#if section.settings.show_date}}
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+            </svg>
+            <time datetime="{{article.published_at | date(format="%Y-%m-%d")}}">
+              {{article.published_at | date(format="%B %d, %Y")}}
+            </time>
+          </div>
+        {{/if}}
+      </div>
+    </header>
+
+    <!-- Featured Image -->
+    {{#if article.image}}
+      <div class="mb-12 overflow-hidden shadow-lg" style="border-radius: var(--card-radius, 8px);">
+        <img 
+          src="{{ article.image | image_url(width=1200) }}" 
+          alt="{{#if article.image.alt}}{{article.image.alt}}{{#else/}}{{article.title}}{{/if}}"
+          class="w-full h-auto object-cover"
+          loading="eager"
+        >
+      </div>
+    {{/if}}
+
+    <!-- Article Content -->
+    <div class="prose prose-lg prose-gray max-w-none mb-12">
+      {{{article.content}}}
+    </div>
+
+    <!-- Ultra Modern Social Sharing -->
+    {{#if section.settings.show_social_sharing}}
+      <div class="mt-20">
+        <!-- Section with modern glassmorphism effect -->
+        <div class="relative overflow-hidden" style="border-radius: var(--card-radius, 8px);">
+          <!-- Background -->
+          <div class="absolute inset-0 bg-gray-100"></div>
+          
+          <!-- Content -->
+          <div class="relative px-8 py-12 sm:px-12">
+            <!-- Header with icon -->
+            <div class="text-center mb-10">
+              <div class="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-gradient-to-r from-purple-400 to-pink-400">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl mb-2">Share this article</h3>
+              <p class="text-gray-600 text-sm container max-w-md">Help others discover this content by sharing it with your network</p>
+            </div>
+            
+            <!-- Social buttons grid -->
+            <div class="flex flex-wrap justify-center gap-4 mb-8">
+              <!-- Facebook -->
+              <a 
+                href="https://www.facebook.com/sharer/sharer.php?u={{canonical_url}}" 
+                target="_blank" 
+                rel="noopener"
+                class="group relative"
+                aria-label="Share on Facebook"
+              >
+                <div class="relative w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/25 transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-blue-500/40">
+                  <div class="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                  <div class="flex items-center justify-center h-full">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                  </div>
+                </div>
+              </a>
+              
+              <!-- X (Twitter) -->
+              <a 
+                href="https://twitter.com/intent/tweet?url={{canonical_url}}&text={{article.title}}" 
+                target="_blank" 
+                rel="noopener"
+                class="group relative"
+                aria-label="Share on X"
+              >
+                <div class="relative w-14 h-14 rounded-full bg-gradient-to-br from-gray-800 to-black shadow-lg shadow-gray-800/25 transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-gray-800/40">
+                  <div class="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                  <div class="flex items-center justify-center h-full">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                  </div>
+                </div>
+              </a>
+              
+              <!-- LinkedIn -->
+              <a 
+                href="https://www.linkedin.com/sharing/share-offsite/?url={{canonical_url}}" 
+                target="_blank" 
+                rel="noopener"
+                class="group relative"
+                aria-label="Share on LinkedIn"
+              >
+                <div class="relative w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-600/25 transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-blue-600/40">
+                  <div class="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                  <div class="flex items-center justify-center h-full">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 .4C4.698.4.4 4.698.4 10s4.298 9.6 9.6 9.6 9.6-4.298 9.6-9.6S15.302.4 10 .4zM7.65 13.979H5.706V7.723H7.65v6.256zm-.984-7.024c-.614 0-1.011-.435-1.011-.973 0-.549.409-.971 1.036-.971s1.011.422 1.023.971c0 .538-.396.973-1.048.973zm8.084 7.024h-1.944v-3.467c0-.807-.282-1.355-.985-1.355-.537 0-.856.371-.997.728-.052.127-.065.307-.065.486v3.607H8.814v-4.26c0-.781-.025-1.434-.051-1.996h1.689l.089.869h.039c.256-.408.883-1.01 1.932-1.01 1.279 0 2.238.857 2.238 2.699v3.699z"/>
+                    </svg>
+                  </div>
+                </div>
+              </a>
+              
+              <!-- WhatsApp -->
+              <a 
+                href="https://wa.me/?text={{article.title}}%20{{canonical_url}}" 
+                target="_blank" 
+                rel="noopener"
+                class="group relative"
+                aria-label="Share on WhatsApp"
+              >
+                <div class="relative w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-lg shadow-green-500/25 transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-green-500/40">
+                  <div class="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                  <div class="flex items-center justify-center h-full">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                  </div>
+                </div>
+              </a>
+              
+              <!-- Email -->
+              <a 
+                href="mailto:?subject={{article.title}}&body=Check%20out%20this%20article:%20{{canonical_url}}" 
+                class="group relative"
+                aria-label="Share via Email"
+              >
+                <div class="relative w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/25 transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-purple-500/40">
+                  <div class="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                  <div class="flex items-center justify-center h-full">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                </div>
+              </a>
+              
+              <!-- Copy Link -->
+              <button 
+                onclick="navigator.clipboard.writeText(window.location.href).then(() => { 
+                  this.querySelector('.copy-text').textContent = 'Copied!'; 
+                  setTimeout(() => { this.querySelector('.copy-text').textContent = 'Copy'; }, 2000); 
+                })"
+                class="group relative"
+                aria-label="Copy link"
+              >
+                <div class="relative w-14 h-14 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 shadow-lg shadow-gray-600/25 transform transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-gray-600/40">
+                  <div class="absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                  <div class="flex items-center justify-center h-full">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                    </svg>
+                  </div>
+                </div>
+                <span class="copy-text absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Copy</span>
+              </button>
+            </div>
+            
+            <!-- Optional: Share count or engagement metric -->
+            <div class="text-center">
+              <p class="text-sm text-gray-500">Help spread the word!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/if}}
+
+    <!-- Modern Navigation -->
+    <nav class="mt-16">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+        {{#if blog.previous_article}}
+          <a href="{{blog.previous_article.url}}" class="group flex items-center gap-4 p-4 bg-gray-50 hover:bg-white transition-all duration-300 hover:scale-105 hover:shadow-lg border border-gray-200" style="border-radius: var(--card-radius, 8px);">
+            <div class="w-10 h-10 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white group-hover:from-red-400 group-hover:to-pink-400 transition-all duration-300">
+              <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs text-gray-500 uppercase tracking-wider font-medium">Previous</div>
+              <div class="font-semibold text-gray-900 truncate">{{blog.previous_article.title}}</div>
+            </div>
+          </a>
+        {{#else/}}
+          <div></div>
+        {{/if}}
+
+        <div class="text-center">
+          <a href="/blogs/news" class="button button-primary inline-flex items-center gap-2 transition-all duration-300" style="border-radius: var(--button-radius);">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+            </svg>
+            View All Articles
+          </a>
+        </div>
+
+        {{#if blog.next_article}}
+          <a href="{{blog.next_article.url}}" class="group flex items-center gap-4 p-4 bg-gray-50 hover:bg-white transition-all duration-300 hover:scale-105 hover:shadow-lg border border-gray-200 md:justify-end" style="border-radius: var(--card-radius, 8px);">
+            <div class="flex-1 min-w-0 text-right">
+              <div class="text-xs text-gray-500 uppercase tracking-wider font-medium">Next</div>
+              <div class="font-semibold text-gray-900 truncate">{{blog.next_article.title}}</div>
+            </div>
+            <div class="w-10 h-10 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white group-hover:from-red-400 group-hover:to-pink-400 transition-all duration-300">
+              <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </a>
+        {{#else/}}
+          <div></div>
+        {{/if}}
+      </div>
+    </nav>
+
+    <!-- Comments -->
+    {{#if section.settings.enable_comments}}
+      {{#if blog.moderated}}
+        <div class="mt-12 pt-8 border-t border-gray-200">
+          <h3 class="text-xl mb-6">Leave a comment</h3>
+          <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
+            <p class="text-yellow-800">Please note, comments need to be approved before they are published.</p>
+          </div>
+          {{#new_comment_form article}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label for="CommentAuthor" class="block text-sm font-medium text-gray-700 mb-2">Name *</label>
+                <input 
+                  type="text" 
+                  name="comment[author]" 
+                  id="CommentAuthor" 
+                  class="form-input"
+                  value="{{form.author}}"
+                  required
+                >
+              </div>
+              <div>
+                <label for="CommentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                <input 
+                  type="email" 
+                  name="comment[email]" 
+                  id="CommentEmail" 
+                  class="form-input"
+                  value="{{form.email}}"
+                  required
+                >
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="CommentBody" class="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+              <textarea 
+                name="comment[body]" 
+                id="CommentBody" 
+                rows="4" 
+                class="form-input"
+                required
+              >{{form.body}}</textarea>
+            </div>
+            <button
+              type="submit"
+              class="button button-primary transition-colors"
+              style="border-radius: var(--button-radius);"
+            >
+              Post comment
+            </button>
+          {{/new_comment_form}}
+        </div>
+      {{/if}}
+
+      {{#if article.comments_count}}
+        <div class="mt-12 pt-8 border-t border-gray-200">
+          <h3 class="text-xl mb-6">
+            Comments ({{article.comments_count}})
+          </h3>
+          <div class="space-y-6">
+            {{#for comment in article.comments}}
+              <div class="bg-gray-50 rounded-lg p-6">
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <h4 class="font-medium text-gray-900">{{comment.author}}</h4>
+                    <time class="text-sm text-gray-500" datetime="{{comment.created_at | date(format="%Y-%m-%d")}}">
+                      {{comment.created_at | date(format="%B %d, %Y at %I:%M %p")}}
+                    </time>
+                  </div>
+                </div>
+                <div class="prose prose-sm max-w-none">
+                  {{comment.content}}
+                </div>
+              </div>
+            {{/for}}
+          </div>
+        </div>
+      {{/if}}
+    {{/if}}
+  </div>
+</article>
+
+{{#schema}}
+{
+  "name": "Article",
+  "class": "section",
+  "settings": [
+    {
+      "type": "switch",
+      "id": "show_author",
+      "default": true,
+      "label": "Show author"
+    },
+    {
+      "type": "switch",
+      "id": "show_date",
+      "default": true,
+      "label": "Show date"
+    },
+    {
+      "type": "switch",
+      "id": "show_tags",
+      "default": true,
+      "label": "Show tags"
+    },
+    {
+      "type": "switch",
+      "id": "show_social_sharing",
+      "default": true,
+      "label": "Show social sharing"
+    },
+    {
+      "type": "switch",
+      "id": "enable_comments",
+      "default": true,
+      "label": "Enable comments"
+    }
+  ]
+}
+{{/schema}}

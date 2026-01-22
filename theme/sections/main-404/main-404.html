@@ -1,0 +1,31 @@
+<div class="error-404 py-24">
+  <div class="container max-w-4xl text-center">
+    <h1 class="text-7xl sm:text-8xl md:text-9xl">404</h1>
+    <h2 class="text-3xl mt-4">Page not found</h2>
+    <p class="text-lg text-gray-600 mt-4">Sorry, we couldn't find the page you're looking for.</p>
+    
+    <div class="mt-8 flex gap-4 justify-center">
+      <a 
+        href="/" 
+        class="button button-primary transition-colors"
+        style="border-radius: var(--button-radius);"
+      >
+        Go to Homepage
+      </a>
+      <a 
+        href="/collections" 
+        class="button button-secondary transition-colors"
+        style="border-radius: var(--button-radius);"
+      >
+        Browse all products
+      </a>
+    </div>
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "404 page",
+  "class": "section"
+}
+{{/schema}}

@@ -1,0 +1,116 @@
+{
+  "sections": {
+    "main": {
+      "disabled": false,
+      "type": "main-product",
+      "settings": {
+        "gallery_layout": "thumbnails_left",
+        "enable_zoom": true,
+        "enable_lightbox": true,
+        "show_vendor": true,
+        "show_sku": true,
+        "show_availability": true,
+        "show_buy_now": true,
+        "show_breadcrumb": true,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "show_shipping_info": true,
+        "subtitle": "Exotic Citrus • Juicy Cherry",
+        "show_description": false,
+        "padding_top_mobile": 30,
+        "padding_bottom_mobile": 30,
+        "background_image": null
+      },
+      "blocks": {},
+      "block_order": [],
+      "custom_css": []
+    },
+    "175750604549095fc6c2": {
+      "disabled": false,
+      "type": "faq-accordion",
+      "settings": {
+        "title": "FAQs",
+        "heading_font": "title",
+        "heading_size": "text-3xl md:text-4xl",
+        "heading_alignment": "text-center",
+        "heading_color": "#000000",
+        "background_color": "#f2f2f2",
+        "box_background": "#ffffff",
+        "question_color": "#000000",
+        "answer_color": "#000000",
+        "divider_color": "#e5e7eb",
+        "icon_background": "#666666",
+        "icon_hover_background": "#000000",
+        "icon_color": "#ffffff",
+        "icon_hover_color": "#ffffff",
+        "padding_top": 60,
+        "padding_top_mobile": 30,
+        "padding_bottom": 60,
+        "padding_bottom_mobile": 30
+      },
+      "blocks": {
+        "175750604549322467dd": {
+          "type": "faq-item",
+          "settings": {
+            "question": "How long do ELOS Heating Insoles last?",
+            "answer": "<p>ELOS Heating Insoles are designed to provide up to 10 hours of continuous heat. Warning: reaction time may be affected by extreme exposure to water or other conditions where the mixture inside the insole may become saturated.</p>"
+          },
+          "blockId": "175750604549322467dd"
+        },
+        "17575060454937a0690e": {
+          "type": "faq-item",
+          "settings": {
+            "question": "Can I use ELOS Heating Insoles for all types of footwear?",
+            "answer": "<p>Yes! ELOS Heating Insoles are designed to fit a wide range of footwear, including running shoes, hiking boots, ski boots, and more. Their flexible, orthotic-first design ensures maximum comfort and support for any activity.</p>"
+          },
+          "blockId": "17575060454937a0690e"
+        },
+        "17575060454933f2ff0a": {
+          "type": "faq-item",
+          "settings": {
+            "question": "When will my product be shipped?",
+            "answer": "<p>Orders will be shipped on a first-come, first-served basis based on availability. Expected early bird shipping is currently set to late February.</p>"
+          },
+          "blockId": "17575060454933f2ff0a"
+        },
+        "1757506045493df99615": {
+          "type": "faq-item",
+          "settings": {
+            "question": "Are ELOS Insoles reusable?",
+            "answer": "<p>No, ELOS Heating Insoles are designed for single-use. Once activated, the heating reaction cannot be reversed or restarted. Each pair provides up to 10 hours of continuous warmth.</p>"
+          },
+          "blockId": "1757506045493df99615"
+        },
+        "1757506045493da20a80": {
+          "type": "faq-item",
+          "settings": {
+            "question": "What sizes are available?",
+            "answer": "<p>ELOS Heating Insoles come in multiple sizes to fit most shoe sizes. They can also be trimmed along the marked guidelines for a perfect custom fit in your footwear.</p>"
+          },
+          "blockId": "1757506045493da20a80"
+        },
+        "175750604549333e9d02": {
+          "type": "faq-item",
+          "settings": {
+            "question": "How do I activate the heating insoles?",
+            "answer": "<p>Simply remove the insoles from their packaging and shake them gently. The heating process will begin automatically when exposed to air. Insert them into your shoes and enjoy up to 10 hours of warmth.</p>"
+          },
+          "blockId": "175750604549333e9d02"
+        }
+      },
+      "block_order": [
+        "175750604549322467dd",
+        "17575060454937a0690e",
+        "17575060454933f2ff0a",
+        "1757506045493df99615",
+        "1757506045493da20a80",
+        "175750604549333e9d02"
+      ],
+      "custom_css": []
+    }
+  },
+  "order": [
+    "main",
+    "175750604549095fc6c2"
+  ]
+}

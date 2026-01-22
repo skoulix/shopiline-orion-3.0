@@ -1,0 +1,217 @@
+<div class="search-page py-12">
+  <div class="container">
+    <!-- Centered Header Section -->
+    <div class="mb-12 text-center">
+      <h1 class="text-3xl sm:text-4xl mb-6">
+        {{#if search.performed}}
+          {{#if search.results_count}}
+            {{search.results_count}} {{#if search.results_count == 1}}result{{#else/}}results{{/if}} for "{{search.terms}}"
+          {{#else/}}
+            No results found for "{{search.terms}}"
+          {{/if}}
+        {{#else/}}
+          Search our store
+        {{/if}}
+      </h1>
+      
+      <!-- Centered Search Form -->
+      <form action="{{routes.search_url}}" method="get" class="max-w-2xl mx-auto">
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex-1 relative">
+            <input
+              type="search"
+              name="keyword"
+              value="{{search.terms}}"
+              placeholder="Search products..."
+              class="form-input w-full px-5 py-3 pr-12 text-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all"
+              style="border-radius: var(--button-radius); --tw-ring-color: var(--color-primary);"
+              autocomplete="off"
+            >
+            <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+          <button type="submit" class="button button-primary transition-all w-full sm:w-auto" style="border-radius: var(--button-radius);"
+                >
+            Search
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {{#if search.performed}}
+      {{#if search.results_count}}
+        <!-- Results Count -->
+        <div class="mb-6 flex items-center justify-between">
+          <p class="text-gray-600">
+            Showing {{search.results_count}} {{#if search.results_count == 1}}result{{#else/}}results{{/if}}
+          </p>
+        </div>
+        
+        <!-- Search Results Grid -->
+        <div class="search-results">
+          <!-- Try without pagination first -->
+          <div class="grid grid-cols-{{section.settings.columns_mobile}} md:grid-cols-3 lg:grid-cols-{{section.settings.columns_desktop}} gap-6">
+            {{#for result in search.results}}
+              <product-card
+                product-id="{{result.id}}"
+                variant-id="{{result.first_available_variant.id}}"
+                title="{{result.title}}"
+                handle="{{result.handle}}"
+                url="{{result.url}}"
+                vendor="{{result.vendor}}"
+                price="{{result.price}}"
+                compare-at-price="{{result.compare_at_price}}"
+                image="{{#if result.featured_image}}{{ result.featured_image | image_url(width=800) }}{{#else/}}{{ result.image | image_url(width=800) }}{{/if}}"
+                :available="{{#if result.available}}true{{#else/}}false{{/if}}"
+              ></product-card>
+            {{/for}}
+          </div>
+        </div>
+      {{#else/}}
+        <div class="text-center py-16">
+          <div class="container max-w-md">
+            <svg class="mx-auto h-24 w-24 text-gray-300 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <h2 class="text-2xl mb-2">No results found</h2>
+            <p class="text-gray-600 mb-8">We couldn't find any results for "{{search.terms}}". Try checking your spelling or using different keywords.</p>
+
+            <!-- Suggestions -->
+            <div class="space-y-4" id="popular-searches-wrapper-no-results" style="display: none;">
+              <p class="text-sm text-gray-500">Popular searches:</p>
+              <div class="flex flex-wrap justify-center gap-2" id="popular-searches-no-results">
+                <!-- Popular searches will be inserted via JS -->
+              </div>
+            </div>
+            <script>
+              // Get popular searches from theme settings
+              document.addEventListener('DOMContentLoaded', function() {
+                const wrapper = document.getElementById('popular-searches-wrapper-no-results');
+                const container = document.getElementById('popular-searches-no-results');
+                const settings = window.Shopline?.theme?.settings || {};
+                const searchUrl = '{{routes.search_url}}';
+                let hasSearches = false;
+
+                for (let i = 1; i <= 6; i++) {
+                  const searchTerm = settings[`popular_search_${i}`];
+                  if (searchTerm && searchTerm.trim()) {
+                    hasSearches = true;
+                    const link = document.createElement('a');
+                    link.href = `${searchUrl}?keyword=${encodeURIComponent(searchTerm)}`;
+                    link.className = 'px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors text-sm';
+                    link.textContent = searchTerm;
+                    container.appendChild(link);
+                  }
+                }
+
+                // Only show the wrapper if we have searches configured
+                if (hasSearches) {
+                  wrapper.style.display = 'block';
+                }
+              });
+            </script>
+
+              <div class="pt-4">
+                <a href="/collections/all" class="button button-primary inline-block" style="border-radius: var(--button-radius);">
+                  Browse All Products
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {{/if}}
+    {{#else/}}
+      <!-- Initial Search State -->
+      <div class="text-center py-16">
+        <svg class="mx-auto h-24 w-24 text-gray-300 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <p class="text-gray-600 mb-8">Enter a search term to find products, collections, and articles.</p>
+        
+        <div class="space-y-4" id="popular-searches-wrapper-initial" style="display: none;">
+          <p class="text-sm text-gray-500">Popular searches:</p>
+          <div class="flex flex-wrap justify-center gap-2" id="popular-searches-initial">
+            <!-- Popular searches will be inserted via JS -->
+          </div>
+        </div>
+        <script>
+          // Get popular searches from theme settings for initial state
+          document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.getElementById('popular-searches-wrapper-initial');
+            const container = document.getElementById('popular-searches-initial');
+            const settings = window.Shopline?.theme?.settings || {};
+            const searchUrl = '{{routes.search_url}}';
+            let hasSearches = false;
+            
+            for (let i = 1; i <= 6; i++) {
+              const searchTerm = settings[`popular_search_${i}`];
+              if (searchTerm && searchTerm.trim()) {
+                hasSearches = true;
+                const link = document.createElement('a');
+                link.href = `${searchUrl}?keyword=${encodeURIComponent(searchTerm)}`;
+                link.className = 'px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors text-sm';
+                link.textContent = searchTerm;
+                container.appendChild(link);
+              }
+            }
+            
+            // Only show the wrapper if we have searches configured
+            if (hasSearches) {
+              wrapper.style.display = 'block';
+            }
+          });
+        </script>
+      </div>
+    {{/if}}
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "t:sections.main-search.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "t:sections.main-search.settings.group_header__0.label"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 12,
+      "max": 48,
+      "step": 12,
+      "default": 24,
+      "label": "t:sections.main-search.settings.products_per_page.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.main-search.settings.columns_desktop.label"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        {
+          "value": 1,
+          "label": "t:sections.main-search.settings.columns_mobile.options__0.label"
+        },
+        {
+          "value": 2,
+          "label": "t:sections.main-search.settings.columns_mobile.options__1.label"
+        }
+      ],
+      "default": 1,
+      "label": "t:sections.main-search.settings.columns_mobile.label"
+    }
+  ]
+}
+{{/schema}}

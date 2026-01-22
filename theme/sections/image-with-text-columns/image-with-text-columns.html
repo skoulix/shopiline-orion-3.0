@@ -1,0 +1,279 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(30) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(30) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(60) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(60) }}px;
+    }
+  }
+</style>
+
+<div class="image-with-text-columns overflow-hidden" style="background-color: {{ section.settings.background_color | default("ffffff") }};">
+  <div class="{{#if !section.settings.full_width}}container{{/if}} mx-auto" style="" id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-0 items-center">
+
+      {{!-- Left Column - Text Blocks --}}
+      <div class="order-1 lg:order-1 text-center lg:text-right px-6 lg:pr-10 lg:pl-12">
+        {{#for block in section.blocks}}
+          {{#if block.settings.column == "left" }}
+            <div class="mb-8 last:mb-0">
+              <h3 class="text-xl lg:text-2xl uppercase mb-3"
+                  style="font-family: {{#if section.settings.heading_font == "title" }}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.heading_color | default("000000") }};">
+                {{block.settings.title}}
+              </h3>
+              <p class="text-base lg:text-lg"
+                 style="color: {{ section.settings.text_color | default("666666") }};">
+                {{block.settings.description}}
+              </p>
+            </div>
+          {{/if}}
+        {{/for}}
+      </div>
+      
+      {{!-- Center Column - Image --}}
+      <div class="order-2 lg:order-2">
+        {{#if section.settings.image}}
+          <div class="relative">
+            <img
+              src="{{ section.settings.image | image_url(width=1600) }}"
+              class="w-full h-auto"
+              loading="lazy"
+              alt="{{ section.settings.image.alt | default("") }}"
+            >
+          </div>
+        {{#else/}}
+          <div class="bg-gray-100 aspect-[4/5]"></div>
+        {{/if}}
+      </div>
+
+      {{!-- Right Column - Text Blocks --}}
+      <div class="order-3 lg:order-3 text-center lg:text-left px-6 lg:pl-10 lg:pr-12">
+        {{#for block in section.blocks}}
+          {{#if block.settings.column == "right" }}
+            <div class="mb-8 last:mb-0">
+              <h3 class="text-xl lg:text-2xl uppercase mb-3"
+                  style="font-family: {{#if section.settings.heading_font == "title" }}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.heading_color | default("000000") }};">
+                {{block.settings.title}}
+              </h3>
+              <p class="text-base lg:text-lg"
+                 style="color: {{ section.settings.text_color | default("666666") }};">
+                {{block.settings.description}}
+              </p>
+            </div>
+          {{/if}}
+        {{/for}}
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "Image with text columns",
+  "class": "section-image-with-text-columns",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Image"
+    },
+    {
+      "type": "image",
+      "id": "image",
+      "label": "Center image"
+    },
+    {
+      "type": "group_header",
+      "label": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "default": "title",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#666666"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "group_header",
+      "label": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "default": 60,
+      "max": 200,
+      "min": 0,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+{
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "default": 60,
+      "max": 200,
+      "min": 0,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text_block",
+      "name": "Text block",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column",
+          "label": "Column",
+          "default": "left",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left column"
+            },
+            {
+              "value": "right",
+              "label": "Right column"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Feature title"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Describe the feature, benefit, or detail here."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text columns",
+      "blocks": [
+        {
+          "type": "text_block",
+          "settings": {
+            "column": "left",
+            "title": "Premium Quality",
+            "description": "Crafted with the finest materials and attention to detail, ensuring exceptional durability and performance."
+          }
+        },
+        {
+          "type": "text_block",
+          "settings": {
+            "column": "left",
+            "title": "Sustainable Design",
+            "description": "Environmentally conscious production methods that minimize waste and maximize efficiency."
+          }
+        },
+        {
+          "type": "text_block",
+          "settings": {
+            "column": "left",
+            "title": "Expert Craftsmanship",
+            "description": "Years of experience and dedication go into every product we create."
+          }
+        },
+        {
+          "type": "text_block",
+          "settings": {
+            "column": "right",
+            "title": "Innovative Technology",
+            "description": "Cutting-edge features that enhance your experience and deliver superior results."
+          }
+        },
+        {
+          "type": "text_block",
+          "settings": {
+            "column": "right",
+            "title": "Customer Support",
+            "description": "Dedicated team available to assist you with any questions or concerns."
+          }
+        },
+        {
+          "type": "text_block",
+          "settings": {
+            "column": "right",
+            "title": "Satisfaction Guaranteed",
+            "description": "We stand behind our products with comprehensive warranties and return policies."
+          }
+        }
+      ]
+    }
+  ]
+}
+{{/schema}}

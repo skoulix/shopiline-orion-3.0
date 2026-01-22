@@ -1,0 +1,472 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(30) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(30) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(60) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(60) }}px;
+    }
+  }
+</style>
+
+<div class="youtube-video-section" style="background-color: {{ section.settings.background_color | default("#ffffff") }}; " id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+  <div class="{{#if section.settings.full_width}}w-full{{#else/}}container{{/if}}">
+    {{#if section.settings.title}}
+      <h2 class="text-3xl sm:text-4xl md:text-5xl {{#if section.settings.text_alignment == "left"}}text-left{{#else if section.settings.text_alignment == "right" /}}text-right{{#else/}}text-center{{/if}} mb-6"
+          style="font-family: {{#if section.settings.heading_font == "title"}}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.heading_color | default("#000000") }};">
+        {{section.settings.title}}
+      </h2>
+    {{/if}}
+    
+    {{#if section.settings.description}}
+      <div class="prose prose-lg max-w-none {{#if section.settings.text_alignment == "left"}}text-left{{#else if section.settings.text_alignment == "right" /}}text-right{{#else/}}text-center{{/if}} mb-8"
+           style="color: {{ section.settings.text_color | default("#666666") }};">
+        {{{section.settings.description}}}
+      </div>
+    {{/if}}
+    
+    <div class="video-wrapper {{#if !(section.settings.constrain_width)}}w-full{{#else/}}{{#if section.settings.text_alignment == "left"}}mr-auto{{#else if section.settings.text_alignment == "right" /}}ml-auto{{#else/}}mx-auto{{/if}}{{/if}}" {{#if section.settings.constrain_width}}style="max-width: {{ section.settings.max_width | default(1200) }}px;"{{/if}}>
+      {{#if section.settings.video_url || page.metafields.custom.youtube_video_url || page.metafields.guide.video_url}}
+        <div class="relative w-full" style="padding-bottom: {{#if section.settings.aspect_ratio == "16:9"}}56.25%{{#else if section.settings.aspect_ratio == "4:3" /}}75%{{#else if section.settings.aspect_ratio == "1:1" /}}100%{{#else/}}56.25%{{/if}};">
+          
+          <!-- Cover Image with Play Button -->
+          <div id="video-cover-{{section.id}}" class="absolute top-0 left-0 w-full h-full z-10 cursor-pointer group" style="{{#if !(section.settings.cover_image)}}display: none;{{/if}}">
+            {{#if section.settings.cover_image}}
+              <img src="{{ section.settings.cover_image | image_url(width=1920) }}"
+                   srcset="{{ section.settings.cover_image | image_url(width=400) }} 400w,
+                           {{ section.settings.cover_image | image_url(width=600) }} 600w,
+                           {{ section.settings.cover_image | image_url(width=800) }} 800w,
+                           {{ section.settings.cover_image | image_url(width=1200) }} 1200w,
+                           {{ section.settings.cover_image | image_url(width=1920) }} 1920w"
+                   sizes="100vw"
+                   alt="{{ section.settings.video_title | default("Video thumbnail") }}"
+                   class="w-full h-full object-cover"
+                   style="border-radius: var(--card-border-radius, 8px);"
+                   loading="lazy">
+              
+              <!-- Play Button Overlay -->
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="relative flex items-center justify-center">
+                  <!-- Pulse effect background -->
+                  <div class="video-play-pulse"></div>
+                  <!-- Play button -->
+                  <button type="button" 
+                          class="video-play-button absolute"
+                          aria-label="Play video">
+                    <svg fill="none" focusable="false" width="68" height="68" class="icon icon-play-button" viewBox="0 0 48 48">
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M24 48C10.745 48 0 37.255 0 24S10.745 0 24 0s24 10.745 24 24-10.745 24-24 24Zm-3-19.15a.3.3 0 0 0 .462.253l7.545-4.85a.3.3 0 0 0 0-.505l-7.545-4.85a.3.3 0 0 0-.462.252v9.7Z" fill="currentColor" fill-opacity="0.95"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            {{/if}}
+          </div>
+          
+          <!-- YouTube iframe (initially hidden if cover image exists) -->
+          <iframe 
+            id="youtube-player-{{section.id}}"
+            class="absolute top-0 left-0 w-full h-full"
+            style="border-radius: var(--card-border-radius, 8px); {{#if section.settings.cover_image}}display: none;{{/if}}"
+            src=""
+            title="{{ section.settings.video_title | default("YouTube video player") }}"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+        
+        <script>
+          (function() {
+            const videoUrl = '{{#if section.settings.video_url}}{{section.settings.video_url}}{{#else if page.metafields.custom.youtube_video_url /}}{{page.metafields.custom.youtube_video_url}}{{#else if page.metafields.guide.video_url /}}{{page.metafields.guide.video_url}}{{/if}}';
+            const iframe = document.getElementById('youtube-player-{{section.id}}');
+            const coverElement = document.getElementById('video-cover-{{section.id}}');
+            let videoId = '';
+            let embedUrl = '';
+            
+            if (videoUrl && iframe) {
+              // Extract video ID from various YouTube URL formats
+              if (videoUrl.includes('youtube.com/watch?v=')) {
+                videoId = videoUrl.split('v=')[1];
+                const ampersandPosition = videoId.indexOf('&');
+                if (ampersandPosition !== -1) {
+                  videoId = videoId.substring(0, ampersandPosition);
+                }
+              } else if (videoUrl.includes('youtu.be/')) {
+                videoId = videoUrl.split('youtu.be/')[1];
+                const queryPosition = videoId.indexOf('?');
+                if (queryPosition !== -1) {
+                  videoId = videoId.substring(0, queryPosition);
+                }
+              } else if (videoUrl.includes('youtube.com/embed/')) {
+                videoId = videoUrl.split('embed/')[1];
+                const queryPosition = videoId.indexOf('?');
+                if (queryPosition !== -1) {
+                  videoId = videoId.substring(0, queryPosition);
+                }
+              }
+              
+              if (videoId) {
+                // Build embed URL with settings
+                embedUrl = 'https://www.youtube.com/embed/' + videoId + '?rel=0' + String.fromCharCode(38) + 'modestbranding=1' + String.fromCharCode(38) + 'enablejsapi=1';
+                
+                {{#if section.settings.loop}}
+                embedUrl = embedUrl + String.fromCharCode(38) + 'loop=1' + String.fromCharCode(38) + 'playlist=' + videoId;
+                {{/if}}
+                
+                {{#if !(section.settings.show_controls)}}
+                embedUrl = embedUrl + String.fromCharCode(38) + 'controls=0';
+                {{/if}}
+                
+                {{#if section.settings.start_time}}
+                embedUrl = embedUrl + String.fromCharCode(38) + 'start=' + '{{section.settings.start_time}}';
+                {{/if}}
+                
+                {{#if section.settings.end_time}}
+                embedUrl = embedUrl + String.fromCharCode(38) + 'end=' + '{{section.settings.end_time}}';
+                {{/if}}
+                
+                // If no cover image or autoplay is enabled, load the iframe immediately
+                {{#if !section.settings.cover_image || section.settings.autoplay}}
+                  {{#if section.settings.autoplay}}
+                  embedUrl = embedUrl + String.fromCharCode(38) + 'autoplay=1' + String.fromCharCode(38) + 'mute=1';
+                  {{/if}}
+                  iframe.src = embedUrl;
+                  iframe.style.display = 'block';
+                  if (coverElement) coverElement.style.display = 'none';
+                {{/if}}
+              }
+            }
+            
+            // Click handler for cover image
+            if (coverElement && embedUrl) {
+              coverElement.addEventListener('click', function() {
+                // Add autoplay parameter when clicking the cover
+                const autoplayUrl = embedUrl + String.fromCharCode(38) + 'autoplay=1';
+                iframe.src = autoplayUrl;
+                iframe.style.display = 'block';
+                coverElement.style.display = 'none';
+              });
+            }
+          })();
+        </script>
+        
+        <style>
+          .video-play-button {
+            background: transparent;
+            border: none;
+            color: white;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+            cursor: pointer;
+            transition: transform 0.2s ease;
+          }
+          
+          .video-play-button:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+          }
+          
+          .video-play-pulse {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+          }
+          
+          @keyframes pulse-ring {
+            0% {
+              transform: scale(1);
+              opacity: 0.6;
+            }
+            50% {
+              transform: scale(1.5);
+              opacity: 0.1;
+            }
+            100% {
+              transform: scale(1);
+              opacity: 0.6;
+            }
+          }
+          
+        </style>
+      {{#else/}}
+        <div class="text-center p-12 bg-gray-50 rounded-lg">
+          <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+          </svg>
+          <p class="text-gray-600 mb-2">No video URL provided</p>
+          <p class="text-sm text-gray-500">Add a YouTube URL in the section settings or page metafield</p>
+        </div>
+      {{/if}}
+    </div>
+    
+    {{#if section.settings.button_label}}
+      <div class="mt-8 {{#if section.settings.text_alignment == "left"}}text-left{{#else if section.settings.text_alignment == "right" /}}text-right{{#else/}}text-center{{/if}}">
+        <a href="{{section.settings.button_link}}" class="button button-primary inline-block">
+          {{section.settings.button_label}}
+        </a>
+      </div>
+    {{/if}}
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "YouTube Video",
+  "class": "section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "YouTube video URL",
+      "info": "Enter a YouTube URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). Leave empty to use page metafield."
+    },
+    {
+      "type": "text",
+      "id": "video_title",
+      "label": "Video title for accessibility",
+      "default": "YouTube video player"
+    },
+    {
+      "type": "group_header",
+      "label": "Cover Image"
+    },
+    {
+      "type": "image",
+      "id": "cover_image",
+      "label": "Cover image",
+      "info": "Display a thumbnail image with play button. Video loads when clicked."
+    },
+    {
+      "type": "group_header",
+      "label": "Video Settings"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Aspect ratio",
+      "options": [
+        {
+          "value": "16:9",
+          "label": "16:9 (Standard)"
+        },
+        {
+          "value": "4:3",
+          "label": "4:3"
+        },
+        {
+          "value": "1:1",
+          "label": "1:1 (Square)"
+        }
+      ],
+      "default": "16:9"
+    },
+    {
+      "type": "switch",
+      "id": "constrain_width",
+      "label": "Constrain video width",
+      "default": false,
+      "info": "When disabled, video will use full container width"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum video width",
+      "min": 600,
+      "max": 1500,
+      "step": 1,
+      "unit": "px",
+      "default": 1200,
+      "info": "Only applies when 'Constrain video width' is enabled"
+    },
+    {
+      "type": "switch",
+      "id": "autoplay",
+      "label": "Autoplay video",
+      "default": false,
+      "info": "Videos will be muted when autoplay is enabled (browser requirement). Overrides cover image."
+    },
+    {
+      "type": "switch",
+      "id": "loop",
+      "label": "Loop video",
+      "default": false
+    },
+    {
+      "type": "switch",
+      "id": "show_controls",
+      "label": "Show player controls",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "start_time",
+      "label": "Start time (seconds)",
+      "info": "Optional: Start video at specific time"
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "End time (seconds)",
+      "info": "Optional: End video at specific time"
+    },
+    {
+      "type": "group_header",
+      "label": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "group_header",
+      "label": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "title"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#666666"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "group_header",
+      "label": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+{
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    },
+    {
+      "type": "group_header",
+      "label": "Metafield Settings"
+    },
+    {
+      "type": "info",
+      "info": "This section can automatically pull YouTube URL from page metafields. It will look for: page.metafields.custom.youtube_video_url or page.metafields.guide.video_url. The section setting takes priority if both are set."
+    }
+  ],
+  "presets": [
+    {
+      "name": "YouTube Video",
+      "settings": {
+        "title": "Watch Our Tutorial",
+        "description": "<p>Learn how to get the most out of your product with this comprehensive video guide.</p>",
+        "aspect_ratio": "16:9",
+        "max_width": 1200,
+        "show_controls": true,
+        "text_alignment": "center"
+      }
+    }
+  ]
+}
+{{/schema}}

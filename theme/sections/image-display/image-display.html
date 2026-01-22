@@ -1,0 +1,470 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(20) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(20) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(40) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(40) }}px;
+    }
+  }
+</style>
+
+<div class="image-display-section overflow-hidden" style="background-color: {{ section.settings.background_color | default("ffffff") }};">
+  <div class="{{#if !section.settings.full_width}}container{{/if}} mx-auto {{#if !section.settings.remove_padding}}px-4 sm:px-6 lg:px-8{{/if}}" style="" id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+    
+    {{#if section.settings.image}}
+      <!-- Desktop Image -->
+      <div class="{{#if section.settings.mobile_image}}hidden md:block{{/if}} {{#if section.settings.alignment == "center" }}mx-auto{{#else/}}{{#if section.settings.alignment == "right" }}ml-auto{{/if}}{{/if}}"
+           style="{{#if section.settings.image_size == "custom" }}max-width: {{ section.settings.custom_max_width | default(100) }}%;{{#else/}}{{#if section.settings.image_size == "small" }}max-width: 400px;{{#else/}}{{#if section.settings.image_size == "medium" }}max-width: 600px;{{#else/}}{{#if section.settings.image_size == "large" }}max-width: 900px;{{/if}}{{/if}}{{/if}}{{/if}}">
+        
+        {{#if section.settings.link}}
+          <a href="{{section.settings.link}}" class="block">
+        {{/if}}
+        
+        <div class="relative {{#if section.settings.add_shadow}}shadow-lg{{/if}}"
+             style="{{#if section.settings.border_radius}}border-radius: {{section.settings.border_radius}}px;{{/if}} overflow: hidden; {{#if section.settings.aspect_ratio}}{{#if section.settings.aspect_ratio == "square" }}aspect-ratio: 1/1;{{#else/}}{{#if section.settings.aspect_ratio == "portrait" }}aspect-ratio: 3/4;{{#else/}}{{#if section.settings.aspect_ratio == "landscape" }}aspect-ratio: 16/9;{{#else/}}{{#if section.settings.aspect_ratio == "wide" }}aspect-ratio: 21/9;{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}">
+          <img
+            src="{{ section.settings.image | image_url(width=1800) }}"
+            class="w-full h-full object-cover"
+            style="{{#if section.settings.aspect_ratio}}object-fit: {{ section.settings.object_fit | default("cover") }};{{/if}}"
+            loading="{{#if section.settings.lazy_load}}lazy{{#else/}}eager{{/if}}"
+            alt="{{ section.settings.image.alt | default("") }}"
+          >
+        </div>
+        
+        {{#if section.settings.link}}
+          </a>
+        {{/if}}
+        
+        {{#if section.settings.caption}}
+          <div class="mt-4 text-sm {{#if section.settings.caption_alignment == "center" }}text-center{{#else/}}{{#if section.settings.caption_alignment == "right" }}text-right{{#else/}}text-left{{/if}}{{/if}}"
+               style="color: {{ section.settings.caption_color | default("666666") }};">
+            {{section.settings.caption}}
+          </div>
+        {{/if}}
+      </div>
+      
+      <!-- Mobile Image -->
+      {{#if section.settings.mobile_image}}
+        <div class="md:hidden {{#if section.settings.alignment == "center" }}mx-auto{{#else/}}{{#if section.settings.alignment == "right" }}ml-auto{{/if}}{{/if}}"
+             style="{{#if section.settings.mobile_image_size == "custom" }}max-width: {{ section.settings.mobile_custom_max_width | default(100) }}%;{{#else/}}{{#if section.settings.mobile_image_size == "small" }}max-width: 400px;{{#else/}}{{#if section.settings.mobile_image_size == "medium" }}max-width: 600px;{{#else/}}{{#if section.settings.mobile_image_size == "large" }}max-width: 900px;{{/if}}{{/if}}{{/if}}{{/if}}">
+          
+          {{#if section.settings.link}}
+            <a href="{{section.settings.link}}" class="block">
+          {{/if}}
+          
+          <div class="relative {{#if section.settings.add_shadow}}shadow-lg{{/if}}"
+               style="{{#if section.settings.border_radius}}border-radius: {{section.settings.border_radius}}px;{{/if}} overflow: hidden; {{#if section.settings.mobile_aspect_ratio}}{{#if section.settings.mobile_aspect_ratio == "square" }}aspect-ratio: 1/1;{{#else/}}{{#if section.settings.mobile_aspect_ratio == "portrait" }}aspect-ratio: 3/4;{{#else/}}{{#if section.settings.mobile_aspect_ratio == "landscape" }}aspect-ratio: 16/9;{{#else/}}{{#if section.settings.mobile_aspect_ratio == "wide" }}aspect-ratio: 21/9;{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}">
+            <img
+              src="{{ section.settings.mobile_image | image_url(width=800) }}"
+              class="w-full h-full object-cover"
+              style="{{#if section.settings.mobile_aspect_ratio}}object-fit: {{ section.settings.mobile_object_fit | default("cover") }};{{/if}}"
+              loading="{{#if section.settings.lazy_load}}lazy{{#else/}}eager{{/if}}"
+              alt="{{ section.settings.mobile_image.alt | default("") }}"
+            >
+          </div>
+          
+          {{#if section.settings.link}}
+            </a>
+          {{/if}}
+          
+          {{#if section.settings.mobile_caption}}
+            <div class="mt-4 text-sm {{#if section.settings.caption_alignment == "center" }}text-center{{#else/}}{{#if section.settings.caption_alignment == "right" }}text-right{{#else/}}text-left{{/if}}{{/if}}"
+                 style="color: {{ section.settings.caption_color | default("666666") }};">
+              {{section.settings.mobile_caption}}
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    {{#else/}}
+      <div class="{{#if section.settings.alignment == "center" }}mx-auto{{#else/}}{{#if section.settings.alignment == "right" }}ml-auto{{/if}}{{/if}} bg-gray-100 flex items-center justify-center"
+           style="{{#if section.settings.image_size == "custom" }}max-width: {{ section.settings.custom_max_width | default(100) }}%;{{#else/}}{{#if section.settings.image_size == "small" }}max-width: 400px;{{#else/}}{{#if section.settings.image_size == "medium" }}max-width: 600px;{{#else/}}{{#if section.settings.image_size == "large" }}max-width: 900px;{{#else/}}max-width: 100%;{{/if}}{{/if}}{{/if}}{{/if}} height: 400px; {{#if section.settings.border_radius}}border-radius: {{section.settings.border_radius}}px;{{/if}}">
+        <span class="text-gray-400">Select an image</span>
+      </div>
+    {{/if}}
+    
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "Image Display",
+  "class": "section-image-display",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "image",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "caption",
+      "label": "Caption",
+      "info": "Optional text below the image"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link",
+      "info": "Make the image clickable"
+    },
+    {
+      "type": "group_header",
+      "label": "Mobile Image"
+    },
+    {
+      "type": "image",
+      "id": "mobile_image",
+      "label": "Mobile image",
+      "info": "Optional different image for mobile devices"
+    },
+    {
+      "type": "text",
+      "id": "mobile_caption",
+      "label": "Mobile caption",
+      "info": "Optional different caption for mobile"
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_size",
+      "label": "Mobile image size",
+      "default": "full",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small (400px)"
+        },
+        {
+          "value": "medium",
+          "label": "Medium (600px)"
+        },
+        {
+          "value": "large",
+          "label": "Large (900px)"
+        },
+        {
+          "value": "full",
+          "label": "Full width"
+        },
+        {
+          "value": "custom",
+          "label": "Custom"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "mobile_custom_max_width",
+      "label": "Mobile custom max width",
+      "default": 100,
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "info": "Only applies when 'Custom' size is selected for mobile"
+    },
+    {
+      "type": "select",
+      "id": "mobile_aspect_ratio",
+      "label": "Mobile aspect ratio",
+      "default": "natural",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Natural"
+        },
+        {
+          "value": "square",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape (16:9)"
+        },
+        {
+          "value": "wide",
+          "label": "Wide (21:9)"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_object_fit",
+      "label": "Mobile image fit",
+      "default": "cover",
+      "info": "How the mobile image fills its container when aspect ratio is set",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover (crop to fill)"
+        },
+        {
+          "value": "contain",
+          "label": "Contain (fit entirely)"
+        },
+        {
+          "value": "fill",
+          "label": "Fill (stretch)"
+        }
+      ]
+    },
+    {
+      "type": "group_header",
+      "label": "Desktop Image Settings"
+    },
+    {
+      "type": "select",
+      "id": "image_size",
+      "label": "Image size",
+      "default": "full",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small (400px)"
+        },
+        {
+          "value": "medium",
+          "label": "Medium (600px)"
+        },
+        {
+          "value": "large",
+          "label": "Large (900px)"
+        },
+        {
+          "value": "full",
+          "label": "Full width"
+        },
+        {
+          "value": "custom",
+          "label": "Custom"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "custom_max_width",
+      "label": "Custom max width",
+      "default": 100,
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "info": "Only applies when 'Custom' size is selected"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Aspect ratio",
+      "default": "natural",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Natural"
+        },
+        {
+          "value": "square",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "portrait",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape (16:9)"
+        },
+        {
+          "value": "wide",
+          "label": "Wide (21:9)"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "object_fit",
+      "label": "Image fit",
+      "default": "cover",
+      "info": "How the image fills its container when aspect ratio is set",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover (crop to fill)"
+        },
+        {
+          "value": "contain",
+          "label": "Contain (fit entirely)"
+        },
+        {
+          "value": "fill",
+          "label": "Fill (stretch)"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Image alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "group_header",
+      "label": "Styling"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Corner radius",
+      "default": 0,
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "switch",
+      "id": "add_shadow",
+      "label": "Add shadow",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "caption_alignment",
+      "label": "Caption alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "caption_color",
+      "label": "Caption color",
+      "default": "#666666"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Full width section",
+      "default": false
+    },
+    {
+      "type": "switch",
+      "id": "remove_padding",
+      "label": "Remove horizontal padding",
+      "default": false,
+      "info": "Remove left and right padding from the section"
+    },
+    {
+      "type": "switch",
+      "id": "lazy_load",
+      "label": "Lazy load image",
+      "default": true,
+      "info": "Load image only when it comes into view"
+    },
+    {
+      "type": "group_header",
+      "label": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "default": 60,
+      "max": 200,
+      "min": 0,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+{
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "default": 60,
+      "max": 200,
+      "min": 0,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image Display",
+      "settings": {
+        "image_size": "full",
+        "aspect_ratio": "natural",
+        "alignment": "center",
+        "lazy_load": true
+      }
+    }
+  ]
+}
+{{/schema}}

@@ -1,0 +1,57 @@
+{
+  "sections": {
+    "main": {
+      "disabled": true,
+      "type": "main-page",
+      "settings": {
+        "show_breadcrumb": true,
+        "show_title": true,
+        "padding_top": 40,
+        "padding_bottom": 40
+      },
+      "blocks": {}
+    },
+    "form": {
+      "disabled": false,
+      "type": "contact-form",
+      "settings": {
+        "heading": "Contact us",
+        "subheading": "",
+        "success_message": "Thanks for contacting us. We'll get back to you as soon as possible.",
+        "background_color": "#f2f2f2",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "padding_top_mobile": 30,
+        "padding_bottom_mobile": 30
+      },
+      "blocks": {},
+      "custom_css": []
+    },
+    "175402892360860db07a": {
+      "disabled": false,
+      "type": "rich-text",
+      "settings": {
+        "heading": "Get in touch",
+        "text": "<div id=\"shopify-section-template--23143616151874__rich-text\" class=\"shopify-section rich-text-section\">\n<div class=\"index-section color-scheme-none text-center \">\n<div class=\"page-width page-width--narrow\">\n<div class=\"theme-block\">\n<div class=\"rte clearfix\">\n<div class=\"enlarge-text\">\n<p>We’d love to hear from you! Whether you have questions, feedback, or just want to share your experience, we’re here to help. Reach out to us and let’s connect.</p>\n</div>\n</div>\n</div>\n</div>\n</div>\n</div>",
+        "text_alignment": "center",
+        "content_position": "center",
+        "full_width": false,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "heading_size": "text-5xl",
+        "heading_image_width": 100,
+        "heading_color": "#000000",
+        "text_color": "#000000",
+        "background_color": "#ffffff"
+      },
+      "blocks": {},
+      "block_order": [],
+      "custom_css": []
+    }
+  },
+  "order": [
+    "main",
+    "175402892360860db07a",
+    "form"
+  ]
+}

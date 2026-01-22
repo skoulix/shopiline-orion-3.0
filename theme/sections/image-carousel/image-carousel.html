@@ -1,0 +1,478 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(20) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(20) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(40) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(40) }}px;
+    }
+  }
+</style>
+
+<div class="image-carousel-section" style="background-color: {{ section.settings.background_color | default("ffffff") }}; " id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+  <div class="{{#if section.settings.full_width}}w-full px-6 sm:px-8 md:px-10 lg:px-12 xl:px-16 2xl:px-20{{#else/}}container mx-auto px-4{{/if}}">
+    {{#if section.settings.heading}}
+      <h2 class="text-center text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-balance max-w-2xl mx-auto" style="color: {{ section.settings.heading_color | default("000000") }};">
+        {{section.settings.heading}}
+      </h2>
+    {{/if}}
+    
+    {{#if section.settings.subheading}}
+      <p class="text-center text-lg md:text-xl mb-12" style="color: {{ section.settings.subheading_color | default("666666") }};">
+        {{section.settings.subheading}}
+      </p>
+    {{/if}}
+
+    <!-- Carousel -->
+    <div class="relative w-full">
+      <div class="carousel-container overflow-hidden">
+        <div class="carousel-slides flex transition-transform duration-300 ease-in-out">
+          <!-- Clone last 3 items at the beginning for endless scroll -->
+          {{#for block in section.blocks}}
+            {{#if block.type == "image" }}
+              <div class="carousel-slide carousel-clone w-[70%] md:w-1/3 flex-shrink-0 px-3 md:px-6" data-clone="end">
+                {{#if block.settings.image}}
+                  {{#if block.settings.link}}
+                    <a href="{{block.settings.link}}" class="block">
+                  {{/if}}
+                  <div class="aspect-square overflow-hidden rounded-lg">
+                    <img
+                      src="{{ block.settings.image | image_url(width=400) }}"
+                      class="w-full h-full object-cover"
+                      loading="lazy"
+                      alt="{{ block.settings.alt_text | default("") }}"
+                    >
+                  </div>
+                  {{#if block.settings.link}}
+                    </a>
+                  {{/if}}
+                {{#else/}}
+                  <div class="aspect-square bg-gray-200 rounded-lg"></div>
+                {{/if}}
+                
+                {{#if block.settings.caption}}
+                  <p class="text-center mt-2 text-xs" style="color: {{ section.settings.caption_color | default("666666") }};">
+                    {{block.settings.caption}}
+                  </p>
+                {{/if}}
+              </div>
+            {{/if}}
+          {{/for}}
+          
+          <!-- Original items -->
+          {{#for block in section.blocks}}
+            {{#if block.type == "image" }}
+              <div class="carousel-slide w-[70%] md:w-1/3 flex-shrink-0 px-3 md:px-6" data-index="{{forloop.index}}">
+                {{#if block.settings.image}}
+                  {{#if block.settings.link}}
+                    <a href="{{block.settings.link}}" class="block">
+                  {{/if}}
+                  <div class="aspect-square overflow-hidden rounded-lg">
+                    <img
+                      src="{{ block.settings.image | image_url(width=400) }}"
+                      class="w-full h-full object-cover"
+                      loading="lazy"
+                      alt="{{ block.settings.alt_text | default("") }}"
+                    >
+                  </div>
+                  {{#if block.settings.link}}
+                    </a>
+                  {{/if}}
+                {{#else/}}
+                  <div class="aspect-square bg-gray-200 rounded-lg"></div>
+                {{/if}}
+                
+                {{#if block.settings.caption}}
+                  <p class="text-center mt-2 text-xs" style="color: {{ section.settings.caption_color | default("666666") }};">
+                    {{block.settings.caption}}
+                  </p>
+                {{/if}}
+              </div>
+            {{/if}}
+          {{/for}}
+          
+          <!-- Clone first 3 items at the end for endless scroll -->
+          {{#for block in section.blocks}}
+            {{#if block.type == "image" }}
+              <div class="carousel-slide carousel-clone w-[70%] md:w-1/3 flex-shrink-0 px-3 md:px-6" data-clone="start">
+                {{#if block.settings.image}}
+                  {{#if block.settings.link}}
+                    <a href="{{block.settings.link}}" class="block">
+                  {{/if}}
+                  <div class="aspect-square overflow-hidden rounded-lg">
+                    <img
+                      src="{{ block.settings.image | image_url(width=400) }}"
+                      class="w-full h-full object-cover"
+                      loading="lazy"
+                      alt="{{ block.settings.alt_text | default("") }}"
+                    >
+                  </div>
+                  {{#if block.settings.link}}
+                    </a>
+                  {{/if}}
+                {{#else/}}
+                  <div class="aspect-square bg-gray-200 rounded-lg"></div>
+                {{/if}}
+                
+                {{#if block.settings.caption}}
+                  <p class="text-center mt-2 text-xs" style="color: {{ section.settings.caption_color | default("666666") }};">
+                    {{block.settings.caption}}
+                  </p>
+                {{/if}}
+              </div>
+            {{/if}}
+          {{/for}}
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="flex items-center justify-center gap-2 mt-6">
+        <button class="carousel-prev p-2 rounded-full hover:opacity-80 transition-opacity" style="background-color: {{ section.settings.arrow_bg_color | default("4fb35b") }};" aria-label="Previous image">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24">
+            <path stroke="{{ section.settings.arrow_color | default("ffffff") }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        
+        <button class="carousel-next p-2 rounded-full hover:opacity-80 transition-opacity" style="background-color: {{ section.settings.arrow_bg_color | default("4fb35b") }};" aria-label="Next image">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24">
+            <path stroke="{{ section.settings.arrow_color | default("ffffff") }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sections = document.querySelectorAll('.image-carousel-section');
+    
+    sections.forEach(section => {
+      const container = section.querySelector('.carousel-container');
+      const slidesContainer = section.querySelector('.carousel-slides');
+      const allSlides = section.querySelectorAll('.carousel-slide:not(.carousel-clone)');
+      const prevBtn = section.querySelector('.carousel-prev');
+      const nextBtn = section.querySelector('.carousel-next');
+      
+      if (!slidesContainer || allSlides.length === 0) return;
+      
+      const totalOriginalSlides = allSlides.length;
+      const isMobile = window.innerWidth < 768;
+      const slidesPerView = isMobile ? 1 : 3;
+      const slideWidthPercent = isMobile ? 70 : (100 / 3);
+      
+      // For mobile, we need to center the slide (15% offset on each side for 70% width)
+      const centerOffset = isMobile ? 15 : 0;
+      
+      // Start at the first real slide (after the cloned ones)
+      let currentSlide = totalOriginalSlides;
+      let isTransitioning = false;
+      
+      // Set initial position without animation
+      slidesContainer.style.transition = 'none';
+      const initialTranslate = (currentSlide * slideWidthPercent) - centerOffset;
+      slidesContainer.style.transform = `translateX(-${initialTranslate}%)`;
+      
+      // Re-enable transitions after initial positioning
+      setTimeout(() => {
+        slidesContainer.style.transition = 'transform 300ms ease-in-out';
+      }, 50);
+      
+      function updateSlider(instant = false) {
+        if (instant) {
+          slidesContainer.style.transition = 'none';
+        } else {
+          slidesContainer.style.transition = 'transform 300ms ease-in-out';
+        }
+        const translateX = (currentSlide * slideWidthPercent) - centerOffset;
+        slidesContainer.style.transform = `translateX(-${translateX}%)`;
+        
+        // Update active class for mobile
+        if (isMobile) {
+          const allSlidesWithClones = section.querySelectorAll('.carousel-slide');
+          allSlidesWithClones.forEach((slide, index) => {
+            slide.classList.remove('active');
+            if (index === currentSlide) {
+              slide.classList.add('active');
+            }
+          });
+        }
+      }
+      
+      function handleTransitionEnd() {
+        isTransitioning = false;
+        
+        // Check if we need to jump to maintain endless loop
+        if (currentSlide >= totalOriginalSlides * 2) {
+          // We've scrolled past the end, jump to the real slides
+          currentSlide = currentSlide - totalOriginalSlides;
+          updateSlider(true);
+        } else if (currentSlide < totalOriginalSlides) {
+          // We've scrolled before the start, jump to the end
+          currentSlide = currentSlide + totalOriginalSlides;
+          updateSlider(true);
+        }
+      }
+      
+      function nextSlide(e) {
+        if (e) e.preventDefault();
+        if (isTransitioning) return;
+        
+        isTransitioning = true;
+        currentSlide++;
+        updateSlider();
+      }
+      
+      function prevSlide(e) {
+        if (e) e.preventDefault();
+        if (isTransitioning) return;
+        
+        isTransitioning = true;
+        currentSlide--;
+        updateSlider();
+      }
+      
+      // Event listeners
+      slidesContainer.addEventListener('transitionend', handleTransitionEnd);
+      
+      if (prevBtn) {
+        prevBtn.addEventListener('click', prevSlide);
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', nextSlide);
+      }
+    
+    // Touch support
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    container.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    container.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      const diff = touchStartX - touchEndX;
+      
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
+    }
+    
+      // Initialize
+      updateSlider();
+    });
+  });
+</script>
+
+<style>
+  .image-carousel-section .carousel-slide {
+    scroll-snap-align: start;
+    transition: opacity 0.3s ease;
+  }
+  
+  .image-carousel-section .carousel-container {
+    scroll-snap-type: x mandatory;
+  }
+  
+  @media (max-width: 767px) {
+    .image-carousel-section .carousel-container {
+      /* Remove side padding to allow peek effect */
+      padding-left: 0;
+      padding-right: 0;
+    }
+    
+    .image-carousel-section .carousel-slide {
+      opacity: 0.5;
+    }
+    
+    .image-carousel-section .carousel-slide.active {
+      opacity: 1;
+    }
+  }
+</style>
+
+{{#schema}}
+{
+  "name": "Image carousel",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Image Gallery"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false,
+      "info": "Stretch the carousel to full browser width"
+    },
+    {
+      "type": "group_header",
+      "label": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "caption_color",
+      "label": "Caption color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_color",
+      "label": "Arrow background color",
+      "default": "#4fb35b"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow icon color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "default": 60,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+{
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "default": 60,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Alt text",
+          "info": "Describe the image for accessibility"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "info": "Optional text below the image"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "info": "Optional link when image is clicked"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image carousel",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{{/schema}}

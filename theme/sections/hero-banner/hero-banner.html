@@ -1,0 +1,729 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(10) }}px !important;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(10) }}px !important;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(0) }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom | default(0) }}px !important;
+    }
+  }
+</style>
+
+<div class="hero-banner hero-banner-{{section.id}} relative overflow-hidden {{#if request.page_type == "index" }}hero-banner-transparent{{/if}} {{#if section.settings.full_width_image}}full-width-image{{/if}}" 
+     style="
+  {{#if section.settings.use_color_scheme}}
+    {{#if section.settings.color_scheme == "1" }}
+      background-color: rgb(var(--color-scheme-1-bg));
+    {{#else/}}
+      {{#if section.settings.color_scheme == "2" }}
+        background-color: rgb(var(--color-scheme-2-bg));
+      {{#else/}}
+        {{#if section.settings.color_scheme == "3" }}
+          background-color: rgb(var(--color-scheme-3-bg));
+        {{#else/}}
+          background-color: rgb(var(--color-scheme-4-bg));
+        {{/if}}
+      {{/if}}
+    {{/if}}
+  {{/if}}
+  {{#if !section.settings.full_width_image }}
+  height: {{ section.settings.mobile_height | default(60) }}vh;
+  min-height: {{ section.settings.min_height | default(400) }}px;
+  {{/if}}" id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+  
+  <style>
+    {{#if section.settings.full_width_image}}
+    .hero-banner-{{section.id}}.full-width-image {
+      height: auto !important;
+      min-height: unset !important;
+      padding: 0 !important;
+    }
+    .hero-banner-{{section.id}}.full-width-image img {
+      position: relative !important;
+      width: 100% !important;
+      height: auto !important;
+      object-fit: unset !important;
+    }
+    .hero-banner-{{section.id}}.full-width-image img.hidden {
+      display: none !important;
+    }
+    @media (min-width: 768px) {
+      .hero-banner-{{section.id}}.full-width-image img.md\:block {
+        display: block !important;
+      }
+      .hero-banner-{{section.id}}.full-width-image img.md\:hidden {
+        display: none !important;
+      }
+    }
+    .hero-banner-{{section.id}}.full-width-image .absolute {
+      position: absolute !important;
+    }
+    {{#else/}}
+    /* Tablet breakpoint (md: 768px) */
+    @media (min-width: 768px) {
+      .hero-banner-{{section.id}} {
+        height: {{ section.settings.tablet_height | default(80) }}vh !important;
+        min-height: {{ section.settings.min_height_tablet | default(500) }}px !important;
+      }
+    }
+    /* Desktop breakpoint (lg: 1024px) */
+    @media (min-width: 1024px) {
+      .hero-banner-{{section.id}} {
+        height: {{ section.settings.desktop_height | default(100) }}vh !important;
+        min-height: {{ section.settings.min_height_desktop | default(600) }}px !important;
+      }
+    }
+    {{/if}}
+  </style>
+  
+  <div class="relative {{#if !section.settings.full_width_image }}h-full{{/if}}">
+    <!-- Background Image Container -->
+    <div class="{{#if !section.settings.full_width_image }}absolute inset-0{{/if}}">
+      {{#if section.settings.image}}
+        <!-- Desktop Image -->
+        <img 
+          src="{{ section.settings.image | image_url(width=1920) }}" 
+          srcset="{{ section.settings.image | image_url(width=768) }} 768w,
+                  {{ section.settings.image | image_url(width=1024) }} 1024w,
+                  {{ section.settings.image | image_url(width=1440) }} 1440w,
+                  {{ section.settings.image | image_url(width=1920) }} 1920w"
+          sizes="100vw"
+          alt="{{section.settings.title}}"
+          class="hidden md:block {{#if section.settings.full_width_image}}w-full{{#else/}}w-full h-full object-cover{{/if}}"
+          style="{{#if !section.settings.full_width_image }}object-position: {{ section.settings.image_focal_point | default("center center") }};{{/if}}"
+          loading="eager"
+        >
+        
+        <!-- Mobile Image -->
+        {{#if section.settings.mobile_image}}
+          <img 
+            src="{{ section.settings.mobile_image | image_url(width=768) }}" 
+            srcset="{{ section.settings.mobile_image | image_url(width=375) }} 375w,
+                    {{ section.settings.mobile_image | image_url(width=768) }} 768w"
+            sizes="100vw"
+            alt="{{section.settings.title}}"
+            class="md:hidden {{#if section.settings.full_width_image}}w-full{{#else/}}w-full h-full object-cover{{/if}}"
+            style="{{#if !section.settings.full_width_image }}object-position: {{ section.settings.mobile_focal_point | default("center center") }};{{/if}}"
+            loading="eager"
+          >
+        {{#else/}}
+          <!-- Use desktop image on mobile if no mobile image -->
+          <img 
+            src="{{ section.settings.image | image_url(width=768) }}" 
+            srcset="{{ section.settings.image | image_url(width=375) }} 375w,
+                    {{ section.settings.image | image_url(width=768) }} 768w"
+            sizes="100vw"
+            alt="{{section.settings.title}}"
+            class="md:hidden {{#if section.settings.full_width_image}}w-full{{#else/}}w-full h-full object-cover{{/if}}"
+            style="{{#if !section.settings.full_width_image }}object-position: {{ section.settings.mobile_focal_point | default("center center") }};{{/if}}"
+            loading="eager"
+          >
+        {{/if}}
+      {{#else/}}
+        <!-- Placeholder when no image is set -->
+        <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+          {{#component "placeholder-image" seed=section.id /}}
+        </div>
+      {{/if}}
+    </div>
+    
+    <!-- Image Overlay -->
+    {{#if section.settings.enable_overlay}}
+      <div class="absolute inset-0 z-[5]" style="
+        {{#if section.settings.overlay_type == "color" }}
+          background-color: {{ section.settings.overlay_color | default("000000") }};
+          opacity: {{ section.settings.overlay_opacity | default(0.3) }};
+        {{#else/}}
+          background: linear-gradient(
+            {{#if section.settings.overlay_gradient_direction == "top" }}to bottom{{/if}}
+            {{#if section.settings.overlay_gradient_direction == "bottom" }}to top{{/if}}
+            {{#if section.settings.overlay_gradient_direction == "left" }}to right{{/if}}
+            {{#if section.settings.overlay_gradient_direction == "right" }}to left{{/if}}
+            {{#if section.settings.overlay_gradient_direction == "radial" }}circle{{/if}},
+            {{ section.settings.overlay_gradient_start | default("000000") }},
+            {{ section.settings.overlay_gradient_end | default("000000") }}
+          );
+          opacity: {{ section.settings.overlay_opacity | default(0.5) }};
+        {{/if}}
+      "></div>
+    {{/if}}
+    
+    <!-- Content Overlay -->
+    <div class="absolute inset-0 z-10 flex {{#if section.settings.mobile_content_position == "top-left" }}items-start justify-start{{#else/}}{{#if section.settings.mobile_content_position == "top-center" }}items-start justify-center{{#else/}}{{#if section.settings.mobile_content_position == "top-right" }}items-start justify-end{{#else/}}{{#if section.settings.mobile_content_position == "center-left" }}items-center justify-start{{#else/}}{{#if section.settings.mobile_content_position == "center-center" }}items-center justify-center{{#else/}}{{#if section.settings.mobile_content_position == "center-right" }}items-center justify-end{{#else/}}{{#if section.settings.mobile_content_position == "bottom-left" }}items-end justify-start{{#else/}}{{#if section.settings.mobile_content_position == "bottom-center" }}items-end justify-center{{#else/}}{{#if section.settings.mobile_content_position == "bottom-right" }}items-end justify-end{{#else/}}items-center justify-center{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}} md:{{#if section.settings.desktop_content_position == "top-left" }}items-start justify-start{{#else/}}{{#if section.settings.desktop_content_position == "top-center" }}items-start justify-center{{#else/}}{{#if section.settings.desktop_content_position == "top-right" }}items-start justify-end{{#else/}}{{#if section.settings.desktop_content_position == "center-left" }}items-center justify-start{{#else/}}{{#if section.settings.desktop_content_position == "center-center" }}items-center justify-center{{#else/}}{{#if section.settings.desktop_content_position == "center-right" }}items-center justify-end{{#else/}}{{#if section.settings.desktop_content_position == "bottom-left" }}items-end justify-start{{#else/}}{{#if section.settings.desktop_content_position == "bottom-center" }}items-end justify-center{{#else/}}{{#if section.settings.desktop_content_position == "bottom-right" }}items-end justify-end{{#else/}}items-center justify-center{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}">
+      <div class="container mx-auto px-4 lg:px-8 py-8 lg:py-12">
+        <div class="{{#if section.settings.mobile_content_position == "top-left" }}text-left{{#else/}}{{#if section.settings.mobile_content_position == "center-left" }}text-left{{#else/}}{{#if section.settings.mobile_content_position == "bottom-left" }}text-left{{#else/}}{{#if section.settings.mobile_content_position == "top-right" }}text-right{{#else/}}{{#if section.settings.mobile_content_position == "center-right" }}text-right{{#else/}}{{#if section.settings.mobile_content_position == "bottom-right" }}text-right{{#else/}}text-center{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}} md:{{#if section.settings.desktop_content_position == "top-left" }}text-left{{#else/}}{{#if section.settings.desktop_content_position == "center-left" }}text-left{{#else/}}{{#if section.settings.desktop_content_position == "bottom-left" }}text-left{{#else/}}{{#if section.settings.desktop_content_position == "top-right" }}text-right{{#else/}}{{#if section.settings.desktop_content_position == "center-right" }}text-right{{#else/}}{{#if section.settings.desktop_content_position == "bottom-right" }}text-right{{#else/}}text-center{{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{/if}} {{#if section.settings.mobile_content_position == "top-center" || section.settings.mobile_content_position == "center-center" || section.settings.mobile_content_position == "bottom-center" }}mx-auto{{/if}} {{#if section.settings.desktop_content_position == "top-center" || section.settings.desktop_content_position == "center-center" || section.settings.desktop_content_position == "bottom-center" }}md:mx-auto{{/if}} max-w-sm md:max-w-2xl lg:max-w-4xl">
+          {{#if section.settings.title}}
+            <h1 class="mb-3 md:mb-6 {{#if section.settings.title_size == "text-3xl" }}text-2xl sm:text-3xl{{#else/}}{{#if section.settings.title_size == "text-4xl" }}text-3xl sm:text-4xl{{#else/}}{{#if section.settings.title_size == "text-5xl" }}text-3xl sm:text-4xl md:text-5xl{{#else/}}{{#if section.settings.title_size == "text-6xl" }}text-4xl sm:text-5xl md:text-6xl{{#else/}}{{#if section.settings.title_size == "text-7xl" }}text-4xl sm:text-5xl md:text-6xl lg:text-7xl{{#else/}}text-4xl sm:text-5xl md:text-6xl{{/if}}{{/if}}{{/if}}{{/if}}{{/if}} text-balance" style="
+              {{#if section.settings.use_color_scheme}}
+                {{#if section.settings.color_scheme == "1" }}
+                  color: rgb(var(--color-scheme-1-text));
+                {{#else/}}
+                  {{#if section.settings.color_scheme == "2" }}
+                    color: rgb(var(--color-scheme-2-text));
+                  {{#else/}}
+                    {{#if section.settings.color_scheme == "3" }}
+                      color: rgb(var(--color-scheme-3-text));
+                    {{#else/}}
+                      color: rgb(var(--color-scheme-4-text));
+                    {{/if}}
+                  {{/if}}
+                {{/if}}
+              {{#else/}}
+                color: {{ section.settings.title_color | default("000000") }};
+              {{/if}}
+            ">
+              {{section.settings.title}}
+            </h1>
+          {{/if}}
+          
+          {{#if section.settings.subtitle}}
+            <p class="text-base md:text-lg mb-6 md:mb-8 {{#if section.settings.mobile_content_position == "top-center" || section.settings.mobile_content_position == "center-center" || section.settings.mobile_content_position == "bottom-center" }}max-w-prose mx-auto{{/if}} {{#if section.settings.desktop_content_position == "top-center" || section.settings.desktop_content_position == "center-center" || section.settings.desktop_content_position == "bottom-center" }}md:max-w-prose md:mx-auto{{/if}}" style="
+              {{#if section.settings.use_color_scheme}}
+                {{#if section.settings.color_scheme == "1" }}
+                  color: rgb(var(--color-scheme-1-text));
+                {{#else/}}
+                  {{#if section.settings.color_scheme == "2" }}
+                    color: rgb(var(--color-scheme-2-text));
+                  {{#else/}}
+                    {{#if section.settings.color_scheme == "3" }}
+                      color: rgb(var(--color-scheme-3-text));
+                    {{#else/}}
+                      color: rgb(var(--color-scheme-4-text));
+                    {{/if}}
+                  {{/if}}
+                {{/if}}
+              {{#else/}}
+                color: {{ section.settings.subtitle_color | default("666666") }};
+              {{/if}}
+            ">
+              {{section.settings.subtitle}}
+            </p>
+          {{/if}}
+          
+          {{#if section.settings.button_label}}
+            <div class="{{#if section.settings.mobile_content_position == "top-center" || section.settings.mobile_content_position == "center-center" || section.settings.mobile_content_position == "bottom-center" }}text-center{{/if}} {{#if section.settings.desktop_content_position == "top-center" || section.settings.desktop_content_position == "center-center" || section.settings.desktop_content_position == "bottom-center" }}md:text-center{{/if}}">
+            {{#if section.settings.button_link}}
+              <a href="{{section.settings.button_link}}" class="button inline-block transition-all duration-200" style="background-color: {{ section.settings.button_bg_color | default("000000") }} !important; color: {{ section.settings.button_text_color | default("ffffff") }} !important; border-radius: var(--button-radius, 6px); {{#if section.settings.button_border_enabled}}border: {{ section.settings.button_border_width | default(2) }}px solid {{ section.settings.button_border_color | default("ffffff") }} !important;{{#else/}}border-color: {{ section.settings.button_bg_color | default("000000") }} !important;{{/if}}">
+                {{section.settings.button_label}}
+              </a>
+            {{/if}}
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "t:sections.hero-banner.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "default": "Welcome to our store",
+      "label": "t:sections.hero-banner.settings.title.label"
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "Title size",
+      "default": "text-6xl",
+      "options": [
+        {
+          "value": "text-3xl",
+          "label": "Small"
+        },
+        {
+          "value": "text-4xl",
+          "label": "Medium"
+        },
+        {
+          "value": "text-5xl",
+          "label": "Large"
+        },
+        {
+          "value": "text-6xl",
+          "label": "Extra Large"
+        },
+        {
+          "value": "text-7xl",
+          "label": "Huge"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "default": "Discover amazing products",
+      "label": "t:sections.hero-banner.settings.subtitle.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "Shop Now",
+      "label": "t:sections.hero-banner.settings.button_label.label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.hero-banner.settings.button_link.label"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "switch",
+      "id": "button_border_enabled",
+      "label": "Enable button border",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Button border color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "label": "Button border width",
+      "default": 2,
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "group_header",
+      "label": "Color Settings"
+    },
+    {
+      "type": "switch",
+      "id": "use_color_scheme",
+      "label": "Use color scheme",
+      "default": false,
+      "info": "Use one of the 4 predefined color schemes for text and background"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "1",
+      "options": [
+        {
+          "value": "1",
+          "label": "Color scheme 1"
+        },
+        {
+          "value": "2",
+          "label": "Color scheme 2"
+        },
+        {
+          "value": "3",
+          "label": "Color scheme 3"
+        },
+        {
+          "value": "4",
+          "label": "Color scheme 4"
+        }
+      ],
+      "info": "Applied when 'Use color scheme' is enabled"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000",
+      "info": "Used when color scheme is disabled"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666",
+      "info": "Used when color scheme is disabled"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.hero-banner.settings.group_header__0.label"
+    },
+    {
+      "type": "image",
+      "id": "image",
+      "label": "t:sections.hero-banner.settings.image.label",
+      "info": "Desktop background image"
+    },
+    {
+      "type": "text",
+      "id": "image_focal_point",
+      "label": "Desktop image focal point",
+      "default": "center center",
+      "info": "E.g., 'center center', 'left top', '25% 75%'"
+    },
+    {
+      "type": "image",
+      "id": "mobile_image",
+      "label": "Mobile background image",
+      "info": "Optional separate image for mobile devices"
+    },
+    {
+      "type": "text",
+      "id": "mobile_focal_point",
+      "label": "Mobile image focal point",
+      "default": "center center",
+      "info": "E.g., 'center center', 'left top', '25% 75%'"
+    },
+    {
+      "type": "group_header",
+      "label": "Overlay Settings"
+    },
+    {
+      "type": "switch",
+      "id": "enable_overlay",
+      "label": "Enable overlay",
+      "default": false,
+      "info": "Add an overlay to improve text readability"
+    },
+    {
+      "type": "select",
+      "id": "overlay_type",
+      "label": "Overlay type",
+      "default": "color",
+      "options": [
+        {
+          "value": "color",
+          "label": "Solid color"
+        },
+        {
+          "value": "gradient",
+          "label": "Gradient"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000",
+      "info": "Used when overlay type is 'Solid color'"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.3,
+      "info": "Transparency of the overlay (0 = transparent, 1 = opaque)"
+    },
+    {
+      "type": "select",
+      "id": "overlay_gradient_direction",
+      "label": "Gradient direction",
+      "default": "bottom",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top to bottom"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom to top"
+        },
+        {
+          "value": "left",
+          "label": "Left to right"
+        },
+        {
+          "value": "right",
+          "label": "Right to left"
+        },
+        {
+          "value": "radial",
+          "label": "Radial (center out)"
+        }
+      ],
+      "info": "Used when overlay type is 'Gradient'"
+    },
+    {
+      "type": "color",
+      "id": "overlay_gradient_start",
+      "label": "Gradient start color",
+      "default": "#000000",
+      "info": "Used when overlay type is 'Gradient'"
+    },
+    {
+      "type": "color",
+      "id": "overlay_gradient_end",
+      "label": "Gradient end color",
+      "default": "#000000",
+      "info": "Used when overlay type is 'Gradient'"
+    },
+    {
+      "type": "group_header",
+      "label": "Content Position"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "label": "Desktop content position",
+      "default": "center-center",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "Top Left"
+        },
+        {
+          "value": "top-center",
+          "label": "Top Center"
+        },
+        {
+          "value": "top-right",
+          "label": "Top Right"
+        },
+        {
+          "value": "center-left",
+          "label": "Center Left"
+        },
+        {
+          "value": "center-center",
+          "label": "Center"
+        },
+        {
+          "value": "center-right",
+          "label": "Center Right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom Left"
+        },
+        {
+          "value": "bottom-center",
+          "label": "Bottom Center"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom Right"
+        }
+      ],
+      "info": "Content position on desktop devices (≥ 768px)"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_position",
+      "label": "Mobile content position",
+      "default": "center-center",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "Top Left"
+        },
+        {
+          "value": "top-center",
+          "label": "Top Center"
+        },
+        {
+          "value": "top-right",
+          "label": "Top Right"
+        },
+        {
+          "value": "center-left",
+          "label": "Center Left"
+        },
+        {
+          "value": "center-center",
+          "label": "Center"
+        },
+        {
+          "value": "center-right",
+          "label": "Center Right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom Left"
+        },
+        {
+          "value": "bottom-center",
+          "label": "Bottom Center"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom Right"
+        }
+      ],
+      "info": "Content position on mobile devices (< 768px)"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout Settings"
+    },
+    {
+      "type": "switch",
+      "id": "full_width_image",
+      "label": "Full width image (auto height)",
+      "default": false,
+      "info": "Display image at full width with automatic height. Overrides height settings."
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "label": "Mobile height",
+      "default": 60,
+      "min": 40,
+      "max": 100,
+      "step": 1,
+      "unit": "vh",
+      "info": "Height on mobile devices (< 768px)"
+    },
+    {
+      "type": "range",
+      "id": "tablet_height",
+      "label": "Tablet height",
+      "default": 80,
+      "min": 50,
+      "max": 100,
+      "step": 1,
+      "unit": "vh",
+      "info": "Height on tablet devices (768px - 1023px)"
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "label": "Desktop height",
+      "default": 100,
+      "min": 50,
+      "max": 100,
+      "step": 1,
+      "unit": "vh",
+      "info": "Height on desktop (≥ 1024px)"
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Mobile minimum height",
+      "default": 400,
+      "min": 300,
+      "max": 600,
+      "step": 1,
+      "unit": "px",
+      "info": "Minimum height on mobile"
+    },
+    {
+      "type": "range",
+      "id": "min_height_tablet",
+      "label": "Tablet minimum height",
+      "default": 500,
+      "min": 400,
+      "max": 700,
+      "step": 1,
+      "unit": "px",
+      "info": "Minimum height on tablet"
+    },
+    {
+      "type": "range",
+      "id": "min_height_desktop",
+      "label": "Desktop minimum height",
+      "default": 600,
+      "min": 500,
+      "max": 800,
+      "step": 1,
+      "unit": "px",
+      "info": "Minimum height on desktop"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.hero-banner.settings.group_header__1.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:sections.hero-banner.settings.padding_top.label",
+      "default": 60,
+      "max": 200,
+      "min": 0,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:sections.hero-banner.settings.padding_bottom.label",
+      "default": 60,
+      "max": 200,
+      "min": 0,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.hero-banner.presets.hero_banner.name",
+      "settings": {
+        "title": "ENERGIZE YOUR JOURNEY",
+        "subtitle": "Discover the perfect blend of taste and energy with Avvika",
+        "button_label": "Shop now",
+        "button_link": "/collections/all",
+        "image_focal_point": "center center",
+        "mobile_focal_point": "center center",
+        "mobile_height": 60,
+        "tablet_height": 80,
+        "desktop_height": 100,
+        "min_height": 400,
+        "min_height_tablet": 500,
+        "min_height_desktop": 600,
+        "use_color_scheme": false,
+        "color_scheme": "1",
+        "title_color": "#000000",
+        "subtitle_color": "#666666",
+        "enable_overlay": false,
+        "overlay_type": "color",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0.3,
+        "desktop_text_alignment": "text-center",
+        "mobile_text_alignment": "text-center",
+        "padding_top": 0,
+        "padding_bottom": 120
+      }
+    }
+  ]
+}
+{{/schema}}

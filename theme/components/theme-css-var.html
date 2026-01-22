@@ -1,0 +1,107 @@
+<style>
+{{{settings.title_font_family | font_modify("weight", "400") | font_face()}}}
+{{{settings.title_font_family | font_modify("weight", "500") | font_face()}}}
+{{{settings.title_font_family | font_modify("weight", "600") | font_face()}}}
+{{{settings.title_font_family | font_modify("weight", "700") | font_face()}}}
+{{{settings.title_font_family | font_face()}}}
+{{{settings.body_font_family | font_modify("weight", "400") | font_face()}}}
+{{{settings.body_font_family | font_modify("weight", "500") | font_face()}}}
+{{{settings.body_font_family | font_modify("weight", "600") | font_face()}}}
+{{{settings.body_font_family | font_modify("weight", "700") | font_face()}}}
+{{{settings.body_font_family | font_face()}}}
+
+:root {
+/* Error color */
+--color-error-message: 240, 73, 73;
+
+/* Page colors */
+--color-page-background: {{settings.color_page_background.red}}, {{settings.color_page_background.green}}, {{settings.color_page_background.blue}};
+--color-sale: {{settings.color_sale.red}}, {{settings.color_sale.green}}, {{settings.color_sale.blue}};
+--color-discount: {{settings.color_discount.red}}, {{settings.color_discount.green}}, {{settings.color_discount.blue}};
+--color-tag-background: {{settings.color_discount_tag_background.red}}, {{settings.color_discount_tag_background.green}}, {{settings.color_discount_tag_background.blue}};
+--color-tag-text: {{settings.color_discount_tag_text.red}}, {{settings.color_discount_tag_text.green}}, {{settings.color_discount_tag_text.blue}};
+
+/* Font settings */
+--title-font: "{{settings.title_font_family.family}}", "{{settings.title_font_family.fallback_families}}";
+--title-font-weight: {{settings.title_font_family.weight}};
+--title-font-style: {{settings.title_font_family.style}};
+--title-letter-spacing: {{#if settings.title_letter_spacing == 0}}0.00000001em{{#else/}}{{ settings.title_letter_spacing | divided_by(1000, integer=false) }}em{{/if}};
+--title-font-size: {{settings.title_font_size}}px;
+--title-line-height: {{settings.title_line_height}};
+--title-text-transform: {{#if settings.title_uppercase}}uppercase{{#else/}}unset{{/if}};
+
+--body-font: "{{settings.body_font_family.family}}", "{{settings.body_font_family.fallback_families}}";
+--body-font-style: {{settings.body_font_family.style}};
+--body-font-weight: {{settings.body_font_family.weight}};
+{{#var body_font_weight = settings.body_font_family.weight /}}
+{{#var body_font_weight_bold = body_font_weight | plus(300) /}}
+--body-font-weight-bold: {{#if body_font_weight_bold >= 1000}}1000{{#else/}}{{body_font_weight_bold}}{{/if}};
+--body-letter-spacing: {{#if settings.body_letter_spacing == 0}}0.00000001em{{#else/}}{{ settings.body_letter_spacing | divided_by(1000, integer=false) }}em{{/if}};
+--body-font-size: {{settings.body_font_size}}px;
+--body-line-height: {{settings.body_line_height}};
+
+--navigation-font: "{{settings.navigation_font_family.family}}";
+--navigation-font-size: {{settings.navigation_font_size}}px;
+{{#if settings.navigation_links_uppercase}}
+--navigation-links-uppercase: uppercase;
+{{/if}}
+{{#if settings.title_uppercase}}
+--title-text-uppercase: uppercase;
+{{/if}}
+
+/* Button styles */
+--button-border-radius: {{settings.button_border_radius}}px;
+{{#if settings.button_text_uppercase}}
+--button-text-uppercase: uppercase;
+{{/if}}
+--button-letter-spacing: {{#if settings.button_letter_spacing == 0}}0.00000001em{{#else/}}{{ settings.button_letter_spacing | divided_by(1000, integer=false) }}em{{/if}};
+--button-primary-bg: {{settings.button_primary_bg.red}}, {{settings.button_primary_bg.green}}, {{settings.button_primary_bg.blue}};
+--button-primary-bg-hover: {{settings.button_primary_bg_hover.red}}, {{settings.button_primary_bg_hover.green}}, {{settings.button_primary_bg_hover.blue}};
+--button-primary-text: {{settings.button_primary_text.red}}, {{settings.button_primary_text.green}}, {{settings.button_primary_text.blue}};
+--button-secondary-bg: {{settings.button_secondary_bg.red}}, {{settings.button_secondary_bg.green}}, {{settings.button_secondary_bg.blue}};
+--button-secondary-bg-hover: {{settings.button_secondary_bg_hover.red}}, {{settings.button_secondary_bg_hover.green}}, {{settings.button_secondary_bg_hover.blue}};
+--button-secondary-text: {{settings.button_secondary_text.red}}, {{settings.button_secondary_text.green}}, {{settings.button_secondary_text.blue}};
+--button-secondary-border: {{settings.button_secondary_border.red}}, {{settings.button_secondary_border.green}}, {{settings.button_secondary_border.blue}};
+
+/* Input fields */
+--input-border-thickness: {{settings.input_border_thickness}}px;
+--input-border-opacity: {{settings.input_border_opacity}}%;
+--input-border-radius: {{settings.input_border_radius}}px;
+{{#var input_border_radius_outset = 0 /}}
+{{#if settings.input_border_radius != 0}}
+  {{#set input_border_radius_outset = settings.input_border_radius | plus(settings.input_border_thickness) /}}
+{{/if}}
+--input-border-radius-outset: {{input_border_radius_outset}}px;
+--input-shadow-opacity: {{settings.input_shadow_opacity}}%;
+--input-shadow-offset-x: {{settings.input_shadow_offset_x}}px;
+--input-shadow-offset-y: {{settings.input_shadow_offset_y}}px;
+--input-shadow-blur: {{settings.input_shadow_blur}}px;
+
+/* Card styles */
+--card-border-radius: {{settings.card_border_radius}}px;
+--card-shadow: {{settings.card_shadow}}%;
+
+/* Legacy color variables */
+--color-primary: rgb({{settings.button_primary_bg.red}}, {{settings.button_primary_bg.green}}, {{settings.button_primary_bg.blue}});
+--color-secondary: rgb({{settings.button_secondary_bg.red}}, {{settings.button_secondary_bg.green}}, {{settings.button_secondary_bg.blue}});
+}
+
+/* Color schemes from theme settings */
+{{#for scheme in settings.color_schemes}}
+.color-{{scheme.id}} {
+  --color-background: {{scheme.settings.color_background.red}},{{scheme.settings.color_background.green}},{{scheme.settings.color_background.blue}};
+  --color-text: {{scheme.settings.color_text.red}},{{scheme.settings.color_text.green}},{{scheme.settings.color_text.blue}};
+  --color-light-text: {{scheme.settings.color_light_text.red}},{{scheme.settings.color_light_text.green}},{{scheme.settings.color_light_text.blue}};
+  --color-entry-line: {{scheme.settings.color_entry_line.red}},{{scheme.settings.color_entry_line.green}},{{scheme.settings.color_entry_line.blue}};
+  --color-button-background: {{scheme.settings.color_button_background.red}},{{scheme.settings.color_button_background.green}},{{scheme.settings.color_button_background.blue}};
+  --color-button-text: {{scheme.settings.color_button_text.red}},{{scheme.settings.color_button_text.green}},{{scheme.settings.color_button_text.blue}};
+  --color-button-secondary-background: {{scheme.settings.color_button_secondary_background.red}},{{scheme.settings.color_button_secondary_background.green}},{{scheme.settings.color_button_secondary_background.blue}};
+  --color-button-secondary-text: {{scheme.settings.color_button_secondary_text.red}},{{scheme.settings.color_button_secondary_text.green}},{{scheme.settings.color_button_secondary_text.blue}};
+  --color-button-secondary-border: {{scheme.settings.color_button_secondary_border.red}},{{scheme.settings.color_button_secondary_border.green}},{{scheme.settings.color_button_secondary_border.blue}};
+  --color-button-text-link: {{scheme.settings.color_button_text_link.red}},{{scheme.settings.color_button_text_link.green}},{{scheme.settings.color_button_text_link.blue}};
+
+  color: rgba(var(--color-text));
+  background-color: rgba(var(--color-background));
+}
+{{/for}}
+</style>

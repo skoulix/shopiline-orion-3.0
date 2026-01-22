@@ -1,0 +1,420 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(30) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(30) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(60) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(60) }}px;
+    }
+  }
+</style>
+
+<div id="shopline-section-{{section.id}}" data-section-id="{{section.id}}" class="animated-counters-section" style="background-color: {{ section.settings.background_color | default("ffffff") }};">
+  <div class="{{#if section.settings.full_width}}w-full{{#else/}}container{{/if}}">
+    {{#if section.settings.title}}
+      <h2 class="text-3xl sm:text-4xl md:text-5xl {{#if section.settings.uppercase_title}}uppercase{{/if}} {{#if section.settings.title_alignment == "left"}}text-left{{#else if section.settings.title_alignment == "right" /}}text-right{{#else/}}text-center{{/if}} mb-12"
+          style="font-family: {{#if section.settings.heading_font == "title"}}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.heading_color | default("000000") }};">
+        {{section.settings.title}}
+      </h2>
+    {{/if}}
+
+    <div class="grid {{#if section.settings.columns_mobile == "1"}}grid-cols-1{{#else/}}grid-cols-2{{/if}} {{#if section.settings.columns_desktop == 2}}md:grid-cols-2{{#else if section.settings.columns_desktop == 3 /}}md:grid-cols-3{{#else/}}md:grid-cols-4{{/if}} {{#if section.settings.gap == 0}}gap-0{{#else if section.settings.gap == 4 /}}gap-4{{#else if section.settings.gap == 8 /}}gap-8{{#else if section.settings.gap == 12 /}}gap-12{{#else/}}gap-6{{/if}}">
+      {{#blocks}}
+        <div class="counter-item text-center" data-counter-duration="{{ section.settings.animation_duration | default(2000) }}">
+          {{#block section_settings=section.settings}}{{/block}}
+        </div>
+      {{/blocks}}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.counter-item');
+    const animationDuration = {{ section.settings.animation_duration | default(2000) }};
+    const startDelay = {{ section.settings.start_delay | default(0) }};
+
+    const formatNumber = (num, delimiter) => {
+      if (delimiter) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, delimiter);
+      }
+      return num.toString();
+    };
+
+    const animateCounter = (counter) => {
+      const numberElement = counter.querySelector('.counter-number');
+      const targetValue = parseInt(numberElement.dataset.end) || 0;
+      const delimiter = numberElement.dataset.delimiter;
+      const startValue = 0;
+      const increment = targetValue / (animationDuration / 16);
+      let currentValue = startValue;
+
+      const updateCounter = () => {
+        currentValue += increment;
+        if (currentValue < targetValue) {
+          numberElement.textContent = formatNumber(Math.floor(currentValue), delimiter);
+          requestAnimationFrame(updateCounter);
+        } else {
+          numberElement.textContent = formatNumber(targetValue, delimiter);
+        }
+      };
+
+      setTimeout(() => {
+        updateCounter();
+      }, startDelay);
+    };
+
+    // Intersection Observer for scroll-triggered animation
+    const observerOptions = {
+      threshold: 0.5,
+      rootMargin: '0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+          entry.target.classList.add('animated');
+          animateCounter(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    counters.forEach(counter => {
+      observer.observe(counter);
+    });
+  });
+</script>
+
+{{#schema}}
+{
+  "name": "Animated Counters",
+  "class": "section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "switch",
+      "id": "uppercase_title",
+      "label": "Uppercase section title",
+      "default": false
+    },
+    {
+      "type": "group_header",
+      "label": "Counter Settings"
+    },
+    {
+      "type": "switch",
+      "id": "uppercase_labels",
+      "label": "Uppercase counter labels",
+      "default": true
+    },
+    {
+      "type": "switch",
+      "id": "use_delimiter",
+      "label": "Use thousand separator",
+      "default": true,
+      "info": "Adds comma separator for thousands (e.g., 30,000)"
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "label": "Animation duration",
+      "min": 500,
+      "max": 5000,
+      "step": 500,
+      "unit": "ms",
+      "default": 2000,
+      "info": "How long the counting animation takes"
+    },
+    {
+      "type": "range",
+      "id": "start_delay",
+      "label": "Start delay",
+      "min": 0,
+      "max": 1000,
+      "step": 100,
+      "unit": "ms",
+      "default": 0,
+      "info": "Delay before animation starts"
+    },
+    {
+      "type": "group_header",
+      "label": "Grid Settings"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between counters",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "unit": "spacing units",
+      "default": 6
+    },
+    {
+      "type": "group_header",
+      "label": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Section heading font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "title"
+    },
+    {
+      "type": "select",
+      "id": "label_font",
+      "label": "Counter label font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "select",
+      "id": "number_font",
+      "label": "Counter number font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Section heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Counter label color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "Counter number color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#999999"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "group_header",
+      "label": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "counter",
+      "name": "Counter",
+      "settings": [
+        {
+          "type": "text",
+          "id": "target_value",
+          "label": "Target value",
+          "default": "30000",
+          "info": "The number to count up to (e.g., 30000, 500, 1000000)"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Counter label",
+          "default": "HAPPY CUSTOMERS",
+          "info": "Text displayed below the number"
+        },
+        {
+          "type": "text",
+          "id": "prefix",
+          "label": "Number prefix",
+          "info": "Text before the number (e.g., $, €)"
+        },
+        {
+          "type": "text",
+          "id": "suffix",
+          "label": "Number suffix",
+          "default": "+",
+          "info": "Text after the number (e.g., +, %, k)"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "info": "Optional text below the counter"
+        },
+        {
+          "type": "image",
+          "id": "icon",
+          "label": "Icon",
+          "info": "Optional icon above the counter"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Animated Counters",
+      "blocks": [
+        {
+          "type": "counter",
+          "settings": {
+            "target_value": "30000",
+            "label": "HAPPY CUSTOMERS",
+            "suffix": "+"
+          }
+        },
+        {
+          "type": "counter",
+          "settings": {
+            "target_value": "300",
+            "label": "5 STAR REVIEWS",
+            "suffix": "+"
+          }
+        }
+      ]
+    }
+  ]
+}
+{{/schema}}

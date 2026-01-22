@@ -1,0 +1,256 @@
+{{#if localization.available_countries | size() > 1 }}
+  <script>
+    // Make localization data available to Vue components
+    window.localizationData = {
+      availableCountries: [
+        {{#for country in localization.available_countries}}
+        {
+          iso_code: "{{country.iso_code}}",
+          name: "{{country.name}}",
+          currency: {
+            iso_code: "{{country.currency.iso_code}}",
+            symbol: "{{country.currency.symbol}}"
+          }
+        }{{#if !forloop.last}},{{/if}}
+        {{/for}}
+      ],
+      currentCurrency: "{{localization.country.currency.iso_code}}"
+    };
+  </script>
+  <div class="currency-selector-wrapper" {{#if is_transparent}}data-transparent="true"{{/if}}>
+    <div class="dropdown-menu relative">
+      <button class="dropdown-menu__button flex items-center space-x-2 text-sm font-normal transition-all hover:opacity-65" type="button" onclick="toggleCurrencyDropdown(event)" style="{{#if is_transparent}}color: {{ text_color | default("#ffffff") }};{{/if}}">
+        <span class="fi fi-{{ localization.country.iso_code | downcase() }} rounded-sm" style="width: 20px; height: 15px;"></span>
+        <span style="{{#if is_transparent}}color: {{ text_color | default("#ffffff") }};{{/if}}">{{localization.country.currency.iso_code}}</span>
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="{{#if is_transparent}}color: {{ text_color | default("#ffffff") }};{{/if}}">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div class="dropdown-menu__list-wrapper absolute top-full mt-2 w-72 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-[9999] max-h-64 overflow-y-auto" style="display: none; right: 0;">
+        <ul class="dropdown-menu__list list-unstyled py-1">
+          {{#for country in localization.available_countries}}
+            <li>
+              <a href="/localization"
+                 onclick="changeCurrency(event, '{{country.iso_code}}')"
+                 class="flex items-center gap-4 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-100 text-left">
+                <span class="fi fi-{{ country.iso_code | downcase() }} rounded-sm flex-shrink-0" style="width: 20px; height: 15px;"></span>
+                <span style="font-weight: 600; text-transform: none;">{{country.name}} ({{country.currency.iso_code}})</span>
+              </a>
+            </li>
+          {{/for}}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleCurrencyDropdown(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const dropdown = button.nextElementSibling;
+      const isVisible = dropdown.style.display !== "none";
+
+      // Close all other dropdowns
+      document.querySelectorAll('.dropdown-menu__list-wrapper').forEach(d => {
+        d.style.display = 'none';
+      });
+
+      // Check if in footer and pre-position before showing
+      const isFooter = button.closest('.footer-currency-selector');
+      if (isFooter && !isVisible) {
+        // Set position BEFORE making visible to prevent flash
+        dropdown.style.visibility = 'hidden';
+        dropdown.style.display = 'block';
+        dropdown.style.bottom = 'calc(100% + 0.5rem)';
+        dropdown.style.top = 'auto';
+
+        // Center on mobile, align left on desktop
+        if (window.innerWidth < 768) {
+          // Mobile: use fixed positioning with proper bottom calculation
+          const buttonRect = button.getBoundingClientRect();
+          const dropdownWidth = 288; // w-72 = 18rem = 288px
+          const buttonCenter = buttonRect.left + (buttonRect.width / 2);
+          const leftPosition = buttonCenter - (dropdownWidth / 2);
+
+          // Ensure dropdown doesn't go off screen
+          const maxLeft = window.innerWidth - dropdownWidth - 16; // 16px margin
+          const finalLeft = Math.max(16, Math.min(leftPosition, maxLeft));
+
+          // Calculate bottom position from viewport
+          const bottomPosition = window.innerHeight - buttonRect.top + 8; // 8px gap
+
+          dropdown.style.position = 'fixed';
+          dropdown.style.left = `${finalLeft}px`;
+          dropdown.style.right = 'auto';
+          dropdown.style.bottom = `${bottomPosition}px`;
+          dropdown.style.top = 'auto';
+          dropdown.style.transform = 'none';
+          dropdown.style.zIndex = '9999';
+        } else {
+          // Desktop: default positioning
+          dropdown.style.position = 'absolute';
+          dropdown.style.right = 'auto';
+          dropdown.style.left = '0';
+
+          // Check and adjust for overflow
+          const rect = dropdown.getBoundingClientRect();
+          if (rect.right > window.innerWidth) {
+            dropdown.style.left = 'auto';
+            dropdown.style.right = '0';
+          }
+        }
+
+        // Now make it visible
+        dropdown.style.visibility = 'visible';
+      } else if (!isVisible) {
+        // Non-footer dropdown - just show it
+        dropdown.style.display = 'block';
+      } else {
+        // Hide dropdown
+        dropdown.style.display = 'none';
+      }
+
+      // Rotate arrow
+      const svg = button.querySelector('svg');
+      if (svg) {
+        svg.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+      }
+    }
+
+    function changeCurrency(event, countryCode) {
+      event.preventDefault();
+
+      // Create and submit form with return_to parameter
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/localization';
+      form.acceptCharset = 'UTF-8';
+      form.enctype = 'multipart/form-data';
+
+      // Add country code
+      const countryInput = document.createElement('input');
+      countryInput.type = 'hidden';
+      countryInput.name = 'country_code';
+      countryInput.value = countryCode;
+      form.appendChild(countryInput);
+
+      // Add return_to to stay on current page
+      const returnInput = document.createElement('input');
+      returnInput.type = 'hidden';
+      returnInput.name = 'return_to';
+      returnInput.value = window.location.pathname + window.location.search;
+      form.appendChild(returnInput);
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.currency-selector-wrapper')) {
+        document.querySelectorAll('.dropdown-menu__list-wrapper').forEach(d => {
+          d.style.display = 'none';
+          // Reset arrow rotation
+          const button = d.previousElementSibling;
+          if (button) {
+            const svg = button.querySelector('svg');
+            if (svg) svg.style.transform = 'rotate(0deg)';
+          }
+        });
+      }
+    });
+  </script>
+{{#else/}}
+  <div class="flex items-center gap-2" {{#if is_transparent}}style="color: {{ text_color | default("#ffffff") }};"{{/if}}>
+    <span class="fi fi-{{ localization.country.iso_code | downcase() }} rounded-sm" style="width: 20px; height: 15px;"></span>
+    <span class="text-sm font-medium">{{localization.country.currency.iso_code}}</span>
+  </div>
+{{/if}}
+
+<style>
+  .currency-selector-wrapper {
+    display: inline-block;
+  }
+
+  .dropdown-menu {
+    position: relative;
+  }
+
+  .dropdown-menu__button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .dropdown-menu__button svg {
+    transition: transform 0.2s;
+  }
+
+  .dropdown-menu__list {
+    margin: 0;
+    padding: 0.25rem 0;
+    list-style: none;
+  }
+
+  .dropdown-menu__list a {
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+  }
+
+  /* Footer specific adjustments */
+  .footer-currency-selector {
+    position: relative;
+  }
+
+  .footer-currency-selector .dropdown-menu__list-wrapper {
+    bottom: calc(100% + 0.5rem);
+    top: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    max-width: min(48rem, calc(100vw - 2rem));
+  }
+
+  /* Mobile styling for footer currency selector */
+  @media (max-width: 767px) {
+    .footer-currency-selector .dropdown-menu__list-wrapper {
+      width: calc(100vw - 2rem);
+      max-width: 18rem;
+    }
+  }
+
+  /* Desktop positioning */
+  @media (min-width: 768px) {
+    .footer-currency-selector .dropdown-menu__list-wrapper {
+      right: auto;
+      left: 0;
+    }
+  }
+
+  .footer-currency-selector .dropdown-menu__list a {
+    color: #374151 !important;
+  }
+
+  /* Prevent horizontal scrollbar */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Transparent header styling */
+  .currency-selector-wrapper[data-transparent="true"] .dropdown-menu__button,
+  .currency-selector-wrapper[data-transparent="true"] .dropdown-menu__button span,
+  .currency-selector-wrapper[data-transparent="true"] .dropdown-menu__button svg {
+    color: inherit !important;
+  }
+
+  /* Ensure the flag and text inherit the color */
+  .site-header.transparent-not-scrolled .currency-selector-wrapper .dropdown-menu__button,
+  .site-header.transparent-not-scrolled .currency-selector-wrapper .dropdown-menu__button span,
+  .site-header.transparent-not-scrolled .currency-selector-wrapper .dropdown-menu__button svg {
+    color: var(--current-header-color) !important;
+  }
+</style>

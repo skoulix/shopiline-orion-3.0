@@ -1,0 +1,146 @@
+<div class="main-orders-section container" id="shopline-section-{{section.id}}" data-section-id="{{section.id}}">
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(30) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(30) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(40) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(40) }}px;
+    }
+  }
+</style>
+  <div class="max-w-6xl mx-auto px-4">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl sm:text-3xl font-bold">{{"customer.orders.title" | t()}}</h1>
+    </div>
+
+    {{#var order_paginate = customer | get_order_pagination(20) /}}
+    {{#if order_paginate.items > 0}}
+      <!-- Orders Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="border-b">
+              <th class="text-left py-3 px-4 font-medium">{{"customer.orders.order_number" | t()}}</th>
+              <th class="text-left py-3 px-4 font-medium">{{"customer.orders.date" | t()}}</th>
+              <th class="text-left py-3 px-4 font-medium">{{"customer.orders.payment_status" | t()}}</th>
+              <th class="text-left py-3 px-4 font-medium">{{"customer.orders.fulfillment_status" | t()}}</th>
+              <th class="text-right py-3 px-4 font-medium">{{"customer.orders.total" | t()}}</th>
+              <th class="text-right py-3 px-4"></th>
+            </tr>
+          </thead>
+          <tbody>
+              {{#for order in order_paginate.list}}
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="py-4 px-4">
+                    <a href="{{routes.account_order_list_url}}/{{order.id}}" class="text-black hover:underline font-medium">{{order.name}}</a>
+                  </td>
+                  <td class="py-4 px-4 text-gray-600">
+                    {{order.created_at | date(format="%Y-%m-%d %H:%M")}}
+                  </td>
+                  <td class="py-4 px-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                      {{#if order.financial_status == "paid"}}bg-green-100 text-green-800{{/if}}
+                      {{#if order.financial_status == "pending"}}bg-yellow-100 text-yellow-800{{/if}}
+                      {{#if order.financial_status == "refunded"}}bg-gray-100 text-gray-800{{/if}}
+                      {{#if order.financial_status == "partially_refunded"}}bg-gray-100 text-gray-800{{/if}}
+                    ">
+                      {{order.financial_status_label}}
+                    </span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                      {{#if order.fulfillment_status == "fulfilled"}}bg-green-100 text-green-800{{/if}}
+                      {{#if order.fulfillment_status == "unfulfilled"}}bg-gray-100 text-gray-800{{/if}}
+                      {{#if order.fulfillment_status == "partially_fulfilled"}}bg-yellow-100 text-yellow-800{{/if}}
+                    ">
+                      {{order.fulfillment_status_label}}
+                    </span>
+                  </td>
+                  <td class="py-4 px-4 text-right font-medium">
+                    {{{order.total_price | money_with_currency(currency=order.currency)}}}
+                  </td>
+                  <td class="py-4 px-4 text-right">
+                    <a href="{{routes.account_order_list_url}}/{{order.id}}" class="text-sm text-black hover:underline">
+                      {{"customer.orders.view_order" | t()}} →
+                    </a>
+                  </td>
+                </tr>
+              {{/for}}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+        {{#if order_paginate.pages > 1}}
+          <nav class="mt-8 flex justify-center" aria-label="Pagination">
+            {{#component "pagination" paginate=order_paginate /}}
+          </nav>
+        {{/if}}
+    {{#else/}}
+      <!-- Empty State -->
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">{{"customer.orders.no_orders" | t()}}</h3>
+        <p class="text-gray-600 mb-6">{{"customer.orders.no_orders_message" | t()}}</p>
+        <a href="{{routes.all_products_collection_url}}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-black hover:bg-black-dark">
+          {{"customer.orders.continue_shopping" | t()}}
+        </a>
+      </div>
+    {{/if}}
+  </div>
+</div>
+
+{{#schema}}
+{
+  "name": "t:sections.main-orders.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.main-orders.settings.padding_top.label",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.main-orders.settings.padding_bottom.label",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    }
+  ]
+}
+{{/schema}}

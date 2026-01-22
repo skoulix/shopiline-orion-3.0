@@ -1,0 +1,783 @@
+{{#var menu_id = section.settings.menu /}}
+{{#var mobile_menu_id = section.settings.mobile_menu /}}
+
+<script>
+  // Global menu data for mobile menu
+  window.mobileMenuData = [
+    {{#for link in linklists.main-menu.links}}
+    {
+      title: "{{ link.title }}",
+      url: "{{ link.url }}",
+      {{#if link.links}}
+      links: [
+        {{#for sublink in link.links}}
+        {
+          title: "{{ sublink.title }}",
+          url: "{{ sublink.url }}",
+          {{#if sublink.links}}
+          links: [
+            {{#for subsublink in sublink.links}}
+            {
+              title: "{{ subsublink.title }}",
+              url: "{{ subsublink.url }}"
+            }{{#unless forloop.last}},{{/unless}}
+            {{/for}}
+          ]
+          {{/if}}
+        }{{#unless forloop.last}},{{/unless}}
+        {{/for}}
+      ]
+      {{/if}}
+    }{{#unless forloop.last}},{{/unless}}
+    {{/for}}
+  ];
+</script>
+
+<div class="header-group {{#if section.settings.enable_sticky_header}}sticky-header{{/if}}"
+     {{#if section.settings.enable_sticky_header}}
+     data-sticky="true"
+     data-hide-on-scroll="{{ section.settings.sticky_hide_on_scroll_down }}"
+     data-sticky-background="{{ section.settings.sticky_header_background }}"
+     {{/if}}
+     {{#if section.settings.transparent_header_homepage}}
+     data-transparent="true"
+     {{/if}}>
+
+{{#if section.settings.show_announcement}}
+<div class="announcement-bar text-center py-2.5 text-sm color-{{ section.settings.announcement_color_scheme.id }}" style="background-image: none !important;">
+  <div class="container font-semibold">
+    {{ section.settings.announcement_text }}
+  </div>
+</div>
+{{/if}}
+
+<header class="site-header bg-white border-b border-gray-200" id="section-{{ section.id }}"
+        style="{{#if section.settings.transparent_header_homepage}}{{#if request.page_type == 'index'}} background-color: transparent; border-bottom-color: transparent;{{/if}}{{/if}}">
+  <style>
+    /* Mobile/Desktop breakpoint control */
+    {{#if section.settings.mobile_breakpoint == "sm"}}
+      #section-{{ section.id }} .header-mobile { display: flex; }
+      #section-{{ section.id }} .header-desktop { display: none; }
+      @media (min-width: 640px) {
+        #section-{{ section.id }} .header-mobile { display: none; }
+        #section-{{ section.id }} .header-desktop { display: flex; }
+      }
+    {{#else if section.settings.mobile_breakpoint == "lg" /}}
+      #section-{{ section.id }} .header-mobile { display: flex; }
+      #section-{{ section.id }} .header-desktop { display: none; }
+      @media (min-width: 1024px) {
+        #section-{{ section.id }} .header-mobile { display: none; }
+        #section-{{ section.id }} .header-desktop { display: flex; }
+      }
+    {{#else if section.settings.mobile_breakpoint == "xl" /}}
+      #section-{{ section.id }} .header-mobile { display: flex; }
+      #section-{{ section.id }} .header-desktop { display: none; }
+      @media (min-width: 1280px) {
+        #section-{{ section.id }} .header-mobile { display: none; }
+        #section-{{ section.id }} .header-desktop { display: flex; }
+      }
+    {{#else/}}
+      /* Default: md (768px) */
+      #section-{{ section.id }} .header-mobile { display: flex; }
+      #section-{{ section.id }} .header-desktop { display: none; }
+      @media (min-width: 768px) {
+        #section-{{ section.id }} .header-mobile { display: none; }
+        #section-{{ section.id }} .header-desktop { display: flex; }
+      }
+    {{/if}}
+
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_mobile | default: 30 }}px !important;
+      padding-bottom: {{ section.settings.padding_bottom_mobile | default: 30 }}px !important;
+    }
+    @media (min-width: 768px) {
+      #section-{{ section.id }} {
+        padding-top: {{ section.settings.padding_top | default: 16 }}px !important;
+        padding-bottom: {{ section.settings.padding_bottom | default: 16 }}px !important;
+      }
+    }
+  </style>
+
+  <style>
+    /* CSS Variables for dynamic color switching */
+    .site-header {
+      --current-header-color: {{ section.settings.header_text_color | default: '#000000' }};
+    }
+
+    /* Apply color to all header elements using the variable */
+    .site-header,
+    .site-header a,
+    .site-header button,
+    .site-header nav a,
+    .site-header nav > div > a,
+    .site-header .group > a,
+    .site-header h1 {
+      color: var(--current-header-color) !important;
+    }
+
+    /* Maintain color on hover states */
+    .site-header a:hover,
+    .site-header button:hover,
+    .site-header nav a:hover,
+    .site-header nav > div > a:hover,
+    .site-header .group > a:hover {
+      color: var(--current-header-color) !important;
+      opacity: 0.8;
+    }
+
+    /* Dropdown menus should always have standard colors */
+    .site-header .group > div a {
+      color: #374151 !important;
+    }
+    .site-header .group > div a:hover {
+      color: #111827 !important;
+      background-color: #f3f4f6 !important;
+    }
+    /* Apply stroke only to icon SVGs, not the logo */
+    .site-header svg:not(#logo-77) {
+      stroke: var(--current-header-color) !important;
+    }
+    /* Logo placeholder uses fill from currentColor which inherits text color */
+    .site-header #logo-77 {
+      color: var(--current-header-color) !important;
+    }
+
+    /* Override variable for transparent state (homepage only, not scrolled) */
+    {{#if section.settings.transparent_header_homepage}}{{#if request.page_type == 'index'}}
+    .site-header.transparent-not-scrolled {
+      --current-header-color: {{ section.settings.transparent_text_color | default: '#ffffff' }};
+    }
+
+    /* Explicitly set default color when scrolled */
+    .site-header.scrolled {
+      --current-header-color: {{ section.settings.header_text_color | default: '#000000' }} !important;
+      background-color: #ffffff !important;
+      border-bottom-color: #e5e7eb !important;
+    }
+    {{/if}}{{/if}}
+
+    /* Text shadow for better readability - only when transparent and not scrolled */
+    {{#if section.settings.enable_text_shadow}}{{#if section.settings.transparent_header_homepage}}{{#if request.page_type == 'index'}}
+    .site-header.transparent-not-scrolled a,
+    .site-header.transparent-not-scrolled button,
+    .site-header.transparent-not-scrolled h1,
+    .site-header.transparent-not-scrolled span {
+      text-shadow: {{ section.settings.text_shadow | default: '0 1px 3px rgba(0,0,0,0.5)' }};
+    }
+    {{/if}}{{/if}}{{/if}}
+
+    /* Optional backdrop blur - only when transparent and not scrolled */
+    {{#if section.settings.enable_backdrop_blur}}{{#if section.settings.transparent_header_homepage}}{{#if request.page_type == 'index'}}
+    .site-header.transparent-not-scrolled {
+      backdrop-filter: blur({{ section.settings.backdrop_blur_amount | default: 8 }}px);
+      -webkit-backdrop-filter: blur({{ section.settings.backdrop_blur_amount | default: 8 }}px);
+      {{#if section.settings.backdrop_bg_color}}
+      background-color: {{ section.settings.backdrop_bg_color }};
+      {{/if}}
+    }
+    {{/if}}{{/if}}{{/if}}
+
+    /* Logo filter transition - only for actual images */
+    .site-header img[alt="{{ shop.name }}"] {
+      transition: filter 0.3s ease-in-out;
+    }
+
+    /* Invert logo IMAGE when transparent header - only if logo is selected */
+    {{#if section.settings.logo}}{{#if section.settings.invert_logo_when_transparent}}{{#if section.settings.transparent_header_homepage}}{{#if request.page_type == 'index'}}
+    .site-header.transparent-not-scrolled img[alt="{{ shop.name }}"] {
+      filter: invert(1);
+    }
+    {{/if}}{{/if}}{{/if}}{{/if}}
+  </style>
+
+  <div class="container">
+    <!-- Mobile Layout: Flexbox with centered logo -->
+    <div class="header-mobile items-center">
+      <!-- Left: Mobile menu -->
+      <div class="flex items-center">
+        <button type="button"
+                class="mobile-menu-toggle inline-flex items-center justify-center md:p-1.5 rounded-md hover:md:bg-black/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-current"
+                aria-controls="mobile-menu"
+                aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Center: Logo (grows and centers) -->
+      <div class="flex-1 flex items-center justify-center px-4">
+        {{#if section.settings.logo}}
+          <a href="/" class="flex items-center">
+            <img src="{{ section.settings.logo | image_url(width = 300) }}"
+                 alt="{{ shop.name }}"
+                 class="h-auto max-h-16"
+                 style="width: {{ section.settings.logo_width }}px; max-width: {{ section.settings.logo_width }}px;">
+          </a>
+        {{#else/}}
+          <a href="/" class="flex items-center">
+            {{#component "logo-placeholder" /}}
+          </a>
+        {{/if}}
+      </div>
+
+      <!-- Right: Header actions -->
+      <div class="flex items-center space-x-3">
+        {{#if section.settings.show_search}}
+          <button type="button" class="search-toggle transition-all" >
+            <span class="sr-only">Search</span>
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+          </button>
+        {{/if}}
+
+        {{#if section.settings.show_cart}}
+          <button type="button" class="cart-toggle relative  transition-all" >
+            <span class="sr-only">Cart</span>
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+              </svg>
+            <span class="cart-count absolute -top-2 -right-2 bg-[--color-primary] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium opacity-0 transition-opacity overflow-hidden">0</span>
+          </button>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- Desktop Layout: Standard or Centered -->
+    {{#if section.settings.logo_layout == "center"}}
+      <!-- Centered Logo Layout -->
+      <div class="header-desktop items-center">
+        <!-- Left: Navigation (flex-1 for equal space) -->
+        <nav class="flex-1 flex space-x-6">
+          {{#for link in linklists.main-menu.links}}
+            <div class="relative group">
+              <a href="{{ link.url }}"
+                 class=" transition-all duration-200 flex items-center py-2 px-1 whitespace-nowrap" >
+                {{ link.title }}
+                {{#if link.links}}
+                  <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                {{/if}}
+              </a>
+
+              {{#if link.links}}
+                <div class="absolute top-full left-0 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 ease-out z-[9999]">
+                  <div class="py-1">
+                    {{#for sublink in link.links}}
+                      <a href="{{ sublink.url }}" class="block px-4 py-2 text-sm text-" >
+                        {{ sublink.title }}
+                      </a>
+                    {{/for}}
+                  </div>
+                </div>
+              {{/if}}
+            </div>
+          {{/for}}
+        </nav>
+
+        <!-- Center: Logo (flex-shrink-0 to maintain size) -->
+        <div class="flex-shrink-0 flex items-center justify-center px-8">
+          {{#if section.settings.logo}}
+            <a href="/" class="flex items-center">
+              <img src="{{ section.settings.logo | image_url(width = 300) }}"
+                   alt="{{ shop.name }}"
+                   class="h-auto"
+                   style="width: {{ section.settings.logo_width }}px; max-width: {{ section.settings.logo_width }}px;">
+            </a>
+          {{#else/}}
+            <a href="/" class="flex items-center">
+              {{#component "logo-placeholder" /}}
+            </a>
+          {{/if}}
+        </div>
+
+        <!-- Right: Header Actions (flex-1 for equal space) -->
+        <div class="flex-1 flex items-center space-x-4 justify-end">
+          {{#if section.settings.show_currency_selector}}
+            {{#component "currency-selector" text_color=section.settings.transparent_text_color is_transparent=section.settings.transparent_header_homepage /}}
+          {{/if}}
+
+          {{#if section.settings.show_search}}
+            <button type="button" class="search-toggle  transition-all" >
+              <span class="sr-only">Search</span>
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+            </button>
+          {{/if}}
+
+          {{#if section.settings.show_account}}
+            <a href="{{#if customer}}{{ routes.account_url }}{{#else/}}{{ routes.account_login_url }}{{/if}}" class=" transition-all" >
+              <span class="sr-only">Account</span>
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            </a>
+          {{/if}}
+
+          {{#if section.settings.show_cart}}
+            <button type="button"
+                    class="cart-toggle relative  transition-all" >
+              <span class="sr-only">Shopping cart</span>
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+              </svg>
+              <span class="cart-count absolute -top-2 -right-2 bg-[--color-primary] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center opacity-0 transition-opacity overflow-hidden">0</span>
+            </button>
+          {{/if}}
+        </div>
+      </div>
+    {{#else/}}
+      <!-- Standard Left-aligned Logo Layout -->
+      <div class="header-desktop items-center justify-between">
+        <!-- Logo -->
+        <div class="flex-shrink-0">
+          {{#if section.settings.logo}}
+            <a href="/" class="flex items-center">
+              <img src="{{ section.settings.logo | image_url(width = 300) }}"
+                   alt="{{ shop.name }}"
+                   class="h-auto"
+                   style="width: {{ section.settings.logo_width }}px; max-width: {{ section.settings.logo_width }}px;">
+            </a>
+          {{#else/}}
+            <a href="/" class="flex items-center">
+              {{#component "logo-placeholder" /}}
+            </a>
+          {{/if}}
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="flex space-x-8">
+          {{#for link in linklists.main-menu.links}}
+            <div class="relative group">
+              <a href="{{ link.url }}"
+                 class=" transition-all duration-200 flex items-center py-2 px-1" >
+                {{ link.title }}
+                {{#if link.links}}
+                  <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                {{/if}}
+              </a>
+
+              {{#if link.links}}
+                <div class="absolute top-full left-0 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 ease-out z-[9999]">
+                  <div class="py-1">
+                    {{#for sublink in link.links}}
+                      <a href="{{ sublink.url }}" class="block px-4 py-2 text-sm text-" >
+                        {{ sublink.title }}
+                      </a>
+                    {{/for}}
+                  </div>
+                </div>
+              {{/if}}
+            </div>
+          {{/for}}
+        </nav>
+
+        <!-- Header Actions -->
+        <div class="flex items-center space-x-4">
+          {{#if section.settings.show_currency_selector}}
+            {{#component "currency-selector" text_color=section.settings.transparent_text_color is_transparent=section.settings.transparent_header_homepage /}}
+          {{/if}}
+
+          {{#if section.settings.show_search}}
+            <button type="button" class="search-toggle  transition-all" >
+              <span class="sr-only">Search</span>
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+            </button>
+          {{/if}}
+
+          {{#if section.settings.show_account}}
+            <a href="{{#if customer}}{{ routes.account_url }}{{#else/}}{{ routes.account_login_url }}{{/if}}" class=" transition-all" >
+              <span class="sr-only">Account</span>
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            </a>
+          {{/if}}
+
+          {{#if section.settings.show_cart}}
+            <button type="button"
+                    class="cart-toggle relative  transition-all" >
+              <span class="sr-only">Shopping cart</span>
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+              </svg>
+              <span class="cart-count absolute -top-2 -right-2 bg-[--color-primary] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center text-center opacity-0 transition-opacity overflow-hidden">0</span>
+            </button>
+          {{/if}}
+        </div>
+      </div>
+    {{/if}}
+  </div>
+
+</header>
+</div>
+
+
+<script>
+  // Set localization data for mobile menu currency selector
+  {{#if localization.available_countries.size > 1}}
+  window.localizationData = {
+    availableCountries: [
+      {{#for country in localization.available_countries}}
+      {
+        iso_code: "{{ country.iso_code }}",
+        name: "{{ country.name }}",
+        currency: {
+          iso_code: "{{ country.currency.iso_code }}",
+          symbol: "{{ country.currency.symbol }}"
+        }
+      }{{#unless forloop.last}},{{/unless}}
+      {{/for}}
+    ],
+    currentCountry: "{{ localization.country.iso_code }}",
+    currentCurrency: "{{ localization.country.currency.iso_code }}"
+  };
+  {{/if}}
+
+  window.mobileMenuCustomerUrl = {{#if customer}}"{{ routes.account_url }}"{{#else/}}"{{ routes.account_login_url }}"{{/if}};
+  window.mobileMenuShowCurrencySelector = {{#if section.settings.show_currency_selector}}true{{#else/}}false{{/if}};
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mobile menu toggle
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    if (mobileMenuToggle) {
+      mobileMenuToggle.addEventListener('click', function() {
+        document.dispatchEvent(new CustomEvent('mobile-menu:open'));
+      });
+    }
+
+    // Search toggle - handle all search buttons
+    const searchToggles = document.querySelectorAll('.search-toggle');
+    searchToggles.forEach(toggle => {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.dispatchEvent(new CustomEvent('search-overlay:open'));
+      });
+    });
+
+    // Cart toggle - handle all cart buttons
+    const cartToggles = document.querySelectorAll('.cart-toggle');
+    cartToggles.forEach(toggle => {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Get cart type from Shopline theme settings
+        const cartType = Shopline?.theme?.settings?.cart_type || 'drawer';
+
+        if (cartType === 'drawer' && window.OrionCart) {
+          window.OrionCart.openDrawer();
+        } else {
+          window.location.href = Shopline?.routes?.cart || '/cart';
+        }
+      });
+    });
+
+    // Update cart count badges when cart is updated
+    const updateCartCount = (cart) => {
+      const itemCount = cart.item_count || 0;
+      const cartCountBadges = document.querySelectorAll('.cart-count');
+
+      cartCountBadges.forEach(badge => {
+        badge.textContent = itemCount;
+        if (itemCount > 0) {
+          badge.style.opacity = '1';
+        } else {
+          badge.style.opacity = '0';
+        }
+      });
+    };
+
+    // Listen for cart updates
+    document.addEventListener('cart:updated', function(e) {
+      updateCartCount(e.detail);
+    });
+
+    // Initialize cart count on page load
+    if (window.OrionCart) {
+      window.OrionCart.fetchCart().then(cart => {
+        updateCartCount(cart);
+      });
+    }
+  });
+</script>
+
+{{#schema}}
+{
+  "name": "t:sections.header.name",
+  "class": "header-section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Announcement Bar"
+    },
+    {
+      "type": "switch",
+      "id": "show_announcement",
+      "default": false,
+      "label": "Show announcement bar"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "default": "Welcome to our store!",
+      "label": "Announcement text"
+    },
+    {
+      "type": "color_scheme",
+      "id": "announcement_color_scheme",
+      "label": "Announcement color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.header.settings.group_header__0.label"
+    },
+    {
+      "type": "select",
+      "id": "mobile_breakpoint",
+      "label": "Mobile header breakpoint",
+      "options": [
+        {
+          "value": "sm",
+          "label": "Small (640px)"
+        },
+        {
+          "value": "md",
+          "label": "Medium (768px)"
+        },
+        {
+          "value": "lg",
+          "label": "Large (1024px)"
+        },
+        {
+          "value": "xl",
+          "label": "Extra Large (1280px)"
+        }
+      ],
+      "default": "md",
+      "info": "Screen width at which to switch from mobile to desktop header"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "t:sections.header.settings.logo.label"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 50,
+      "max": 300,
+      "step": 10,
+      "default": 150,
+      "unit": "px",
+      "label": "t:sections.header.settings.logo_width.label"
+    },
+    {
+      "type": "select",
+      "id": "logo_layout",
+      "label": "t:sections.header.settings.logo_layout.label",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.header.settings.logo_layout.options__0.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.header.settings.logo_layout.options__1.label"
+        }
+      ],
+      "info": "t:sections.header.settings.logo_layout.info"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.header.settings.group_header__1.label"
+    },
+    {
+      "type": "menu",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "t:sections.header.settings.menu.label"
+    },
+    {
+      "type": "menu",
+      "id": "mobile_menu",
+      "default": "main-menu",
+      "label": "t:sections.header.settings.mobile_menu.label"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.header.settings.group_header__2.label"
+    },
+    {
+      "type": "switch",
+      "id": "show_search",
+      "default": true,
+      "label": "t:sections.header.settings.show_search.label"
+    },
+    {
+      "type": "switch",
+      "id": "show_account",
+      "default": true,
+      "label": "t:sections.header.settings.show_account.label"
+    },
+    {
+      "type": "switch",
+      "id": "show_currency_selector",
+      "default": false,
+      "label": "Show currency selector"
+    },
+    {
+      "type": "switch",
+      "id": "show_cart",
+      "default": true,
+      "label": "t:sections.header.settings.show_cart.label"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.header.settings.group_header__3.label"
+    },
+    {
+      "type": "switch",
+      "id": "enable_sticky_header",
+      "default": true,
+      "label": "t:sections.header.settings.enable_sticky_header.label"
+    },
+    {
+      "type": "switch",
+      "id": "sticky_hide_on_scroll_down",
+      "default": false,
+      "label": "t:sections.header.settings.sticky_hide_on_scroll_down.label"
+    },
+    {
+      "type": "color",
+      "id": "sticky_header_background",
+      "label": "t:sections.header.settings.sticky_header_background.label",
+      "info": "t:sections.header.settings.sticky_header_background.info",
+      "default": "#ffffff"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.header.settings.group_header__4.label"
+    },
+    {
+      "type": "switch",
+      "id": "transparent_header_homepage",
+      "default": false,
+      "label": "t:sections.header.settings.transparent_header_homepage.label",
+      "info": "t:sections.header.settings.transparent_header_homepage.info"
+    },
+    {
+      "type": "color",
+      "id": "header_text_color",
+      "label": "Default text color",
+      "default": "#000000",
+      "info": "Color for text and icons in normal header state"
+    },
+    {
+      "type": "color",
+      "id": "transparent_text_color",
+      "label": "Text color when transparent",
+      "default": "#ffffff",
+      "info": "Color for text and icons when header is transparent"
+    },
+    {
+      "type": "switch",
+      "id": "invert_logo_when_transparent",
+      "default": false,
+      "label": "Invert logo when transparent",
+      "info": "Apply invert filter to logo when header is transparent (useful for light logos on dark backgrounds)"
+    },
+    {
+      "type": "switch",
+      "id": "enable_text_shadow",
+      "default": false,
+      "label": "Enable text shadow",
+      "info": "Add shadow to text for better readability on images"
+    },
+    {
+      "type": "text",
+      "id": "text_shadow",
+      "label": "Text shadow CSS",
+      "default": "0 1px 3px rgba(0,0,0,0.5)",
+      "info": "CSS text-shadow value (e.g., '0 2px 4px rgba(0,0,0,0.5)')"
+    },
+    {
+      "type": "switch",
+      "id": "enable_backdrop_blur",
+      "default": false,
+      "label": "Enable backdrop blur",
+      "info": "Add a blur effect behind the transparent header"
+    },
+    {
+      "type": "range",
+      "id": "backdrop_blur_amount",
+      "label": "Blur amount",
+      "default": 8,
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "info": "Amount of blur to apply"
+    },
+    {
+      "type": "color",
+      "id": "backdrop_bg_color",
+      "label": "Backdrop overlay color",
+      "default": "rgba(255, 255, 255, 0.1)",
+      "info": "Semi-transparent color overlay with backdrop blur"
+    },
+    {
+      "type": "group_header",
+      "label": "t:sections.header.settings.group_header__6.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.header.settings.padding_top.label",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.header.settings.padding_bottom.label",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    }
+  ]
+}
+{{/schema}}

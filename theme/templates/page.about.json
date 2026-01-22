@@ -1,0 +1,74 @@
+{
+  "sections": {
+    "main": {
+      "disabled": true,
+      "type": "main-page",
+      "settings": {
+        "background_color": "#b6e0f8",
+        "show_title": false
+      },
+      "blocks": {},
+      "custom_css": []
+    },
+    "hero-image": {
+      "disabled": false,
+      "type": "hero-image",
+      "settings": {
+        "image_ratio": 40,
+        "enable_animation": true,
+        "initial_scale": 1.1,
+        "animation_duration": 1.5,
+        "animation_easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "lazy_load": true,
+        "image_position": "center center",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "background_color": "#ffffff",
+        "image": "shopline://shop_images/23spring new.webp",
+        "padding_top_mobile": 0,
+        "padding_bottom_mobile": 0
+      },
+      "blocks": {},
+      "custom_css": []
+    },
+    "17539567816439b6762d": {
+      "disabled": false,
+      "type": "rich-text",
+      "settings": {
+        "full_width": false,
+        "content_position": "center",
+        "heading": "Our Promise is to Redefine Energy",
+        "text": "<p>Our promise is simple: natural uniqueness. Your journey has just begun. Why settle for the view from your cubicle when you can taste the thrill of the wild?</p>\n<p>But beyond all this, AVVIKA is about you. The dreamer, the athlete striving for peak performance, the innovator shaping dreams into reality. It's about the courage to deviate—It's an invitation. To break free, to create, to explore. AVVIKA is your catalyst—it whispers, 'You're capable of more.' We've bottled the essence of the wild, the untamed, the untouched, without the crash. It's not just about where you're going; it's about the journey.</p>\n<p>When you reach for that can of AVVIKA, remember: You're not just choosing a beverage. You're choosing to embrace the unexpected. You're choosing to redefine energy. Rewriting your story.</p>",
+        "heading_size": "text-4xl",
+        "heading_color": "#000000",
+        "text_color": "#000000",
+        "button_label": "",
+        "button_link": "/collections/all",
+        "button_bg_color": "#000000",
+        "button_text_color": "#ffffff",
+        "button_border_enabled": true,
+        "button_border_color": "#1f2937",
+        "button_border_width": 3,
+        "background_color": "#ffffff",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "heading_image_width": 90,
+        "heading_image": {
+          "url": "https://img-va.myshopline.com/image/store/1748460806554/compass.svg",
+          "alt": {
+            "default": "Compass Icon"
+          }
+        },
+        "padding_top_mobile": 30,
+        "padding_bottom_mobile": 30
+      },
+      "blocks": {},
+      "custom_css": []
+    }
+  },
+  "order": [
+    "main",
+    "hero-image",
+    "17539567816439b6762d"
+  ]
+}

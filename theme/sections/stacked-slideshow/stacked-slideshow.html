@@ -1,0 +1,438 @@
+<div id="shopline-section-{{section.id}}" data-section-id="{{section.id}}" class="stacked-slideshow-section" style="background-color: {{ section.settings.background_color | default("#ffffff") }};">
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(30) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(30) }}px;
+  }
+  
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(60) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(60) }}px;
+    }
+  }
+</style>
+  <div class="{{#if section.settings.full_width}}w-full{{#else/}}container mx-auto{{/if}} px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-12 lg:items-center">
+      
+      <!-- Images - First on mobile, First on desktop -->
+      <div class="relative h-[400px] md:h-[500px] lg:h-[600px] order-1">
+        <div class="stacked-images relative w-full h-full flex items-center justify-center">
+          {{#for block in section.blocks}}
+            {{#if block.type == "slide"}}
+              <div class="slide-image absolute w-full max-w-[400px] lg:max-w-[500px] transition-all duration-500 ease-in-out rounded-lg overflow-hidden shadow-xl"
+                   data-slide-index="{{forloop.index0}}"
+                   style="--slide-index: {{forloop.index0}}; --total-slides: {{section.blocks | size()}}; transform: rotate(calc(var(--slide-index) * -2deg)) translateX(calc(var(--slide-index) * -10px)); z-index: calc(var(--total-slides) - var(--slide-index));">
+                {{#if block.settings.image}}
+                  <img src="{{ block.settings.image | image_url(width=1000) }}"
+                       srcset="{{ block.settings.image | image_url(width=500) }} 500w,
+                               {{ block.settings.image | image_url(width=750) }} 750w,
+                               {{ block.settings.image | image_url(width=1000) }} 1000w"
+                       sizes="(max-width: 768px) 100vw, 500px"
+                       alt="{{block.settings.title}}"
+                       class="w-full h-full object-cover"
+                       loading="lazy">
+                {{#else/}}
+                  <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <span class="text-gray-400">Add image</span>
+                  </div>
+                {{/if}}
+              </div>
+            {{/if}}
+          {{/for}}
+        </div>
+      </div>
+
+      <!-- Content and Navigation - Second on mobile, Second on desktop -->
+      <div class="order-2 flex flex-col lg:justify-between lg:min-h-[500px] text-center lg:text-left">
+        <div class="min-h-[200px] sm:min-h-[250px] lg:min-h-0">
+          <div class="slide-content-container">
+            {{#for block in section.blocks}}
+              {{#if block.type == "slide"}}
+                <div class="slide-content transition-opacity duration-500 {{#if forloop.index0 == 0}}block opacity-100{{#else/}}hidden opacity-0{{/if}}"
+                     data-slide-index="{{forloop.index0}}">
+                  {{#if block.settings.subheading}}
+                    <p class="text-sm font-semibold tracking-wide mb-2"
+                       style="color: {{ block.settings.subheading_color | default(section.settings.subheading_color) }};">
+                      {{block.settings.subheading}}
+                    </p>
+                  {{/if}}
+
+                  {{#if block.settings.title}}
+                    <h3 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-6 text-balance mx-auto lg:mx-0"
+                        style="font-family: {{#if section.settings.heading_font == "title"}}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ block.settings.title_color | default(section.settings.heading_color) }}; {{#if section.settings.uppercase_heading}}text-transform: uppercase;{{/if}}">
+                      {{block.settings.title}}
+                    </h3>
+                  {{/if}}
+
+                  {{#if block.settings.description}}
+                    <div class="text-base md:text-lg leading-relaxed prose max-w-none mx-auto lg:mx-0"
+                         style="color: {{ block.settings.description_color | default(section.settings.text_color) }};">
+                      {{{block.settings.description}}}
+                    </div>
+                  {{/if}}
+                </div>
+              {{/if}}
+            {{/for}}
+          </div>
+        </div>
+        
+        <!-- Navigation Arrows - Third on mobile (centered), Bottom on desktop -->
+        <div class="flex gap-4 justify-center lg:justify-start mt-8 lg:mt-0">
+          <button type="button" 
+                  class="prev-slide-btn group w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors"
+                  aria-label="Previous slide">
+            <div class="relative w-5 h-5">
+              <!-- Default arrow -->
+              <svg class="absolute inset-0 w-5 h-5 transition-all duration-300 group-hover:opacity-0 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+              </svg>
+              <!-- Hover arrow with line -->
+              <svg class="absolute inset-0 w-5 h-5 transition-all duration-300 opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12h10M7 12l4-4m-4 4l4 4"/>
+              </svg>
+            </div>
+          </button>
+          
+          <button type="button" 
+                  class="next-slide-btn group w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors"
+                  aria-label="Next slide">
+            <div class="relative w-5 h-5">
+              <!-- Default arrow -->
+              <svg class="absolute inset-0 w-5 h-5 transition-all duration-300 group-hover:opacity-0 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+              </svg>
+              <!-- Hover arrow with line -->
+              <svg class="absolute inset-0 w-5 h-5 transition-all duration-300 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 12H7m10 0l-4-4m4 4l-4 4"/>
+              </svg>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .slide-image {
+    cursor: pointer;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease, z-index 0.5s ease;
+  }
+  
+  .slide-image.active {
+    transform: rotate(0deg) translateX(0) scale(1.05) !important;
+    z-index: 10 !important;
+  }
+  
+  .slide-image:not(.active):hover {
+    transform: scale(1.02);
+  }
+  
+  /* Stacked effect on mobile */
+  @media (max-width: 768px) {
+    .slide-image {
+      max-width: 300px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    function initStackedSlideshow() {
+      const slideshows = document.querySelectorAll('.stacked-slideshow-section');
+      
+      slideshows.forEach(slideshow => {
+        let currentSlide = 0;
+        const slideImages = slideshow.querySelectorAll('.slide-image');
+        const slideContents = slideshow.querySelectorAll('.slide-content');
+        const prevBtn = slideshow.querySelector('.prev-slide-btn');
+        const nextBtn = slideshow.querySelector('.next-slide-btn');
+        const totalSlides = slideImages.length;
+        
+        if (totalSlides === 0) return;
+        
+        function showSlide(index) {
+          // Hide all content
+          slideContents.forEach(content => {
+            content.classList.add('hidden', 'opacity-0');
+            content.classList.remove('block', 'opacity-100');
+          });
+          
+          // Show current content
+          if (slideContents[index]) {
+            slideContents[index].classList.remove('hidden', 'opacity-0');
+            slideContents[index].classList.add('block', 'opacity-100');
+          }
+          
+          // Update image stacking
+          slideImages.forEach((img, i) => {
+            img.classList.remove('active');
+            
+            if (i === index) {
+              img.classList.add('active');
+              img.style.zIndex = totalSlides + 1;
+            } else {
+              // Calculate stacking order
+              const offset = (i - index + totalSlides) % totalSlides;
+              img.style.zIndex = totalSlides - offset;
+              
+              // Apply rotation and offset for stacked effect
+              const rotation = (i - index) * -3;
+              const translateX = (i - index) * -15;
+              const scale = i === index ? 1.05 : 1 - (Math.abs(i - index) * 0.05);
+              
+              img.style.transform = `rotate(${rotation}deg) translateX(${translateX}px) scale(${scale})`;
+            }
+          });
+          
+          currentSlide = index;
+        }
+        
+        // Navigation handlers
+        if (prevBtn) {
+          prevBtn.addEventListener('click', () => {
+            const newIndex = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(newIndex);
+          });
+        }
+        
+        if (nextBtn) {
+          nextBtn.addEventListener('click', () => {
+            const newIndex = (currentSlide + 1) % totalSlides;
+            showSlide(newIndex);
+          });
+        }
+        
+        // Click on image to select
+        slideImages.forEach((img, index) => {
+          img.addEventListener('click', () => {
+            showSlide(index);
+          });
+        });
+        
+        // Auto-play (optional)
+        if (slideshow.dataset.autoplay === 'true') {
+          setInterval(() => {
+            const newIndex = (currentSlide + 1) % totalSlides;
+            showSlide(newIndex);
+          }, 5000);
+        }
+        
+        // Initialize first slide
+        showSlide(0);
+      });
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initStackedSlideshow);
+    } else {
+      initStackedSlideshow();
+    }
+    
+    // Reinitialize on Shopline section reload
+    document.addEventListener('shopline:section:load', initStackedSlideshow);
+  })();
+</script>
+
+{{#schema}}
+{
+  "name": "Stacked Slideshow",
+  "class": "section",
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "title"
+    },
+    {
+      "type": "switch",
+      "id": "uppercase_heading",
+      "label": "Uppercase headings",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Default subheading color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Default heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Default text color",
+      "default": "#666666"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "switch",
+      "id": "autoplay",
+      "label": "Auto-play slideshow",
+      "default": false,
+      "info": "Automatically advance slides every 5 seconds"
+    },
+    {
+      "type": "group_header",
+      "label": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding top (desktop)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding top (mobile)",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding bottom (desktop)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding bottom (mobile)",
+      "default": 30
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Slide Title"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Heading Text"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Add your slide content and description here.</p>"
+        },
+        {
+          "type": "group_header",
+          "label": "Colors (optional)"
+        },
+        {
+          "type": "color",
+          "id": "subheading_color",
+          "label": "Subheading color",
+          "info": "Leave blank to use default"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title color",
+          "info": "Leave blank to use default"
+        },
+        {
+          "type": "color",
+          "id": "description_color",
+          "label": "Description color",
+          "info": "Leave blank to use default"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stacked Slideshow",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "subheading": "Connecting 300,000+ Skiers Across the U.S.",
+            "title": "National Ski Council Federation",
+            "description": "<p>The National Ski Council Federation (NSCF) brings together over 30 regional ski councils, representing 300,000+ passionate skiers and snowboarders across the U.S. In partnership with ELOS, NSCF members will receive exclusive access to next-gen heated insoles designed for true alpine performance.</p>"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "subheading": "ELOS x Denver Pioneers",
+            "title": "University of Denver Ski Team",
+            "description": "<p>We've teamed up with the University of Denver Ski Team—one of the top programs in the country—to make sure our gear performs when it matters most. ELOS insoles are designed and tested by athletes who spend their lives on the mountain.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{{/schema}}

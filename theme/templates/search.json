@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "disabled": false,
+      "type": "main-search",
+      "settings": {
+        "columns_desktop": 4,
+        "columns_mobile": "1"
+      },
+      "blocks": {},
+      "custom_css": []
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

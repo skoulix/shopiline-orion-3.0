@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="{{request.locale.iso_code}}" dir="{{request.document_direction}}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#dc2626">
+  <link rel="canonical" href="{{canonical_url}}">
+  
+  {{#if settings.favicon}}
+    <link rel="icon" type="image/png" href="{{settings.favicon}}">
+  {{/if}}
+  
+  {{#var gift_card_balance = gift_card.balance | money_with_currency() /}}
+  <title>{{"products.giftcard.seoTitle" | t(value=gift_card_balance, shop=shop.name)}}</title>
+  <meta name="description" content="{{"products.giftcard.title" | t()}}">
+
+  {{#content "header" /}}
+
+  {{#component "theme-css-var" /}}
+  {{#component "stylesheet" src="base/index.css" | asset_url() preload=true /}}
+  {{#component "stylesheet" src="theme.css" | asset_url() /}}
+  {{#component "stylesheet" src="style.css" | asset_url() /}}
+  {{#component "script" src="base/index.js" | asset_url() /}}
+  {{#component "script" src="orion-theme.umd.js" | asset_url() defer="defer" /}}
+
+  <script>
+    // Shop data is available via Shopline.shop
+  </script>
+</head>
+
+<body class="template-gift-card">
+  <a class="skip-to-content-link sr-only" href="#MainContent">
+    Skip to content
+  </a>
+
+  <main id="MainContent" role="main" tabindex="-1" class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    {{#content "layout" /}}
+  </main>
+
+  {{#content "footer" /}}
+</body>
+</html>

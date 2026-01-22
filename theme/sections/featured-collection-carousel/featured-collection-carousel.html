@@ -1,0 +1,823 @@
+<style>
+  #shopline-section-{{section.id}} {
+    padding-top: {{ section.settings.padding_top_mobile | default(30) }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile | default(30) }}px;
+  }
+  @media (min-width: 768px) {
+    #shopline-section-{{section.id}} {
+      padding-top: {{ section.settings.padding_top | default(60) }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default(60) }}px;
+    }
+  }
+</style>
+
+<div class="featured-collection-carousel carousel-{{section.id}}" data-section-id="{{section.id}}" style="background-color: {{ section.settings.background_color | default("ffffff") }}; overflow-x: hidden;">
+  <div class="container">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        {{#if section.settings.title}}
+          <h2 class="text-3xl sm:text-4xl md:text-5xl {{#if section.settings.uppercase_title}}uppercase{{/if}} {{#if section.settings.title_alignment == "left" }}text-left{{#else if section.settings.title_alignment == "right" /}}text-right{{#else/}}text-center{{/if}}"
+              style="font-family: {{#if section.settings.heading_font == "title" }}var(--title-font){{#else/}}var(--body-font){{/if}}; color: {{ section.settings.heading_color | default("000000") }};">
+            {{section.settings.title}}
+          </h2>
+        {{/if}}
+
+        {{#if section.settings.subtitle}}
+          <div class="mt-2 max-w-3xl {{#if section.settings.title_alignment == "left" }}mx-0{{#else if section.settings.title_alignment == "right" /}}ml-auto mr-0{{#else/}}mx-auto{{/if}}">
+            <p class="text-lg" style="color: {{ section.settings.subtitle_color | default("666666") }};">
+              {{section.settings.subtitle}}
+            </p>
+          </div>
+        {{/if}}
+      </div>
+
+      {{#if section.settings.show_view_all}}
+        <div class="flex-shrink-0 ml-8">
+          <a href="{{#if section.settings.collection}}{{section.settings.collection.url}}{{#else/}}#{{/if}}"
+             class="group inline-flex items-center gap-2 text-sm font-medium transition-all"
+             style="color: {{ section.settings.view_all_color | default("000000") }};">
+            <span class="group-hover:underline">{{ section.settings.view_all_text | default("View All") }}</span>
+            <span class="w-6 h-6 rounded-full bg-gray-100 group-hover:bg-black flex items-center justify-center transition-colors">
+              <svg class="w-3 h-3 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </span>
+          </a>
+        </div>
+      {{/if}}
+    </div>
+
+  </div>
+
+  {{#if section.settings.collection}}
+    {{#if section.settings.collection.products}}
+      <div class="featured-carousel-container relative container">
+        <div class="carousel-wrapper relative overflow-hidden">
+          <div class="carousel-track flex transition-transform duration-500 ease-out" data-current-slide="0">
+              {{#for product in (section.settings.collection.products | slice(0, len=section.settings.products_to_show))}}
+                <div class="carousel-slide flex-shrink-0 px-2 md:px-3"
+                     style="width: calc(100% / {{#if section.settings.slides_mobile == "1" }}1{{#else/}}2{{/if}});"
+                     data-desktop-width="calc(100% / {{ section.settings.slides_desktop | default(4) }})"
+                     data-tablet-width="calc(100% / {{ section.settings.slides_tablet | default(3) }})"
+                     data-mobile-width="calc(100% / {{#if section.settings.slides_mobile == "1" }}1{{#else/}}2{{/if}})"
+                     data-slide-index="{{forloop.index}}">
+                  <product-card
+                    product-id="{{product.id}}"
+                    variant-id="{{product.first_available_variant.id}}"
+                    title="{{product.title}}"
+                    handle="{{product.handle}}"
+                    url="{{product.url}}"
+                    vendor="{{product.vendor}}"
+                    price="{{product.price}}"
+                    compare-at-price="{{product.compare_at_price}}"
+                    image="{{ product.featured_image | image_url(width=800) }}"
+                    :available="{{#if product.available}}true{{#else/}}false{{/if}}"
+                    class="w-full"
+                  ></product-card>
+                </div>
+              {{/for}}
+            </div>
+          </div>
+
+          {{#if section.settings.show_navigation}}
+            <!-- Navigation buttons positioned within container bounds -->
+            <div class="absolute inset-y-0 left-0 right-0 container mx-auto pointer-events-none">
+              <button class="carousel-nav carousel-prev group absolute left-0 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-full p-3 hover:bg-gray-50 transition-colors overflow-hidden z-10 disabled:opacity-50 disabled:cursor-not-allowed hidden md:flex pointer-events-auto">
+                <div class="relative w-6 h-6">
+                  <svg class="absolute inset-0 w-6 h-6 transition-all duration-300 group-hover:opacity-0 group-hover:-translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                  <svg class="absolute inset-0 w-6 h-6 transition-all duration-300 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                  </svg>
+                </div>
+              </button>
+              <button class="carousel-nav carousel-next group absolute right-0 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-full p-3 hover:bg-gray-50 transition-colors overflow-hidden z-10 disabled:opacity-50 disabled:cursor-not-allowed hidden md:flex pointer-events-auto">
+                <div class="relative w-6 h-6">
+                  <svg class="absolute inset-0 w-6 h-6 transition-all duration-300 group-hover:opacity-0 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                  <svg class="absolute inset-0 w-6 h-6 transition-all duration-300 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                  </svg>
+                </div>
+              </button>
+            </div>
+          {{/if}}
+      </div>
+
+      {{#if section.settings.show_dots}}
+        <div class="container">
+          <div class="carousel-dots flex justify-center gap-2 mt-6">
+            <!-- Dots will be generated by JavaScript with Tailwind classes -->
+          </div>
+        </div>
+      {{/if}}
+    {{#else/}}
+      <div class="container">
+        <p class="text-center text-gray-500 py-8">This collection has no products.</p>
+      </div>
+    {{/if}}
+  {{#else/}}
+    <div class="container">
+      <p class="text-center text-gray-500">Please select a collection to display products.</p>
+    </div>
+  {{/if}}
+</div>
+
+<style>
+  /* Carousel touch improvements */
+  .carousel-wrapper {
+    /* Allow default touch behavior */
+  }
+
+  .carousel-track {
+    /* Only disable text selection during dragging */
+    cursor: grab;
+  }
+
+  .carousel-track.dragging {
+    cursor: grabbing;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .carousel-slide {
+    /* Allow interaction with product cards */
+  }
+
+  {{#if section.settings.full_width}}
+  /* Full-width carousel - viewport edge to edge scrolling */
+  .featured-collection-carousel .featured-carousel-container {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+  }
+
+  /* Extend wrapper to full viewport width with container alignment */
+  /* Account for slide padding: px-2 (0.5rem) on mobile, px-3 (0.75rem) on md+ */
+  /* Add extra buffer (1rem mobile, 1.25rem desktop) to ensure items stay within container */
+  .featured-collection-carousel .carousel-wrapper {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding-left: max(1.5rem, calc((100vw - 1500px) / 2 + 1rem));
+    padding-right: max(1.5rem, calc((100vw - 1500px) / 2 + 1rem));
+  }
+
+  @media (min-width: 640px) {
+    .featured-collection-carousel .carousel-wrapper {
+      padding-left: max(2rem, calc((100vw - 1500px) / 2 + 1rem));
+      padding-right: max(2rem, calc((100vw - 1500px) / 2 + 1rem));
+    }
+  }
+
+  @media (min-width: 768px) {
+    /* md:px-3 = 0.75rem slide padding + 0.5rem buffer = 1.25rem total */
+    .featured-collection-carousel .carousel-wrapper {
+      padding-left: max(2.75rem, calc((100vw - 1500px) / 2 + 1.25rem));
+      padding-right: max(2.75rem, calc((100vw - 1500px) / 2 + 1.25rem));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .featured-collection-carousel .carousel-wrapper {
+      padding-left: max(3.25rem, calc((100vw - 1500px) / 2 + 1.25rem));
+      padding-right: max(3.25rem, calc((100vw - 1500px) / 2 + 1.25rem));
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .featured-collection-carousel .carousel-wrapper {
+      padding-left: max(3.75rem, calc((100vw - 1500px) / 2 + 1.25rem));
+      padding-right: max(3.75rem, calc((100vw - 1500px) / 2 + 1.25rem));
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .featured-collection-carousel .carousel-wrapper {
+      /* Account for 1694px container at 2xl + 1.25rem (slide padding + buffer) */
+      padding-left: calc((100vw - 1694px) / 2 + 1.25rem);
+      padding-right: calc((100vw - 1694px) / 2 + 1.25rem);
+    }
+  }
+  {{/if}}
+</style>
+
+<script>
+  (function() {
+    // Use IIFE to create isolated scope for each carousel instance
+    const sectionId = '{{section.id}}';
+
+    function initCarousel() {
+      const carousel = document.querySelector('.carousel-' + sectionId);
+      if (!carousel) return;
+
+    const track = carousel.querySelector('.carousel-track');
+    const slides = carousel.querySelectorAll('.carousel-slide');
+    const prevBtn = carousel.querySelector('.carousel-prev');
+    const nextBtn = carousel.querySelector('.carousel-next');
+    const dotsContainer = carousel.querySelector('.carousel-dots');
+
+
+    if (!track || slides.length === 0) return;
+
+    let currentSlide = 0;
+    let slidesPerView = {{ section.settings.slides_desktop | default(4) }};
+    let totalSlides = slides.length;
+    let maxSlide = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let isDragging = false;
+    let startPos = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+
+    // Update slides per view based on screen size
+    function updateSlidesPerView() {
+      const width = window.innerWidth;
+
+      if (width < 640) {
+        slidesPerView = {{#if section.settings.slides_mobile == "1" }}1{{#else/}}2{{/if}};
+      } else if (width < 1024) {
+        slidesPerView = {{ section.settings.slides_tablet | default(3) }};
+      } else {
+        slidesPerView = {{ section.settings.slides_desktop | default(4) }};
+      }
+
+      // Update slide widths
+      slides.forEach(slide => {
+        if (width < 640) {
+          slide.style.width = slide.dataset.mobileWidth;
+        } else if (width < 1024) {
+          slide.style.width = slide.dataset.tabletWidth;
+        } else {
+          slide.style.width = slide.dataset.desktopWidth;
+        }
+      });
+
+      maxSlide = Math.max(0, totalSlides - slidesPerView);
+
+      // Reset position if needed
+      if (currentSlide > maxSlide) {
+        currentSlide = maxSlide;
+        updateCarousel();
+      }
+
+      // Update dots
+      updateDots();
+    }
+
+    // Create dots if enabled
+    function createDots() {
+      if (!dotsContainer) return;
+
+      dotsContainer.innerHTML = '';
+      const dotsCount = Math.ceil(totalSlides / slidesPerView);
+
+      for (let i = 0; i < dotsCount; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'w-2 h-2 rounded-full bg-gray-300 transition-all duration-300 hover:bg-gray-400';
+        dot.setAttribute('aria-label', `Go to slide group ${i + 1}`);
+        dot.addEventListener('click', () => goToSlide(i * slidesPerView));
+        dotsContainer.appendChild(dot);
+      }
+
+      updateDots();
+    }
+
+    // Update dots
+    function updateDots() {
+      if (!dotsContainer) return;
+
+      const dots = dotsContainer.querySelectorAll('button');
+      const activeDotIndex = Math.floor(currentSlide / slidesPerView);
+
+      dots.forEach((dot, index) => {
+        if (index === activeDotIndex) {
+          dot.className = 'w-8 h-2 rounded-full bg-gray-700 transition-all duration-300';
+        } else {
+          dot.className = 'w-2 h-2 rounded-full bg-gray-300 transition-all duration-300 hover:bg-gray-400';
+        }
+      });
+    }
+
+    // Update carousel position
+    function updateCarousel() {
+      const slideWidth = 100 / slidesPerView;
+      let translateX = -(currentSlide * slideWidth);
+
+      // For full-width mode, adjust the last position to align with container edge
+      const isFullWidth = {{#if section.settings.full_width}}true{{#else/}}false{{/if}};
+      if (isFullWidth && currentSlide >= maxSlide && maxSlide > 0) {
+        // When at the end, align last item's right edge with container right edge
+        const totalWidth = 100;
+        const visibleWidth = 100;
+        const totalSlideWidth = (totalSlides * 100) / slidesPerView;
+        translateX = -(totalSlideWidth - visibleWidth);
+      }
+
+      track.style.transform = `translateX(${translateX}%)`;
+      track.setAttribute('data-current-slide', currentSlide);
+
+      // Update navigation buttons
+      if (prevBtn) prevBtn.disabled = currentSlide === 0;
+      if (nextBtn) nextBtn.disabled = currentSlide >= maxSlide;
+
+      updateDots();
+    }
+
+    // Go to specific slide
+    function goToSlide(slideIndex) {
+      currentSlide = Math.max(0, Math.min(slideIndex, maxSlide));
+      updateCarousel();
+    }
+
+    // Next slide
+    function nextSlide() {
+      if (currentSlide < maxSlide) {
+        const isFullWidth = {{#if section.settings.full_width}}true{{#else/}}false{{/if}};
+        if (isFullWidth) {
+          // In full-width mode, scroll one item at a time for smoother experience
+          currentSlide = Math.min(currentSlide + 1, maxSlide);
+        } else {
+          currentSlide = Math.min(currentSlide + slidesPerView, maxSlide);
+        }
+        updateCarousel();
+      }
+    }
+
+    // Previous slide
+    function prevSlide() {
+      if (currentSlide > 0) {
+        const isFullWidth = {{#if section.settings.full_width}}true{{#else/}}false{{/if}};
+        if (isFullWidth) {
+          // In full-width mode, scroll one item at a time for smoother experience
+          currentSlide = Math.max(currentSlide - 1, 0);
+        } else {
+          currentSlide = Math.max(currentSlide - slidesPerView, 0);
+        }
+        updateCarousel();
+      }
+    }
+
+    // Touch events
+    let hasMoved = false;
+
+    function handleTouchStart(e) {
+      touchStartX = e.touches[0].clientX;
+      isDragging = true;
+      hasMoved = false;
+      startPos = e.touches[0].clientX;
+      track.style.transition = 'none';
+      // Don't prevent default here to allow clicks
+    }
+
+    function handleTouchMove(e) {
+      if (!isDragging) return;
+
+      const currentPosition = e.touches[0].clientX;
+      const diff = currentPosition - startPos;
+
+      // Only start preventing default after a small movement threshold
+      if (Math.abs(diff) > 5) {
+        hasMoved = true;
+        track.classList.add('dragging');
+        e.preventDefault(); // Only prevent default when actually swiping
+
+        const slideWidth = 100 / slidesPerView;
+        const currentTranslatePercent = -(currentSlide * slideWidth);
+        const translatePercent = currentTranslatePercent + (diff / track.offsetWidth) * 100;
+
+        // Allow some overscroll for better UX
+        const maxTranslatePercent = -(maxSlide * slideWidth);
+        const finalTranslate = Math.max(maxTranslatePercent - 5, Math.min(5, translatePercent));
+
+        track.style.transform = `translateX(${finalTranslate}%)`;
+      }
+    }
+
+    function handleTouchEnd(e) {
+      if (!isDragging) return;
+
+      isDragging = false;
+      track.classList.remove('dragging');
+      touchEndX = e.changedTouches[0].clientX;
+      track.style.transition = 'transform 0.3s ease-out';
+
+      const diff = touchStartX - touchEndX;
+      const threshold = 30; // Lower threshold for more responsive swiping
+
+      // Only handle as swipe if there was actual movement
+      if (hasMoved) {
+        if (Math.abs(diff) > threshold) {
+          if (diff > 0 && currentSlide < maxSlide) {
+            // Swipe left - next
+            nextSlide();
+          } else if (diff < 0 && currentSlide > 0) {
+            // Swipe right - prev
+            prevSlide();
+          } else {
+            updateCarousel();
+          }
+        } else {
+          updateCarousel();
+        }
+      }
+
+      prevTranslate = currentTranslate;
+    }
+
+    // Mouse events for desktop dragging
+    let mouseDown = false;
+
+    function handleMouseDown(e) {
+      mouseDown = true;
+      startPos = e.clientX;
+      track.style.cursor = 'grabbing';
+      track.style.transition = 'none';
+      e.preventDefault();
+    }
+
+    function handleMouseMove(e) {
+      if (!mouseDown) return;
+
+      const currentPosition = e.clientX;
+      const diff = currentPosition - startPos;
+      const slideWidth = track.offsetWidth / slidesPerView;
+      const currentTranslatePercent = -(currentSlide * (100 / slidesPerView));
+      const translatePercent = currentTranslatePercent + (diff / track.offsetWidth) * 100;
+      const maxTranslatePercent = -(maxSlide * (100 / slidesPerView));
+
+      const finalTranslate = Math.max(maxTranslatePercent, Math.min(0, translatePercent));
+      track.style.transform = `translateX(${finalTranslate}%)`;
+    }
+
+    function handleMouseUp(e) {
+      if (!mouseDown) return;
+
+      mouseDown = false;
+      track.style.cursor = 'grab';
+      track.style.transition = 'transform 0.5s ease-out';
+
+      const diff = startPos - e.clientX;
+      const threshold = 50;
+
+      if (Math.abs(diff) > threshold) {
+        if (diff > 0 && currentSlide < maxSlide) {
+          nextSlide();
+        } else if (diff < 0 && currentSlide > 0) {
+          prevSlide();
+        } else {
+          updateCarousel();
+        }
+      } else {
+        updateCarousel();
+      }
+    }
+
+    // Auto-play functionality
+    let autoplayInterval;
+    const autoplay = {{ section.settings.autoplay | default(false) }};
+    const autoplaySpeed = {{ section.settings.autoplay_speed | default(5000) }};
+
+    function startAutoplay() {
+      if (!autoplay || totalSlides <= slidesPerView) return;
+
+      autoplayInterval = setInterval(() => {
+        if (currentSlide >= maxSlide) {
+          currentSlide = 0;
+        } else {
+          currentSlide = Math.min(currentSlide + 1, maxSlide);
+        }
+        updateCarousel();
+      }, autoplaySpeed);
+    }
+
+    function stopAutoplay() {
+      if (autoplayInterval) {
+        clearInterval(autoplayInterval);
+      }
+    }
+
+    // Event listeners
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+    // Touch events - passive for better performance, preventDefault handled conditionally
+    track.addEventListener('touchstart', handleTouchStart, { passive: true });
+    track.addEventListener('touchmove', handleTouchMove, { passive: false });
+    track.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    // Mouse events
+    track.addEventListener('mousedown', handleMouseDown);
+    track.addEventListener('mousemove', handleMouseMove);
+    track.addEventListener('mouseup', handleMouseUp);
+    track.addEventListener('mouseleave', () => {
+      if (mouseDown) {
+        mouseDown = false;
+        track.style.cursor = 'grab';
+        track.style.transition = 'transform 0.5s ease-out';
+        updateCarousel();
+      }
+    });
+
+    // Pause autoplay on hover
+    if (autoplay) {
+      carousel.addEventListener('mouseenter', stopAutoplay);
+      carousel.addEventListener('mouseleave', startAutoplay);
+    }
+
+    // Window resize
+    window.addEventListener('resize', () => {
+      updateSlidesPerView();
+      updateCarousel();
+      createDots();
+    });
+
+    // Initialize
+    track.style.cursor = 'grab';
+    updateSlidesPerView();
+    updateCarousel();
+    createDots();
+    startAutoplay();
+    }
+
+    // Initialize on DOMContentLoaded and also immediately if DOM is already loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCarousel);
+    } else {
+      initCarousel();
+    }
+  })();
+</script>
+
+{{#schema}}
+{
+  "name": "Featured Collection Carousel",
+  "class": "section",
+  "settings": [
+    {
+      "type": "group_header",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "BEST SELLERS"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "info": "Optional text to display after the title"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title alignment",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "switch",
+      "id": "uppercase_title",
+      "label": "Uppercase title",
+      "default": true
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "group_header",
+      "label": "Carousel Settings"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Maximum products to show",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "slides_desktop",
+      "label": "Products per view (Desktop)",
+      "min": 3,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "info": "Number of products visible at once on desktop"
+    },
+    {
+      "type": "range",
+      "id": "slides_tablet",
+      "label": "Products per view (Tablet)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "info": "Number of products visible at once on tablet"
+    },
+    {
+      "type": "select",
+      "id": "slides_mobile",
+      "label": "Products per view (Mobile)",
+      "default": "2",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 product"
+        },
+        {
+          "value": "2",
+          "label": "2 products"
+        }
+      ]
+    },
+    {
+      "type": "switch",
+      "id": "show_navigation",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "switch",
+      "id": "show_dots",
+      "label": "Show pagination dots",
+      "default": false
+    },
+    {
+      "type": "switch",
+      "id": "autoplay",
+      "label": "Auto-play slides",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Auto-play speed",
+      "min": 3000,
+      "max": 10000,
+      "step": 1,
+      "unit": "ms",
+      "default": 5000,
+      "info": "Time between slide transitions"
+    },
+    {
+      "type": "group_header",
+      "label": "View All Button"
+    },
+    {
+      "type": "switch",
+      "id": "show_view_all",
+      "label": "Show 'View All' link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "'View All' text",
+      "default": "View All"
+    },
+    {
+      "type": "color",
+      "id": "view_all_color",
+      "label": "'View All' text color",
+      "default": "#000000"
+    },
+    {
+      "type": "group_header",
+      "label": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "options": [
+        {
+          "value": "title",
+          "label": "Title font"
+        },
+        {
+          "value": "body",
+          "label": "Body font"
+        }
+      ],
+      "default": "title"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "group_header",
+      "label": "Layout"
+    },
+    {
+      "type": "switch",
+      "id": "full_width",
+      "label": "Full width carousel",
+      "default": false,
+      "info": "Allows products to scroll edge-to-edge while keeping title in container"
+    },
+    {
+      "type": "group_header",
+      "label": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "group_header",
+      "label": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom (mobile)",
+      "default": 30,
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection Carousel",
+      "settings": {
+        "title": "BEST SELLERS",
+        "uppercase_title": true,
+        "slides_desktop": 4,
+        "slides_tablet": 3,
+        "slides_mobile": "2",
+        "show_navigation": true,
+        "show_dots": false,
+        "show_view_all": true,
+        "view_all_text": "View All"
+      }
+    }
+  ]
+}
+{{/schema}}
