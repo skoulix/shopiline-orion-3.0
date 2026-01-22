@@ -13,7 +13,7 @@
       <!-- Navigation -->
       {{#if section.settings.menu}}
         <nav class="hidden md:flex items-center gap-6">
-          {{#for link in linklists.main-menu.links}}
+          {{#for link in section.settings.menu.links}}
             <a href="{{ link.url }}" class="text-sm font-medium hover:opacity-80">{{ link.title }}</a>
           {{/for}}
         </nav>
